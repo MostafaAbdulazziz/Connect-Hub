@@ -1,4 +1,4 @@
-package java.com.socialnetwork.connecthub.shared.dto;
+package com.socialnetwork.connecthub.shared.dto;
 
 import lombok.Data;
 

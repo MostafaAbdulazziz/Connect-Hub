@@ -1,6 +1,6 @@
-package java.com.socialnetwork.connecthub.backend.interfaces;
+package com.socialnetwork.connecthub.backend.interfaces;
 
-import java.com.socialnetwork.connecthub.backend.interfaces.services.*;
+import com.socialnetwork.connecthub.backend.interfaces.services.*;
 
 public interface SocialNetworkAPI {
     ContentService getContentService();
