@@ -1,7 +1,7 @@
-package java.com.socialnetwork.connecthub.backend.interfaces.services;
+package com.socialnetwork.connecthub.backend.interfaces.services;
 
-import java.com.socialnetwork.connecthub.backend.model.FriendRequest;
-import java.com.socialnetwork.connecthub.shared.dto.UserDTO;
+import com.socialnetwork.connecthub.backend.model.FriendRequest;
+import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import java.util.List;
 
 public interface FriendService {

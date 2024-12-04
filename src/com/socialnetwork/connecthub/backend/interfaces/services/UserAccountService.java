@@ -1,6 +1,6 @@
-package java.com.socialnetwork.connecthub.backend.interfaces.services;
+package com.socialnetwork.connecthub.backend.interfaces.services;
 
-import java.com.socialnetwork.connecthub.shared.dto.*;
+import com.socialnetwork.connecthub.shared.dto.*;
 
 public interface UserAccountService {
     void signup(SignUpDTO signUpDTO);

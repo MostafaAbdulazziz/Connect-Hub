@@ -1,7 +1,7 @@
-package java.com.socialnetwork.connecthub.backend.interfaces.services;
+package com.socialnetwork.connecthub.backend.interfaces.services;
 
 import java.util.List;
-import java.com.socialnetwork.connecthub.shared.dto.*;
+import com.socialnetwork.connecthub.shared.dto.*;
 
 public interface ProfileService {
     void updateProfilePhoto(String userId, String photoPath);

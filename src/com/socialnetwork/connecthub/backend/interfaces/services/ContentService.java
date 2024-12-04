@@ -1,6 +1,6 @@
-package java.com.socialnetwork.connecthub.backend.interfaces.services;
+package com.socialnetwork.connecthub.backend.interfaces.services;
 
-import java.com.socialnetwork.connecthub.backend.model.*;
+import com.socialnetwork.connecthub.backend.model.*;
 import java.util.List;
 
 public interface ContentService {

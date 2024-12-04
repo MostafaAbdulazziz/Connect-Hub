@@ -1,4 +1,4 @@
-package java.com.socialnetwork.connecthub.backend.model;
+package com.socialnetwork.connecthub.backend.model;
 
 import lombok.Data;
 import java.util.Date;
