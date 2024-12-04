@@ -1,53 +1,69 @@
 package com.socialnetwork.connecthub.frontend.swing.navigationhandler;
+
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandler;
 import com.socialnetwork.connecthub.frontend.swing.view.*;
-import com.socialnetwork.connecthub.frontend.swing.viewfactory.ViewFactory;
 
-public class Navigation implements NavigationHandler {
-    ViewFactory viewFactory = new ViewFactory();
+public class NavigationHandlerTest implements NavigationHandler {
+
     @Override
     public View goToLoginView() {
-        return viewFactory.getView("LoginView");
+        System.out.println("new LoginView()");
+        return null;
     }
 
     @Override
     public View goToSignUpView() {
-        return viewFactory.getView("SignUpView");
+        System.out.println("new SignUpView()");
+        return null;
+
     }
 
     @Override
     public View goToBlockedUsersView() {
-        return viewFactory.getView("BlockedUsersView");
+        System.out.println("new BlockedUsersView()");
+        return null;
+
     }
 
     @Override
     public View goToContentCreationAreaView() {
-        return viewFactory.getView("ContentCreationAreaView");
+        System.out.println("new ContentCreationAreaView()");
+        return null;
+
     }
 
     @Override
     public View goToFriendRequestView() {
-        return viewFactory.getView("FriendRequestView");
+        System.out.println("new FriendRequestView()");
+        return null;
+
     }
 
     @Override
     public View goToMyProfileView() {
-        return viewFactory.getView("MyProfileView");
+        System.out.println("new MyProfileView()");
+        return null;
+
     }
 
     @Override
     public View goToNewsFeedView() {
-        return viewFactory.getView("NewsFeedView");
+        System.out.println("new NewsFeedView()");
+        return null;
+
     }
 
     @Override
     public View goToProfileView() {
-        return viewFactory.getView("ProfileView");
+        System.out.println("new ProfileView()");
+        return null;
+
     }
 
     @Override
     public View goToStoryView() {
-        return viewFactory.getView("StoryView");
+        System.out.println("new StoryView()");
+        return null;
     }
 
 }
