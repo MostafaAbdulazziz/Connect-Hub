@@ -1,4 +1,4 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
-public class FriendRequestsView {
+public class FriendRequestsView extends View{
 }
