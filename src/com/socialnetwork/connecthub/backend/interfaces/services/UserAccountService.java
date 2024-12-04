@@ -1,8 +1,6 @@
 package com.socialnetwork.connecthub.backend.interfaces.services;
 
-import com.socialnetwork.connecthub.shared.dto.LoginDTO;
-import com.socialnetwork.connecthub.shared.dto.SignUpDTO;
-import com.socialnetwork.connecthub.shared.dto.UserDTO;
+import com.socialnetwork.connecthub.shared.dto.*;
 
 public interface UserAccountService {
     void signup(SignUpDTO signUpDTO);
