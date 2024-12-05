@@ -1,14 +1,16 @@
 package com.socialnetwork.connecthub.backend.interfaces.services;
 
 import com.socialnetwork.connecthub.backend.model.*;
+import com.socialnetwork.connecthub.shared.dto.ContentDTO;
+
 import java.util.List;
 
 public interface ContentService {
-    void createPost(String userId, String content);
-    void createStory(String userId, String content);
+    void createPost(String userId, ContentDTO contentDTO);
+    void createStory(String userId, ContentDTO contentDTO);
     void deleteExpiredStories();
-    List<Post> getUserPosts(String userId);
-    List<Post> getFriendsPosts(String userId);
-    List<Story> getUserStories(String userId);
-    List<Story> getFriendsStories(String userId);
+    List<ContentDTO> getUserPosts(String userId);
+    List<ContentDTO> getFriendsPosts(String userId);
+    List<ContentDTO> getUserStories(String userId);
+    List<ContentDTO> getFriendsStories(String userId);
 }
