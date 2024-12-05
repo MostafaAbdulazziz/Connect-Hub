@@ -1,4 +1,236 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
+import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
+import com.socialnetwork.connecthub.backend.interfaces.services.NewsFeedService;
+import com.socialnetwork.connecthub.backend.model.Story;
+import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
+import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
+import com.socialnetwork.connecthub.shared.dto.UserDTO;
+import test.ContentServiceTest;
+import test.NewsFeedAPI;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+
 public class NewsFeedView extends View {
+    RoundedImageLabel myPhotoLabel;
+    JPanel myPanel;
+    JLabel mainLabel;
+    JPanel panel;
+    JScrollPane scrollPane;
+    UserDTO user;
+    NewsFeedService newsFeedService;
+    ContentService contentService;
+
+    public NewsFeedView(UserDTO user) {
+        newsFeedService = new NewsFeedAPI();
+        contentService = new ContentServiceTest();
+        this.user = user;
+        setLayout(null);
+
+        if (user == null) {
+            mainLabel = new JLabel("You are not logged in!", 40, GUIConstants.blue, 5);
+            mainLabel.setFont(new Font("Arial", Font.BOLD, 40));
+            mainLabel.setForeground(GUIConstants.blue);
+            mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            mainLabel.setVerticalAlignment(SwingConstants.CENTER);
+            mainLabel.setBounds(0, 0, this.getWidth(), this.getHeight());
+            add(mainLabel);
+            revalidate();
+            repaint();
+            return;
+        }
+
+        panel = new JPanel(null);
+        panel.setLayout(null);
+        panel.setBounds(0, 0, 1800, 800);
+        panel.setBackground(new Color(215, 215, 215));
+        add(panel);
+
+        myPanel = new JPanel(null);
+        myPanel.setBounds(0, 0, 300, 110);
+        myPanel.setBackground(new Color(255, 255, 255));
+        myPanel.setVisible(true);
+        panel.add(myPanel);
+        if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
+            myPhotoLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
+        } else {
+            myPhotoLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 100, 100);
+        }
+        myPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
+        myPhotoLabel.setBounds(8, 8, 100, 100);
+        myPanel.setOpaque(true);
+        javax.swing.JLabel myNameLabel = new javax.swing.JLabel("userName");
+        myNameLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        myNameLabel.setForeground(Color.GRAY);
+        myNameLabel.setBounds(120, 8, 200, 50);
+        myPanel.add(myNameLabel);
+
+        javax.swing.JLabel OnlineFriendsLabel = new javax.swing.JLabel("Online Friends");
+        OnlineFriendsLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        OnlineFriendsLabel.setForeground(new Color(27, 140, 0));
+        OnlineFriendsLabel.setBounds(60, 120, 300, 20);
+        OnlineFriendsLabel.setOpaque(false);
+        panel.add(OnlineFriendsLabel);
+
+
+        myPanel.add(myPhotoLabel);
+
+
+        // Panel to hold dynamic friend labels
+        JPanel labelPanel = new JPanel();
+        labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.Y_AXIS));
+        labelPanel.setBackground(new Color(215, 215, 215));
+
+        // Add friend labels to the panel
+        List<UserDTO> friends = newsFeedService.getOnlineFriends(user.getUserId());
+        for (UserDTO friend : friends) {
+            JPanel friendLabel = createFriendLabel(friend);
+            labelPanel.add(friendLabel);
+        }
+
+        // Adjust label panel's preferred size dynamically
+        int panelHeight = Math.max(600, friends.size() * 60); // 60px per friend
+        labelPanel.setPreferredSize(new Dimension(300, panelHeight));
+
+        // Add scroll pane
+        scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(labelPanel);
+        scrollPane.setBounds(0, 150, 300, 600); // Position and size
+        scrollPane.setBackground(new Color(215, 215, 215));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        panel.add(scrollPane);
+
+
+        addStories();
+        revalidate();
+        repaint();
+    }
+
+    private JPanel createFriendLabel(UserDTO user) {
+        // Create the friend panel with a null layout for custom positioning
+        JPanel friendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        RoundedImageLabel imageLabel;
+        friendPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
+        friendPanel.setMaximumSize(new Dimension(300, 60));
+        friendPanel.setBackground(Color.WHITE);
+
+        // Add rounded image for the friend
+        if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
+            imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
+            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+            friendPanel.add(imageLabel);
+        } else {
+            imageLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 50, 50);
+            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+            friendPanel.add(imageLabel);
+        }
+
+
+        // Add username text
+        javax.swing.JLabel textLabel = new javax.swing.JLabel(user.getUsername());
+        textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        textLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        textLabel.setForeground(Color.GRAY); // Ensure visible text color
+        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
+        textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        friendPanel.add(textLabel);
+
+        // Add a border for better visuals
+        friendPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the user's profile
+                new ProfileView(user);
+                dispose();
+            }
+        });
+        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the user's profile
+                new ProfileView(user);
+                dispose();
+            }
+        });
+        friendPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the user's profile
+                new ProfileView(user);
+                dispose();
+            }
+        });
+
+        return friendPanel;
+    }
+
+
+    private void addStories() {
+        // Add horizontal scroll panel for rounded labels
+        JPanel horizontalPanel = new JPanel();
+        horizontalPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align labels from left
+        horizontalPanel.setBackground(new Color(215, 215, 215)); // Set background color
+
+// Add friends' stories to the panel
+        for (Story story : contentService.getFriendsStories(user.getUserId())) {
+            RoundedImageLabel userLabel;
+            if (story.getImagePath() == null || story.getImagePath().isEmpty()) {
+                userLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
+            } else {
+                userLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 100, 100);
+            }
+            userLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Hand cursor for interactivity
+            userLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // Open the user's profile on click
+                    new ProfileView(user);
+                    dispose();
+                }
+            });
+            horizontalPanel.add(userLabel);
+        }
+
+// Add user's own stories to the panel
+        for (Story story : contentService.getUserStories(user.getUserId())) {
+            RoundedImageLabel userLabel;
+            if (story.getImagePath() == null || story.getImagePath().isEmpty()) {
+                userLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
+            } else {
+                userLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 100, 100);
+            }
+            userLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // Open the user's profile on click
+                    new ProfileView(user);
+                    dispose();
+                }
+            });
+            horizontalPanel.add(userLabel);
+        }
+
+// Set preferred size to ensure scroll works properly
+        int totalStories = contentService.getFriendsStories(user.getUserId()).size() + contentService.getUserStories(user.getUserId()).size();
+        int panelWidth = Math.max(1000, totalStories * 110); // 110px per label including spacing
+        horizontalPanel.setPreferredSize(new Dimension(panelWidth, 120));
+
+// Create the horizontal scroll pane
+        com.socialnetwork.connecthub.frontend.swing.components.JScrollPane horizontalScrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(horizontalPanel);
+        horizontalScrollPane.setBounds(310, 0, 1000, 120); // Set position and size
+        horizontalScrollPane.setBackground(new Color(215, 215, 215));
+        horizontalScrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+
+// Ensure horizontal scrolling
+        horizontalScrollPane.setHorizontalScrollBarPolicy(com.socialnetwork.connecthub.frontend.swing.components.JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        horizontalScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER); // Disable vertical scrolling
+
+// Add the horizontal scroll pane to the main panel
+        panel.add(horizontalScrollPane);
+
+// Repaint and revalidate to ensure proper rendering
+        revalidate();
+        repaint();
+
+    }
+
 }
