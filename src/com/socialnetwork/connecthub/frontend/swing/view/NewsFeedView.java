@@ -62,6 +62,12 @@ public class NewsFeedView extends View {
         myPanel.setBounds(0, 0, 300, 110);
         myPanel.setBackground(new Color(255, 255, 255));
         myPanel.setVisible(true);
+        myPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new MyProfileView(user);
+                dispose();
+            }
+        });
         panel.add(myPanel);
         if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
             myPhotoLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
@@ -70,6 +76,12 @@ public class NewsFeedView extends View {
         }
         myPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
         myPhotoLabel.setBounds(8, 8, 100, 100);
+        myPhotoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new MyProfileView(user);
+                dispose();
+            }
+        });
         myPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 new MyProfileView(user);
@@ -79,8 +91,14 @@ public class NewsFeedView extends View {
         myPanel.setOpaque(true);
         javax.swing.JLabel myNameLabel = new javax.swing.JLabel("userName");
         myNameLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        myNameLabel.setForeground(Color.GRAY);
-        myNameLabel.setBounds(120, 8, 200, 50);
+        myNameLabel.setForeground(GUIConstants.blue);
+        myNameLabel.setBounds(140, 28, 200, 50);
+        myNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new MyProfileView(user);
+                dispose();
+            }
+        });
         myPanel.add(myNameLabel);
 
         javax.swing.JLabel OnlineFriendsLabel = new javax.swing.JLabel("Online Friends");
