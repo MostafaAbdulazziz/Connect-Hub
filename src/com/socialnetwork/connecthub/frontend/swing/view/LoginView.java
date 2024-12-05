@@ -7,6 +7,7 @@ import com.socialnetwork.connecthub.shared.dto.LoginDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JTextField;
+import com.socialnetwork.connecthub.shared.exceptions.InvalidLoginException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,7 +32,6 @@ public class LoginView extends JFrame {
         title.setHorizontalAlignment(JLabel.CENTER);
         panel.add(title, BorderLayout.NORTH);
 
-
         JPanel center = new JPanel(new GridBagLayout());
         center.setBackground(null);
         center.setBorder(BorderFactory.createEmptyBorder(34, 315, 17, 315));
@@ -49,14 +49,12 @@ public class LoginView extends JFrame {
         gbc.gridwidth = 1;
         center.add(email, gbc);
 
-
         JTextField password = new JTextField("Password");
         password.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         center.add(password, gbc);
-
 
         JButton login = new JButton("Login", 12, 20);
 
@@ -75,32 +73,29 @@ public class LoginView extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (email.getText().isEmpty()) {
-                    new Alert("Email cannot be empty", LoginView.this);
-                    return;
-                }
-                if (password.getText().isEmpty()) {
-                    new Alert("Password cannot be empty", LoginView.this);
-                    return;
-                }
+
 
                 LoginDTO loginDTO = new LoginDTO();
-                //loginDTO.setEmail(email.getText());
-                //loginDTO.setPassword(password.getText());
+                loginDTO.setEmail(email.getText());
+                loginDTO.setPassword(password.getText());
 
+                try {
+                    boolean isLoggedIn = socialNetworkAPI.getUserAccountService().login(loginDTO);
 
-                boolean isLoggedIn = socialNetworkAPI.getUserAccountService().login(loginDTO);
-
-                if (isLoggedIn) {
-                    UserDTO userDTO = socialNetworkAPI.getUserAccountService().getUserById(loginDTO.getEmail()); // Assuming email is used as userId
-                    new NewsFeedView();
-                    LoginView.this.dispose();
-                } else {
-                    new Alert("Incorrect email or password", LoginView.this);
+                    if (isLoggedIn) {
+                        UserDTO userDTO = socialNetworkAPI.getUserAccountService().getUserById(loginDTO.getEmail());
+                        new NewsFeedView();
+                        LoginView.this.dispose();
+                    } else {
+                        throw new InvalidLoginException("Incorrect email or password");
+                    }
+                } catch (InvalidLoginException ex) {
+                    new Alert(ex.getMessage(), LoginView.this);
+                } catch (Exception ex) {
+                    new Alert("An error occurred during login. Please try again later.", LoginView.this);
                 }
             }
         });
-
 
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -108,7 +103,6 @@ public class LoginView extends JFrame {
         center.add(login, gbc);
 
         panel.add(center, BorderLayout.CENTER);
-
 
         javax.swing.JLabel createAcc = new javax.swing.JLabel("<html>Don't have an account?<a href='#' style='color: blue; text-decoration: underline;'> Sign up</a></html>");
         createAcc.addMouseListener(new MouseListener() {
