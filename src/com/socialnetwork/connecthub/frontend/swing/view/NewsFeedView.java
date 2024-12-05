@@ -1,14 +1,18 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
+import com.socialnetwork.connecthub.backend.interfaces.services.FriendService;
 import com.socialnetwork.connecthub.backend.interfaces.services.NewsFeedService;
+import com.socialnetwork.connecthub.backend.interfaces.services.UserAccountService;
 import com.socialnetwork.connecthub.backend.model.Story;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import test.ContentServiceTest;
+import test.FriendServiceTest;
 import test.NewsFeedAPI;
+import test.UserAccountServiceTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,10 +27,14 @@ public class NewsFeedView extends View {
     UserDTO user;
     NewsFeedService newsFeedService;
     ContentService contentService;
+    UserAccountService userAccountService;
+    FriendService friendService;
 
     public NewsFeedView(UserDTO user) {
         newsFeedService = new NewsFeedAPI();
         contentService = new ContentServiceTest();
+        userAccountService = new UserAccountServiceTest();
+        friendService = new FriendServiceTest();
         this.user = user;
         setLayout(null);
 
@@ -104,6 +112,7 @@ public class NewsFeedView extends View {
 
 
         addStories();
+        addFriendSuggestions();
         revalidate();
         repaint();
     }
@@ -165,72 +174,178 @@ public class NewsFeedView extends View {
         return friendPanel;
     }
 
-
     private void addStories() {
         // Add horizontal scroll panel for rounded labels
         JPanel horizontalPanel = new JPanel();
         horizontalPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Align labels from left
         horizontalPanel.setBackground(new Color(215, 215, 215)); // Set background color
 
-// Add friends' stories to the panel
-        for (Story story : contentService.getFriendsStories(user.getUserId())) {
-            RoundedImageLabel userLabel;
-            if (story.getImagePath() == null || story.getImagePath().isEmpty()) {
-                userLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
-            } else {
-                userLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 100, 100);
-            }
-            userLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Hand cursor for interactivity
-            userLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    // Open the user's profile on click
-                    new ProfileView(user);
-                    dispose();
-                }
-            });
-            horizontalPanel.add(userLabel);
+        // Add friends' stories to the panel
+        for (Story story : contentService.getFriendsStories("9999999999")) {
+            JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
+            horizontalPanel.add(storyPanel);
         }
 
-// Add user's own stories to the panel
+        // Add user's own stories to the panel
         for (Story story : contentService.getUserStories(user.getUserId())) {
-            RoundedImageLabel userLabel;
-            if (story.getImagePath() == null || story.getImagePath().isEmpty()) {
-                userLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
-            } else {
-                userLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 100, 100);
-            }
-            userLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    // Open the user's profile on click
-                    new ProfileView(user);
-                    dispose();
-                }
-            });
-            horizontalPanel.add(userLabel);
+            JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
+            horizontalPanel.add(storyPanel);
         }
 
-// Set preferred size to ensure scroll works properly
+        // Set preferred size to ensure scroll works properly
         int totalStories = contentService.getFriendsStories(user.getUserId()).size() + contentService.getUserStories(user.getUserId()).size();
         int panelWidth = Math.max(1000, totalStories * 110); // 110px per label including spacing
         horizontalPanel.setPreferredSize(new Dimension(panelWidth, 120));
 
-// Create the horizontal scroll pane
+        // Create the horizontal scroll pane
         com.socialnetwork.connecthub.frontend.swing.components.JScrollPane horizontalScrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(horizontalPanel);
         horizontalScrollPane.setBounds(310, 0, 1000, 120); // Set position and size
         horizontalScrollPane.setBackground(new Color(215, 215, 215));
         horizontalScrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
 
-// Ensure horizontal scrolling
+        // Ensure horizontal scrolling
         horizontalScrollPane.setHorizontalScrollBarPolicy(com.socialnetwork.connecthub.frontend.swing.components.JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         horizontalScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER); // Disable vertical scrolling
 
-// Add the horizontal scroll pane to the main panel
+        // Add the horizontal scroll pane to the main panel
         panel.add(horizontalScrollPane);
 
-// Repaint and revalidate to ensure proper rendering
+        // Repaint and revalidate to ensure proper rendering
         revalidate();
         repaint();
-
     }
+
+    private JPanel createStoryPanel(Story story) {
+        // Create a panel for each story
+        JPanel storyPanel = new JPanel();
+        storyPanel.setLayout(new BoxLayout(storyPanel, BoxLayout.Y_AXIS)); // Vertical layout
+        storyPanel.setPreferredSize(new Dimension(110, 120)); // Set size for each story panel
+        storyPanel.setBackground(new Color(215, 215, 215)); // Set background color
+
+        // Add the rounded image label for the story
+        String imagePath = (story.getImagePath() == null || story.getImagePath().isEmpty()) ?
+                "src/com/socialnetwork/connecthub/resources/pics/friends.png" :
+                story.getImagePath();
+
+        RoundedImageLabel storyImageLabel = new RoundedImageLabel(imagePath, 75, 75);
+        storyImageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Hand cursor for interactivity
+        storyPanel.add(storyImageLabel);
+
+        // Add the username label below the image
+        javax.swing.JLabel usernameLabel = new javax.swing.JLabel("9999"); // Assuming story has the user's name
+        usernameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        usernameLabel.setForeground(Color.black); // Light color for the name
+        usernameLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center-align the name
+        usernameLabel.setOpaque(false); // Transparent label
+        storyPanel.add(usernameLabel, BorderLayout.CENTER);
+
+        // Add mouse listener for opening the user's profile
+        storyImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the user's profile on click
+                new StoryView(userAccountService.getUserById(story.getAuthorId()));
+                dispose();
+            }
+        });
+
+        return storyPanel;
+    }
+
+    private void addFriendSuggestions() {
+        // Label for friend suggestions
+        javax.swing.JLabel friendSuggestionsLabel = new javax.swing.JLabel("Friend Suggestions");
+        friendSuggestionsLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        friendSuggestionsLabel.setForeground(new Color(0, 140, 124));
+        friendSuggestionsLabel.setBounds(1250, 120, 300, 20); // Position the label below other elements
+        panel.add(friendSuggestionsLabel);
+
+        // Panel to hold dynamic friend suggestion labels
+        JPanel suggestionPanel = new JPanel();
+        suggestionPanel.setLayout(new BoxLayout(suggestionPanel, BoxLayout.Y_AXIS));
+        suggestionPanel.setBackground(new Color(215, 215, 215));
+
+        // Add friend suggestion labels to the panel
+        List<UserDTO> friendSuggestions = friendService.getFriendSuggestions(user.getUserId());
+        for (UserDTO suggestion : friendSuggestions) {
+            JPanel suggestionLabel = createFriendSuggestionLabel(suggestion);
+            suggestionPanel.add(suggestionLabel);
+        }
+
+        // Adjust suggestion panel's preferred size dynamically
+        int panelHeight = Math.max(600, friendSuggestions.size() * 60); // 60px per suggestion
+        suggestionPanel.setPreferredSize(new Dimension(300, panelHeight));
+
+        // Add scroll pane
+        scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(suggestionPanel);
+        scrollPane.setBounds(1200, 150, 300, 600); // Position and size
+        scrollPane.setBackground(new Color(215, 215, 215));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        panel.add(scrollPane);
+
+        revalidate();
+        repaint();
+    }
+
+    private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
+        // Create the suggestion panel with a null layout for custom positioning
+        JPanel suggestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        RoundedImageLabel imageLabel;
+        suggestionPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
+        suggestionPanel.setMaximumSize(new Dimension(300, 60));
+        suggestionPanel.setBackground(Color.WHITE);
+
+        // Add rounded image for the suggestion
+        if (suggestion.getProfilePhotoPath() == null || suggestion.getProfilePhotoPath().isEmpty()) {
+            imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
+            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+            suggestionPanel.add(imageLabel);
+        } else {
+            imageLabel = new RoundedImageLabel(suggestion.getProfilePhotoPath(), 50, 50);
+            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+            suggestionPanel.add(imageLabel);
+        }
+
+        // Add username text
+        javax.swing.JLabel textLabel = new javax.swing.JLabel(suggestion.getUsername());
+        textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        textLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        textLabel.setForeground(Color.GRAY); // Ensure visible text color
+        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
+        textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        suggestionPanel.add(textLabel);
+
+        // Add a border for better visuals
+        suggestionPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the suggestion's profile
+                new ProfileView(suggestion);
+                dispose();
+            }
+        });
+        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the suggestion's profile
+                new ProfileView(suggestion);
+                dispose();
+            }
+        });
+        suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the suggestion's profile
+                new ProfileView(suggestion);
+                dispose();
+            }
+        });
+
+        return suggestionPanel;
+    }
+
+
+//    private addRequiredButtons(){
+//
+//    }
+
 
 }
