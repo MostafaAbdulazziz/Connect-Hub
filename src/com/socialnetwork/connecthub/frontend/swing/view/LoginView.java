@@ -14,10 +14,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class LoginView extends JFrame {
-    private SocialNetworkAPI socialNetworkAPI;  // Add this to access backend services
+    private SocialNetworkAPI socialNetworkAPI;
 
     public LoginView() {
-        super("Login");  // Set window title
+        super("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
         setLocationRelativeTo(null);
@@ -31,34 +31,33 @@ public class LoginView extends JFrame {
         title.setHorizontalAlignment(JLabel.CENTER);
         panel.add(title, BorderLayout.NORTH);
 
-        // Use GridBagLayout for more control over component placement
+
         JPanel center = new JPanel(new GridBagLayout());
         center.setBackground(null);
         center.setBorder(BorderFactory.createEmptyBorder(34, 315, 17, 315));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(10, 0, 10, 0);  // Add margin between components
+        gbc.insets = new Insets(10, 0, 10, 0);
 
         // Create the email text field with flexible width
         JTextField email = new JTextField("Email");
-        email.setMaximumSize(new Dimension(400, 40));  // Set maximum width to fill available space
-        email.setPreferredSize(new Dimension(400, 40));  // Set preferred width
-        email.setMinimumSize(new Dimension(400, 40));  // Set minimum width
-        gbc.gridx = 0;
+        email.setMaximumSize(new Dimension(400, 40));
+        email.setPreferredSize(new Dimension(400, 40));
+        email.setMinimumSize(new Dimension(400, 40));
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         center.add(email, gbc);
 
-        // Create the password text field with flexible width
+
         JTextField password = new JTextField("Password");
-        password.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));  // Set maximum width to fill available space
+        password.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         center.add(password, gbc);
 
-        // Create the login button
+
         JButton login = new JButton("Login", 12, 20);
 
         login.addMouseListener(new MouseListener() {
@@ -85,25 +84,24 @@ public class LoginView extends JFrame {
                     return;
                 }
 
-                // Prepare the DTO with user credentials
                 LoginDTO loginDTO = new LoginDTO();
                 //loginDTO.setEmail(email.getText());
                 //loginDTO.setPassword(password.getText());
 
-                // Call the backend service to perform login
+
                 boolean isLoggedIn = socialNetworkAPI.getUserAccountService().login(loginDTO);
 
                 if (isLoggedIn) {
                     UserDTO userDTO = socialNetworkAPI.getUserAccountService().getUserById(loginDTO.getEmail()); // Assuming email is used as userId
                     new NewsFeedView();
-                    LoginView.this.dispose();  // Close current LoginView window
+                    LoginView.this.dispose();
                 } else {
                     new Alert("Incorrect email or password", LoginView.this);
                 }
             }
         });
 
-        // Add the login button with margin
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
@@ -111,7 +109,7 @@ public class LoginView extends JFrame {
 
         panel.add(center, BorderLayout.CENTER);
 
-        // Modify the "Create new one" label to make it look like a link
+
         javax.swing.JLabel createAcc = new javax.swing.JLabel("<html>Don't have an account?<a href='#' style='color: blue; text-decoration: underline;'> Sign up</a></html>");
         createAcc.addMouseListener(new MouseListener() {
             @Override
@@ -128,8 +126,8 @@ public class LoginView extends JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                LoginView.this.dispose();  // Close the login window when sign up is clicked
-                new SignUpView();  // Open the SignUpView
+                LoginView.this.dispose();
+                new SignUpView();
             }
         });
         createAcc.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -137,6 +135,6 @@ public class LoginView extends JFrame {
         panel.add(createAcc, BorderLayout.SOUTH);
 
         getContentPane().add(panel);
-        setVisible(true);  // Make the window visible
+        setVisible(true);
     }
 }
