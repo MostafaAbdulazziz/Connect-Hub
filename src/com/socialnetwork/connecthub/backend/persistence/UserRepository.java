@@ -1,0 +1,17 @@
+package com.socialnetwork.connecthub.backend.persistence;
+
+import com.socialnetwork.connecthub.backend.model.User;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface UserRepository {
+    Optional<User> findById(String userId);
+    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
+    void save(User user);
+    void delete(String userId);
+    List<User> findAllFriends(String userId);
+    List<User> findAllBlockedUsers(String userId);
+    List<String> getReceivedFriendRequests(String userId);
+}
