@@ -8,6 +8,7 @@ import com.socialnetwork.connecthub.backend.model.Story;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
+import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import test.ContentServiceTest;
 import test.FriendServiceTest;
@@ -181,13 +182,13 @@ public class NewsFeedView extends View {
         horizontalPanel.setBackground(new Color(215, 215, 215)); // Set background color
 
         // Add friends' stories to the panel
-        for (Story story : contentService.getFriendsStories("9999999999")) {
+        for (ContentDTO story : contentService.getFriendsStories("9999999999")) {
             JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
             horizontalPanel.add(storyPanel);
         }
 
         // Add user's own stories to the panel
-        for (Story story : contentService.getUserStories(user.getUserId())) {
+        for (ContentDTO story : contentService.getUserStories(user.getUserId())) {
             JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
             horizontalPanel.add(storyPanel);
         }
@@ -215,7 +216,7 @@ public class NewsFeedView extends View {
         repaint();
     }
 
-    private JPanel createStoryPanel(Story story) {
+    private JPanel createStoryPanel(ContentDTO story) {
         // Create a panel for each story
         JPanel storyPanel = new JPanel();
         storyPanel.setLayout(new BoxLayout(storyPanel, BoxLayout.Y_AXIS)); // Vertical layout
@@ -252,40 +253,56 @@ public class NewsFeedView extends View {
     }
 
     private void addFriendSuggestions() {
-        // Label for friend suggestions
-        javax.swing.JLabel friendSuggestionsLabel = new javax.swing.JLabel("Friend Suggestions");
-        friendSuggestionsLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        friendSuggestionsLabel.setForeground(new Color(0, 140, 124));
-        friendSuggestionsLabel.setBounds(1250, 120, 300, 20); // Position the label below other elements
-        panel.add(friendSuggestionsLabel);
+    // Label for friend suggestions
+    javax.swing.JLabel friendSuggestionsLabel = new javax.swing.JLabel("Friend Suggestions");
+    friendSuggestionsLabel.setFont(new Font("Arial", Font.BOLD, 20));
+    friendSuggestionsLabel.setForeground(new Color(0, 140, 124));
+    friendSuggestionsLabel.setBounds(0, 0, 300, 20); // Position the label to the left of the scroll pane
 
-        // Panel to hold dynamic friend suggestion labels
-        JPanel suggestionPanel = new JPanel();
-        suggestionPanel.setLayout(new BoxLayout(suggestionPanel, BoxLayout.Y_AXIS));
-        suggestionPanel.setBackground(new Color(215, 215, 215));
+    // Panel to hold the label and scroll pane side by side
+    JPanel labelAndScrollPanel = new JPanel();
+    labelAndScrollPanel.setLayout(new BorderLayout()); // Use BorderLayout for better control
+    labelAndScrollPanel.setBackground(new Color(215, 215, 215));
 
-        // Add friend suggestion labels to the panel
-        List<UserDTO> friendSuggestions = friendService.getFriendSuggestions(user.getUserId());
-        for (UserDTO suggestion : friendSuggestions) {
-            JPanel suggestionLabel = createFriendSuggestionLabel(suggestion);
-            suggestionPanel.add(suggestionLabel);
-        }
+    // Panel to hold dynamic friend suggestion labels
+    JPanel suggestionPanel = new JPanel();
+    suggestionPanel.setLayout(new BoxLayout(suggestionPanel, BoxLayout.Y_AXIS));
+    suggestionPanel.setBackground(new Color(215, 215, 215));
 
-        // Adjust suggestion panel's preferred size dynamically
-        int panelHeight = Math.max(600, friendSuggestions.size() * 60); // 60px per suggestion
-        suggestionPanel.setPreferredSize(new Dimension(300, panelHeight));
-
-        // Add scroll pane
-        scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(suggestionPanel);
-        scrollPane.setBounds(1200, 150, 300, 600); // Position and size
-        scrollPane.setBackground(new Color(215, 215, 215));
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-        panel.add(scrollPane);
-
-        revalidate();
-        repaint();
+    // Add friend suggestion labels to the panel
+    List<UserDTO> friendSuggestions = friendService.getFriendSuggestions(user.getUserId());
+    for (UserDTO suggestion : friendSuggestions) {
+        JPanel suggestionLabel = createFriendSuggestionLabel(suggestion);
+        suggestionPanel.add(suggestionLabel);
     }
 
+    // Adjust suggestion panel's preferred size dynamically
+    int panelHeight = Math.max(600, friendSuggestions.size() * 60); // 60px per suggestion
+    suggestionPanel.setPreferredSize(new Dimension(300, panelHeight));
+
+    // Create the scroll pane and set its orientation
+    com.socialnetwork.connecthub.frontend.swing.components.JScrollPane scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(suggestionPanel);
+    scrollPane.setPreferredSize(new Dimension(300, 600)); // Set the size of the scroll pane
+    scrollPane.setBackground(new Color(215, 215, 215));
+    scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
+
+    // Set the scroll bar to appear on the left side
+    JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+    verticalScrollBar.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT); // Move the scroll bar to the left
+
+    // Add the scroll pane and label to the panel
+    labelAndScrollPanel.add(scrollPane, BorderLayout.WEST); // Scroll pane on the left
+    labelAndScrollPanel.add(friendSuggestionsLabel, BorderLayout.EAST); // Label on the right
+
+    // Set the bounds of the label and scroll panel
+    labelAndScrollPanel.setBounds(1200, 150, 600, 600); // Position and size the container
+
+    panel.add(labelAndScrollPanel);
+
+    revalidate();
+    repaint();
+}
     private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
         // Create the suggestion panel with a null layout for custom positioning
         JPanel suggestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
