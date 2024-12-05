@@ -13,6 +13,7 @@ import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
+import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
 
 public class ContentCreationAreaView extends JFrame {
     private JTextArea postTextArea;
@@ -174,8 +175,13 @@ public class ContentCreationAreaView extends JFrame {
         contentDTO.setImagePath(imagePath);
 
         // Call the content service
-        contentService.createPost(currentUser.getUserId(), contentDTO);
-
+        try {
+            contentService.createPost(currentUser.getUserId(), contentDTO);
+        } catch (ContentCreationException ex) {
+            new Alert(ex.getMessage(), ContentCreationAreaView.this);
+        } catch (Exception ex) {
+            new Alert("An error occurred during posting. Please try again.", ContentCreationAreaView.this);
+        }
         // Reset UI
         JOptionPane.showMessageDialog(this, "Post submitted successfully!");
         this.dispose();

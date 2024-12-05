@@ -134,7 +134,7 @@ public class SignUpView extends JFrame {
                 } catch (InvalidSignupException ex) {
                     new Alert(ex.getMessage(), SignUpView.this);
                 } catch (Exception ex) {
-                    new Alert("An error occurred during signup. Please try.", SignUpView.this);
+                    new Alert("An error occurred during signup. Please try again.", SignUpView.this);
                 }
             }
         });
