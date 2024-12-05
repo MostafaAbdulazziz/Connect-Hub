@@ -3,6 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.LoginDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
@@ -16,6 +17,7 @@ import java.awt.event.MouseListener;
 
 public class LoginView extends JFrame {
     private SocialNetworkAPI socialNetworkAPI;
+    private NavigationHandlerFactory navigationHandlerFactory;
 
     public LoginView() {
         super("Login");
@@ -60,16 +62,20 @@ public class LoginView extends JFrame {
 
         login.addMouseListener(new MouseListener() {
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {
+            }
 
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+            }
 
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+            }
 
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {
+            }
 
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -80,15 +86,9 @@ public class LoginView extends JFrame {
                 loginDTO.setPassword(password.getText());
 
                 try {
-                    boolean isLoggedIn = socialNetworkAPI.getUserAccountService().login(loginDTO);
-
-                    if (isLoggedIn) {
-                        UserDTO userDTO = socialNetworkAPI.getUserAccountService().getUserById(loginDTO.getEmail());
-                        new NewsFeedView();
-                        LoginView.this.dispose();
-                    } else {
-                        throw new InvalidLoginException("Incorrect email or password");
-                    }
+                    UserDTO userDTO = socialNetworkAPI.getUserAccountService().login(loginDTO);
+                    navigationHandlerFactory.getNavigationHandler().goToNewsFeedView(userDTO);
+                    LoginView.this.dispose();
                 } catch (InvalidLoginException ex) {
                     new Alert(ex.getMessage(), LoginView.this);
                 } catch (Exception ex) {
@@ -107,16 +107,20 @@ public class LoginView extends JFrame {
         javax.swing.JLabel createAcc = new javax.swing.JLabel("<html>Don't have an account?<a href='#' style='color: blue; text-decoration: underline;'> Sign up</a></html>");
         createAcc.addMouseListener(new MouseListener() {
             @Override
-            public void mouseReleased(MouseEvent e) {}
+            public void mouseReleased(MouseEvent e) {
+            }
 
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+            }
 
             @Override
-            public void mouseExited(MouseEvent e) {}
+            public void mouseExited(MouseEvent e) {
+            }
 
             @Override
-            public void mouseEntered(MouseEvent e) {}
+            public void mouseEntered(MouseEvent e) {
+            }
 
             @Override
             public void mouseClicked(MouseEvent e) {
