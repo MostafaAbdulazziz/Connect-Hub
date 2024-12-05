@@ -70,6 +70,12 @@ public class NewsFeedView extends View {
         }
         myPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
         myPhotoLabel.setBounds(8, 8, 100, 100);
+        myPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                new MyProfileView(user);
+                dispose();
+            }
+        });
         myPanel.setOpaque(true);
         javax.swing.JLabel myNameLabel = new javax.swing.JLabel("userName");
         myNameLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -101,7 +107,7 @@ public class NewsFeedView extends View {
         }
 
         // Adjust label panel's preferred size dynamically
-        int panelHeight = Math.max(600, friends.size() * 60); // 60px per friend
+        int panelHeight = Math.max(1000, friends.size() * 100); // 60px per friend
         labelPanel.setPreferredSize(new Dimension(300, panelHeight));
 
         // Add scroll pane
@@ -114,8 +120,9 @@ public class NewsFeedView extends View {
 
         addTimeline();
         addStories();
-        addFriendSuggestions();
+        addButtons();
         revalidate();
+        addFriendSuggestions();
         repaint();
     }
 
@@ -129,81 +136,127 @@ public class NewsFeedView extends View {
 
 
 
-  private void addTimeline() {
-    // Panel to hold dynamic content labels
-    JPanel contentPanel = new JPanel();
-    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-    contentPanel.setBackground(new Color(215, 215, 215));
+    private void addTimeline() {
+        // Panel to hold dynamic content labels
+        JPanel contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBackground(new Color(215, 215, 215));
 
-    // Add content labels to the panel
-    List<ContentDTO> contentList = newsFeedService.getNewsFeed(user.getUserId());
-    for (ContentDTO content : contentList) {
-        JPanel contentLabel = createContentLabel(content);
-        contentPanel.add(contentLabel);
+        // Add content labels to the panel
+        List<ContentDTO> contentList = newsFeedService.getNewsFeed(user.getUserId());
+        for (ContentDTO content : contentList) {
+            JPanel contentLabel = createContentLabel(content);
+            contentPanel.add(contentLabel);
+            contentPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
+        }
+
+        // Adjust content panel's preferred size dynamically
+        int panelHeight = Math.max(1500, contentList.size() * 1210); // 1210px per content including spacing
+        contentPanel.setPreferredSize(new Dimension(800, panelHeight));
+
+        // Create the scroll pane and set its bounds
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBounds(310, 150, 900, 600); // Set the size and position of the scroll pane
+        scrollPane.setBackground(new Color(215, 215, 215));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
+
+        // Add the scroll pane to the main panel
+        panel.add(scrollPane);
+
+        revalidate();
+        repaint();
     }
 
-    // Adjust content panel's preferred size dynamically
-    int panelHeight = Math.max(600, contentList.size() * 400); // 400px per content
-    contentPanel.setPreferredSize(new Dimension(580, panelHeight));
+    private JPanel createContentLabel(ContentDTO content) {
+        // Create the content panel with a null layout for custom positioning
+        JPanel contentPanel = new JPanel(null);
+        contentPanel.setBackground(Color.WHITE);
 
-    // Create the scroll pane and set its bounds
-    JScrollPane scrollPane = new JScrollPane(contentPanel);
-    scrollPane.setBounds(310, 150, 900, 600); // Set the size and position of the scroll pane
-    scrollPane.setBackground(new Color(215, 215, 215));
-    scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
+        // Add rounded image for the author
+        if (content.getImagePath() == null || content.getImagePath().isEmpty()) {
+            RoundedImageLabel authorImageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
+            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+            contentPanel.add(authorImageLabel);
+        }
+        else {
+            RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
+            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+            contentPanel.add(authorImageLabel);
+        }
 
-    // Add the scroll pane to the main panel
-    panel.add(scrollPane);
+        // Add author name text
+        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
+        authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        authorNameLabel.setForeground(Color.BLACK);
+        for(UserDTO user1 : newsFeedService.getOnlineFriends(user.getUserId())){
+            if(user1.getUserId().equals(content.getAuthorId())){
+                authorNameLabel.setForeground(Color.GREEN);
+                break;
+            }
+        }
+        authorNameLabel.setBounds(70, 20, 200, 30); // Adjusted position
+        contentPanel.add(authorNameLabel);
 
-    revalidate();
-    repaint();
-}
+        // Add timestamp text
+        javax.swing.JLabel timestampLabel = new javax.swing.JLabel(content.getTimestamp().toString());
+        timestampLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        timestampLabel.setForeground(Color.GRAY);
+        timestampLabel.setBounds(650, 20, 170, 30); // Adjusted position
+        contentPanel.add(timestampLabel);
 
-private JPanel createContentLabel(ContentDTO content) {
-    // Create the content panel with a null layout for custom positioning
-    JPanel contentPanel = new JPanel(null);
-    contentPanel.setPreferredSize(new Dimension(700, 400)); // Set fixed size
-    contentPanel.setBackground(Color.WHITE);
+        // Add content text
+        javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent() + "</html>");
+        contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        contentTextLabel.setForeground(Color.BLACK);
+        contentTextLabel.setBounds(50, 80, 750, content.getContent().length() / 5); // Adjusted position and size
+//        contentTextLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        contentPanel.add(contentTextLabel);
 
-    // Add rounded image for the author
-    RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
-    authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
-    contentPanel.add(authorImageLabel);
+        JPanel contentImagePanel = null;
+        if (content.getImagePath() != null && !content.getImagePath().isEmpty()) {
+            contentImagePanel = new JPanel() {
+                private Image image = new ImageIcon(content.getImagePath()).getImage();
 
-    // Add author name text
-    javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
-    authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-    authorNameLabel.setForeground(Color.BLACK);
-    authorNameLabel.setBounds(70, 26, 200, 20); // Position the name
-    contentPanel.add(authorNameLabel);
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Draw the image scaled to fit the panel
+                    g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+                }
+            };
 
-    // Add timestamp text
-    javax.swing.JLabel timestampLabel = new javax.swing.JLabel(content.getTimestamp().toString());
-    timestampLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-    timestampLabel.setForeground(Color.GRAY);
-    timestampLabel.setBounds(700, 10, 170, 20); // Position the timestamp
-    contentPanel.add(timestampLabel);
+            contentImagePanel.setBounds(70, contentTextLabel.getHeight() + 100, 700, 400); // Position the image panel
+            contentPanel.add(contentImagePanel);
+        }
 
-    // Add content text
-    javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent() + "</html>");
-    contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-    contentTextLabel.setForeground(Color.BLACK);
-    contentTextLabel.setBounds(10, 70, 650, 70); // Position the content text
-    contentPanel.add(contentTextLabel);
+        // Add spacing at the bottom to maintain consistent height
 
-    // Add content image if available
-    if (content.getImagePath() != null && !content.getImagePath().isEmpty()) {
-        javax.swing.JLabel contentImageLabel = new javax.swing.JLabel(new ImageIcon(content.getImagePath()));
-        contentImageLabel.setBounds(70, 110, 500, 250); // Position the content image
-        contentPanel.add(contentImageLabel);
+
+        // Add a border for better visuals
+        contentPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 5));
+//        contentPanel.setPreferredSize(new Dimension(800, contentPanel.getY()+400)); // Set fixed size
+        if( contentImagePanel != null){
+        contentPanel.setMaximumSize(new Dimension(1900, contentImagePanel.getY() + 450));
+        }
+        else
+          {
+            contentPanel.setMaximumSize(new Dimension(1900, 450));
+         }
+
+        return contentPanel;
     }
 
-    // Add a border for better visuals
-    contentPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+    // Helper method to scale images while maintaining aspect ratio
+    private ImageIcon scaleImageIcon(ImageIcon icon, int maxWidth, int maxHeight) {
+        Image img = icon.getImage();
+        double scale = Math.min((double) maxWidth / img.getWidth(null), (double) maxHeight / img.getHeight(null));
+        int newWidth = (int) (img.getWidth(null) * scale);
+        int newHeight = (int) (img.getHeight(null) * scale);
+        Image scaledImg = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaledImg);
+    }
 
-    return contentPanel;
-}
 
 
 
@@ -353,16 +406,14 @@ private JPanel createContentLabel(ContentDTO content) {
     }
 
     private void addFriendSuggestions() {
-    // Label for friend suggestions
+    // Create the label
     javax.swing.JLabel friendSuggestionsLabel = new javax.swing.JLabel("Friend Suggestions");
     friendSuggestionsLabel.setFont(new Font("Arial", Font.BOLD, 20));
-    friendSuggestionsLabel.setForeground(new Color(0, 140, 124));
-    friendSuggestionsLabel.setBounds(0, 0, 300, 20); // Position the label to the left of the scroll pane
+    friendSuggestionsLabel.setForeground(new Color(0, 0, 0, 255));
+    friendSuggestionsLabel.setBounds(1240, 120, 300, 20); // Ensure these bounds fit inside the panel
 
-    // Panel to hold the label and scroll pane side by side
-    JPanel labelAndScrollPanel = new JPanel();
-    labelAndScrollPanel.setLayout(new BorderLayout()); // Use BorderLayout for better control
-    labelAndScrollPanel.setBackground(new Color(215, 215, 215));
+    // Add the label to the main panel
+    panel.add(friendSuggestionsLabel);
 
     // Panel to hold dynamic friend suggestion labels
     JPanel suggestionPanel = new JPanel();
@@ -370,7 +421,7 @@ private JPanel createContentLabel(ContentDTO content) {
     suggestionPanel.setBackground(new Color(215, 215, 215));
 
     // Add friend suggestion labels to the panel
-    List<UserDTO> friendSuggestions = friendService.getFriendSuggestions(user.getUserId());
+    List<UserDTO> friendSuggestions = newsFeedService.getFriendSuggestions(user.getUserId());
     for (UserDTO suggestion : friendSuggestions) {
         JPanel suggestionLabel = createFriendSuggestionLabel(suggestion);
         suggestionPanel.add(suggestionLabel);
@@ -391,14 +442,11 @@ private JPanel createContentLabel(ContentDTO content) {
     JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
     verticalScrollBar.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT); // Move the scroll bar to the left
 
-    // Add the scroll pane and label to the panel
-    labelAndScrollPanel.add(scrollPane, BorderLayout.WEST); // Scroll pane on the left
-    labelAndScrollPanel.add(friendSuggestionsLabel, BorderLayout.EAST); // Label on the right
+    // Set the bounds of the scroll pane
+    scrollPane.setBounds(1200, 150, 300, 600); // Position and size the scroll pane
 
-    // Set the bounds of the label and scroll panel
-    labelAndScrollPanel.setBounds(1200, 150, 600, 600); // Position and size the container
-
-    panel.add(labelAndScrollPanel);
+    // Add the scroll pane to the main panel
+    panel.add(scrollPane);
 
     revalidate();
     repaint();
@@ -406,7 +454,42 @@ private JPanel createContentLabel(ContentDTO content) {
 
 
 
+    private void addButtons()
+    {
+        com.socialnetwork.connecthub.frontend.swing.components.JButton createButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Post", 5, 12);
+        createButton.setBounds(310, 120, 150, 30); // Adjust to fit within the panel
+        createButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the create post view
+                new ContentCreationAreaView(contentService, user);
+                dispose();
+            }
+        });
+        panel.add(createButton);
 
+        com.socialnetwork.connecthub.frontend.swing.components.JButton refreshButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Refresh", 5, 12);
+        refreshButton.setBounds(670, 120, 150, 30); // Adjust to fit within the panel
+        refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Refresh the news feed
+                new NewsFeedView(user);
+                dispose();
+            }
+        });
+        panel.add(refreshButton);
+
+        com.socialnetwork.connecthub.frontend.swing.components.JButton logoutButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Logout", 5, 12);
+        logoutButton.setBounds(1030, 120, 150, 30); // Adjust to fit within the panel
+        logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Logout the user
+                new LoginView();
+                dispose();
+            }
+        });
+        panel.add(logoutButton);
+
+    }
 
 
 
@@ -440,7 +523,7 @@ private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
     suggestionPanel.add(textLabel);
 
     // Add "Friend Request" button
-    com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Sent Friend Request ", 5, 12);
+    com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Send Friend Request ", 5, 12);
     friendRequestButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
     friendRequestButton.setBackground(Color.BLUE);
     friendRequestButton.setForeground(Color.WHITE);
@@ -496,9 +579,7 @@ private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
 }
 
 
-//    private addRequiredButtons(){
-//
-//    }
+
 
 
 }

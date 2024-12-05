@@ -34,22 +34,6 @@ public class FriendServiceTest implements FriendService {
     }
 
     @Override
-    public List<UserDTO> getFriendSuggestions(String userId) {
-        List<UserDTO> userDTOList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUserId("user" + i);
-            userDTO.setUsername("User" + i);
-            userDTO.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
-            userDTO.setCoverPhotoPath("coverPhotoPath");
-            userDTO.setBio("bio");
-            userDTO.setOnlineStatus(true);
-            userDTOList.add(userDTO);
-        }
-        return userDTOList;
-    }
-
-    @Override
     public List<FriendRequest> getFriendRequests(String userId) {
         return List.of();
     }

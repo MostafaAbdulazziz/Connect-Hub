@@ -37,6 +37,9 @@ public class ContentServiceTest implements ContentService {
             post.setImagePath("src/test/Screenshot 2024-12-03 011157.png");
             posts.add(post);
         }
+        ContentDTO post = new ContentDTO();
+        post.setContent(String.valueOf(8)+"stererees");
+        posts.add(post);
         return posts;
 
     }
