@@ -1,5 +1,6 @@
 package com.socialnetwork.connecthub.backend.interfaces.services;
 
+import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.shared.dto.*;
 import com.socialnetwork.connecthub.shared.exceptions.*;
 
