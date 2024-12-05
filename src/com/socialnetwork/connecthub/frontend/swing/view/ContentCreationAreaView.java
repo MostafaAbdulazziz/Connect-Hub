@@ -10,6 +10,7 @@ import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
@@ -24,6 +25,7 @@ public class ContentCreationAreaView extends JFrame {
 
     private ContentService contentService;
     private UserDTO currentUser;
+    private NavigationHandlerFactory navigationHandlerFactory;
 
     public ContentCreationAreaView(ContentService contentService, UserDTO currentUser) {
         this.contentService = contentService;
@@ -177,6 +179,7 @@ public class ContentCreationAreaView extends JFrame {
         // Reset UI
         JOptionPane.showMessageDialog(this, "Post submitted successfully!");
         this.dispose();
+        navigationHandlerFactory.getNavigationHandler().goToNewsFeedView(currentUser);
         postTextArea.setText(placeholderText);
         postTextArea.setForeground(Color.GRAY);
         selectedImageFile = null;
