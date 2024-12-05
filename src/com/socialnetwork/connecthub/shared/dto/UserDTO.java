@@ -10,4 +10,9 @@ public class UserDTO {
     private String coverPhotoPath;
     private String bio;
     private boolean onlineStatus;
+
+    public String getUsername() {
+        return username;
+    }
+
 }

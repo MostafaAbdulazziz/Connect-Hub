@@ -4,15 +4,18 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Shape;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
-import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
-
 import javax.swing.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 
 public class JButton extends JLabel {
 
     private Shape shape;
     private int radius;
+    private ActionListener actionListener;
 
     public JButton(String text, int radius, int textSize) {
         super(text);
@@ -22,16 +25,31 @@ public class JButton extends JLabel {
         setForeground(GUIConstants.white);
         setHorizontalAlignment(CENTER);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Add mouse listener to handle click
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (actionListener != null) {
+                    actionListener.actionPerformed(null); // Call action listener when clicked
+                }
+            }
+        });
     }
 
-    //for rounded corners
+    // Set the action listener
+    public void addActionListener(ActionListener listener) {
+        this.actionListener = listener;
+    }
+
+    // For rounded corners
     protected void paintComponent(Graphics g) {
         g.setColor(GUIConstants.blue);
         g.fillRoundRect(0, 0, getWidth()-1, getHeight()-1, radius, radius);
         super.paintComponent(g);
     }
 
-    //for rounded border
+    // For rounded border
     protected void paintBorder(Graphics g) {
         g.setColor(GUIConstants.blue);
         g.drawRoundRect(0, 0, getWidth()-1, getHeight()-1, radius, radius);
