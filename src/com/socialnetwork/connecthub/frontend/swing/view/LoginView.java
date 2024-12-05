@@ -82,8 +82,8 @@ public class LoginView extends JFrame {
 
 
                 LoginDTO loginDTO = new LoginDTO();
-                //loginDTO.setEmail(email.getText());
-                //loginDTO.setPassword(password.getText());
+                loginDTO.setEmail(email.getText());
+                loginDTO.setPassword(password.getText());
 
                 try {
                     UserDTO userDTO = socialNetworkAPI.getUserAccountService().login(loginDTO);
