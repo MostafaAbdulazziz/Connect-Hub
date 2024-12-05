@@ -112,11 +112,111 @@ public class NewsFeedView extends View {
         panel.add(scrollPane);
 
 
+        addTimeline();
         addStories();
         addFriendSuggestions();
         revalidate();
         repaint();
     }
+
+
+
+
+
+
+
+
+
+
+
+  private void addTimeline() {
+    // Panel to hold dynamic content labels
+    JPanel contentPanel = new JPanel();
+    contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+    contentPanel.setBackground(new Color(215, 215, 215));
+
+    // Add content labels to the panel
+    List<ContentDTO> contentList = newsFeedService.getNewsFeed(user.getUserId());
+    for (ContentDTO content : contentList) {
+        JPanel contentLabel = createContentLabel(content);
+        contentPanel.add(contentLabel);
+    }
+
+    // Adjust content panel's preferred size dynamically
+    int panelHeight = Math.max(600, contentList.size() * 400); // 400px per content
+    contentPanel.setPreferredSize(new Dimension(580, panelHeight));
+
+    // Create the scroll pane and set its bounds
+    JScrollPane scrollPane = new JScrollPane(contentPanel);
+    scrollPane.setBounds(310, 150, 900, 600); // Set the size and position of the scroll pane
+    scrollPane.setBackground(new Color(215, 215, 215));
+    scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
+
+    // Add the scroll pane to the main panel
+    panel.add(scrollPane);
+
+    revalidate();
+    repaint();
+}
+
+private JPanel createContentLabel(ContentDTO content) {
+    // Create the content panel with a null layout for custom positioning
+    JPanel contentPanel = new JPanel(null);
+    contentPanel.setPreferredSize(new Dimension(700, 400)); // Set fixed size
+    contentPanel.setBackground(Color.WHITE);
+
+    // Add rounded image for the author
+    RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
+    authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+    contentPanel.add(authorImageLabel);
+
+    // Add author name text
+    javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
+    authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    authorNameLabel.setForeground(Color.BLACK);
+    authorNameLabel.setBounds(70, 26, 200, 20); // Position the name
+    contentPanel.add(authorNameLabel);
+
+    // Add timestamp text
+    javax.swing.JLabel timestampLabel = new javax.swing.JLabel(content.getTimestamp().toString());
+    timestampLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+    timestampLabel.setForeground(Color.GRAY);
+    timestampLabel.setBounds(700, 10, 170, 20); // Position the timestamp
+    contentPanel.add(timestampLabel);
+
+    // Add content text
+    javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent() + "</html>");
+    contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    contentTextLabel.setForeground(Color.BLACK);
+    contentTextLabel.setBounds(10, 70, 650, 70); // Position the content text
+    contentPanel.add(contentTextLabel);
+
+    // Add content image if available
+    if (content.getImagePath() != null && !content.getImagePath().isEmpty()) {
+        javax.swing.JLabel contentImageLabel = new javax.swing.JLabel(new ImageIcon(content.getImagePath()));
+        contentImageLabel.setBounds(70, 110, 500, 250); // Position the content image
+        contentPanel.add(contentImageLabel);
+    }
+
+    // Add a border for better visuals
+    contentPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+
+    return contentPanel;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private JPanel createFriendLabel(UserDTO user) {
         // Create the friend panel with a null layout for custom positioning
@@ -281,7 +381,7 @@ public class NewsFeedView extends View {
     suggestionPanel.setPreferredSize(new Dimension(300, panelHeight));
 
     // Create the scroll pane and set its orientation
-    com.socialnetwork.connecthub.frontend.swing.components.JScrollPane scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(suggestionPanel);
+    JScrollPane scrollPane = new JScrollPane(suggestionPanel);
     scrollPane.setPreferredSize(new Dimension(300, 600)); // Set the size of the scroll pane
     scrollPane.setBackground(new Color(215, 215, 215));
     scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
@@ -303,61 +403,97 @@ public class NewsFeedView extends View {
     revalidate();
     repaint();
 }
-    private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
-        // Create the suggestion panel with a null layout for custom positioning
-        JPanel suggestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        RoundedImageLabel imageLabel;
-        suggestionPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
-        suggestionPanel.setMaximumSize(new Dimension(300, 60));
-        suggestionPanel.setBackground(Color.WHITE);
 
-        // Add rounded image for the suggestion
-        if (suggestion.getProfilePhotoPath() == null || suggestion.getProfilePhotoPath().isEmpty()) {
-            imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
-            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-            suggestionPanel.add(imageLabel);
-        } else {
-            imageLabel = new RoundedImageLabel(suggestion.getProfilePhotoPath(), 50, 50);
-            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-            suggestionPanel.add(imageLabel);
-        }
 
-        // Add username text
-        javax.swing.JLabel textLabel = new javax.swing.JLabel(suggestion.getUsername());
-        textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        textLabel.setFont(new Font("Arial", Font.BOLD, 13));
-        textLabel.setForeground(Color.GRAY); // Ensure visible text color
-        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
-        textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        suggestionPanel.add(textLabel);
 
-        // Add a border for better visuals
-        suggestionPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-        textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the suggestion's profile
-                new ProfileView(suggestion);
-                dispose();
-            }
-        });
-        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the suggestion's profile
-                new ProfileView(suggestion);
-                dispose();
-            }
-        });
-        suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the suggestion's profile
-                new ProfileView(suggestion);
-                dispose();
-            }
-        });
 
-        return suggestionPanel;
+
+
+
+private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
+    // Create the suggestion panel with a null layout for custom positioning
+    JPanel suggestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+    RoundedImageLabel imageLabel;
+    suggestionPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
+    suggestionPanel.setMaximumSize(new Dimension(300, 60));
+    suggestionPanel.setBackground(Color.WHITE);
+
+    // Add rounded image for the suggestion
+    if (suggestion.getProfilePhotoPath() == null || suggestion.getProfilePhotoPath().isEmpty()) {
+        imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
+        imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+        suggestionPanel.add(imageLabel);
+    } else {
+        imageLabel = new RoundedImageLabel(suggestion.getProfilePhotoPath(), 50, 50);
+        imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+        suggestionPanel.add(imageLabel);
     }
+
+    // Add username text
+    javax.swing.JLabel textLabel = new javax.swing.JLabel(suggestion.getUsername());
+    textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+    textLabel.setFont(new Font("Arial", Font.BOLD, 13));
+    textLabel.setForeground(Color.GRAY); // Ensure visible text color
+    textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
+    textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    suggestionPanel.add(textLabel);
+
+    // Add "Friend Request" button
+    com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Sent Friend Request ", 5, 12);
+    friendRequestButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
+    friendRequestButton.setBackground(Color.BLUE);
+    friendRequestButton.setForeground(Color.WHITE);
+
+    friendRequestButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        private boolean requestSent = false;
+
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            if (requestSent) {
+                // Cancel friend request
+                friendService.declineFriendRequest(user.getUserId(), suggestion.getUserId());
+                friendRequestButton.setText(" Sent Friend Request ");
+                friendRequestButton.setBackground(Color.BLUE);
+                requestSent = false;
+                System.out.println("Friend request canceled for " + suggestion.getUsername());
+            } else {
+                // Send friend request
+                friendService.sendFriendRequest(user.getUserId(), suggestion.getUserId());
+                friendRequestButton.setText(" Cancel ");
+                requestSent = true;
+                System.out.println("Friend request sent to " + suggestion.getUsername());
+            }
+        }
+    });
+
+    suggestionPanel.add(friendRequestButton);
+
+    // Add a border for better visuals
+    suggestionPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+    textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            // Open the suggestion's profile
+            new ProfileView(suggestion);
+            dispose();
+        }
+    });
+    imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            // Open the suggestion's profile
+            new ProfileView(suggestion);
+            dispose();
+        }
+    });
+    suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            // Open the suggestion's profile
+            new ProfileView(suggestion);
+            dispose();
+        }
+    });
+
+    return suggestionPanel;
+}
 
 
 //    private addRequiredButtons(){

@@ -30,7 +30,15 @@ public class ContentServiceTest implements ContentService {
 
     @Override
     public List<ContentDTO> getFriendsPosts(String userId) {
-        return null;
+        List<ContentDTO> posts = new java.util.ArrayList<>();
+        for (int i =0; i<20; i++){
+            ContentDTO post = new ContentDTO();
+            post.setContent(String.valueOf(i)+"stererees");
+            post.setImagePath("src/test/Screenshot 2024-12-03 011157.png");
+            posts.add(post);
+        }
+        return posts;
+
     }
 
     @Override

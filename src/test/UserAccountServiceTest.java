@@ -33,6 +33,10 @@ public class UserAccountServiceTest implements UserAccountService {
 
     @Override
     public UserDTO getUserById(String userId) {
-        return null;
+        UserDTO user = new UserDTO();
+        user.setUserId(userId);
+        user.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
+        user.setUsername("User " + userId);
+        return user;
     }
 }
