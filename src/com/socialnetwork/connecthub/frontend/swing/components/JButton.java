@@ -44,5 +44,4 @@ public class JButton extends JLabel {
         return shape.contains(x, y);
     }
 
-
 }

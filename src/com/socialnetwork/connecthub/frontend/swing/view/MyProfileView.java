@@ -96,7 +96,7 @@ public class MyProfileView extends View {
         friendManagerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open friend manager view
-                new FriendManager(user);
+                new FriendRequestReview(user);
             }
         });
 
