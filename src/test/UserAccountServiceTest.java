@@ -12,8 +12,8 @@ public class UserAccountServiceTest implements UserAccountService {
     }
 
     @Override
-    public boolean login(LoginDTO loginDTO) {
-        return false;
+    public UserDTO login(LoginDTO loginDTO) {
+        return null;
     }
 
     @Override

@@ -52,7 +52,14 @@ public class NewsFeedView extends View {
             return;
         }
 
-        panel = new JPanel(null);
+        panel = new JPanel(null){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(new ImageIcon("src/com/socialnetwork/connecthub/resources/pics/BG1.jpg").getImage(), 0, 0, null)
+                ;
+            }
+        };
         panel.setLayout(null);
         panel.setBounds(0, 0, 1800, 800);
         panel.setBackground(new Color(215, 215, 215));
@@ -428,8 +435,7 @@ public class NewsFeedView extends View {
         storyImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile on click
-                new StoryView(userAccountService.getUserById(story.getAuthorId()));
-                dispose();
+                new StoryView(story);
             }
         });
 
