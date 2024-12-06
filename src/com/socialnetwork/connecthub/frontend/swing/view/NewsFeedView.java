@@ -526,6 +526,19 @@ public class NewsFeedView extends View {
         });
         panel.add(logoutButton);
 
+
+        com.socialnetwork.connecthub.frontend.swing.components.JButton createStoryButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Story", 5, 12);
+        createStoryButton.setBounds(1330, 80, 150, 30); // Adjust to fit within the panel
+        createStoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the create story view
+
+                new StoryCreationAreaView(contentService, user);
+
+            }
+        });
+        panel.add(createStoryButton);
+
     }
 
 
