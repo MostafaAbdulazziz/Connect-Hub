@@ -17,8 +17,6 @@ public class User {
     private String coverPhotoPath;
     private String bio;
     private List<String> friends;
-    private List<String> blockedUsers;
-    private List<String> receivedFriendRequests;
     private List<String> posts;
     private List<String> stories;
 }
