@@ -1,13 +1,8 @@
 package com.socialnetwork.connecthub.backend.service.java;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
-import com.socialnetwork.connecthub.backend.model.Content;
-import com.socialnetwork.connecthub.backend.model.Post;
-import com.socialnetwork.connecthub.backend.model.Story;
-import com.socialnetwork.connecthub.backend.model.User;
-import com.socialnetwork.connecthub.backend.persistence.json.JsonPostRepository;
-import com.socialnetwork.connecthub.backend.persistence.json.JsonStoryRepository;
-import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
+import com.socialnetwork.connecthub.backend.model.*;
+import com.socialnetwork.connecthub.backend.persistence.json.*;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
 
@@ -145,7 +140,9 @@ public class JavaContentService implements ContentService {
         // Retrieve friends using a for loop
         for (String friendId : user.getFriends()) {
             User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
-            friends.add(friend);
+            // Don't get content form blocked users in the content service
+            if(!user.getBlockedUsers().contains(friendId))
+                friends.add(friend);
         }
 
         return friends;
