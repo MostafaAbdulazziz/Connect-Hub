@@ -1,6 +1,6 @@
 package com.socialnetwork.connecthub.shared.exceptions;
 
-public class SocialNetworkException extends RuntimeException {
+public class SocialNetworkException extends Exception {
     public SocialNetworkException(String message) {
         super(message);
     }

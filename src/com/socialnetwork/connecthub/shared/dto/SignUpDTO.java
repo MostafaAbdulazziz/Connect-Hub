@@ -10,4 +10,5 @@ public class SignUpDTO {
     private String username;
     private String password;
     private Date dateOfBirth;
+
 }
