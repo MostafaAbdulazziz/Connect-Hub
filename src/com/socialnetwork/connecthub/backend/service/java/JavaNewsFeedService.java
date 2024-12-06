@@ -10,6 +10,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaNewsFeedService implements NewsFeedService {
+    private static JavaNewsFeedService instance;
+
+    private JavaNewsFeedService() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized JavaNewsFeedService getInstance() {
+        if (instance == null) {
+            instance = new JavaNewsFeedService();
+        }
+        return instance;
+    }
+
     @Override
     public List<UserDTO> getOnlineFriends(String userId) {
         List<User> friends = getFriends(userId);

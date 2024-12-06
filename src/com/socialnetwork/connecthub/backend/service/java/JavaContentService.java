@@ -12,6 +12,18 @@ import java.util.Date;
 import java.util.List;
 
 public class JavaContentService implements ContentService {
+    private static JavaContentService instance;
+
+    private JavaContentService() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized JavaContentService getInstance() {
+        if (instance == null) {
+            instance = new JavaContentService();
+        }
+        return instance;
+    }
 
     @Override
     public void createPost(String userId, ContentDTO contentDTO) throws ContentCreationException {

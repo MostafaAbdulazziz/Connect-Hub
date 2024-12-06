@@ -9,6 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JavaProfileService implements ProfileService {
+    private static JavaProfileService instance;
+
+    private JavaProfileService() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized JavaProfileService getInstance() {
+        if (instance == null) {
+            instance = new JavaProfileService();
+        }
+        return instance;
+    }
 
     @Override
     public void updateProfilePhoto(String userId, String photoPath) {

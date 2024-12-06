@@ -11,6 +11,19 @@ import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
 import java.util.List;
 
 public class JavaFriendService implements FriendService {
+    private static JavaFriendService instance;
+
+    private JavaFriendService() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized JavaFriendService getInstance() {
+        if (instance == null) {
+            instance = new JavaFriendService();
+        }
+        return instance;
+    }
+
     @Override
     public void sendFriendRequest(String senderId, String recipientId) {
         FriendRequest friendRequest = new FriendRequest();

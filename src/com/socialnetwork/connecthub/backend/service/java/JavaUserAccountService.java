@@ -14,6 +14,18 @@ import java.util.Date;
 import java.util.Optional;
 
 public class JavaUserAccountService implements UserAccountService {
+    private static JavaUserAccountService instance;
+
+    private JavaUserAccountService() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized JavaUserAccountService getInstance() {
+        if (instance == null) {
+            instance = new JavaUserAccountService();
+        }
+        return instance;
+    }
 
     @Override
     public void signup(SignUpDTO signUpDTO) throws InvalidSignupException {
