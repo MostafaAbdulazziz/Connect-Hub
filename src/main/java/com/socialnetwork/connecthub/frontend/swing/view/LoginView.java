@@ -16,10 +16,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class LoginView extends JFrame {
-    private SocialNetworkAPI socialNetworkAPI;
     private String navigationHandlerType = "final";
 
-    public LoginView() {
+    public LoginView(SocialNetworkAPI socialNetworkAPI) {
         super("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
@@ -89,8 +88,6 @@ public class LoginView extends JFrame {
                     LoginView.this.dispose();
                 } catch (InvalidLoginException ex) {
                     new Alert(ex.getMessage(), LoginView.this);
-                } catch (Exception ex) {
-                    new Alert("An error occurred during login. Please try again later.", LoginView.this);
                 }
             }
         });
@@ -123,7 +120,7 @@ public class LoginView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 LoginView.this.dispose();
-                new SignUpView();
+                new SignUpView(socialNetworkAPI);
             }
         });
         createAcc.setCursor(new Cursor(Cursor.HAND_CURSOR));

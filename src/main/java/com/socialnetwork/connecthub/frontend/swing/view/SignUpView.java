@@ -16,10 +16,9 @@ import java.awt.event.MouseListener;
 import java.util.Date;
 
 public class SignUpView extends JFrame {
-    private SocialNetworkAPI socialNetworkAPI;
     private String navigationHandlerType = "final";
 
-    public SignUpView() {
+    public SignUpView(SocialNetworkAPI socialNetworkAPI) {
         super("Sign Up");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 800);
@@ -133,8 +132,6 @@ public class SignUpView extends JFrame {
                     SignUpView.this.dispose();
                 } catch (InvalidSignupException ex) {
                     new Alert(ex.getMessage(), SignUpView.this);
-                } catch (Exception ex) {
-                    new Alert("An error occurred during signup. Please try again.", SignUpView.this);
                 }
             }
         });
@@ -158,7 +155,7 @@ public class SignUpView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 SignUpView.this.dispose();
-                new LoginView();
+                new LoginView(socialNetworkAPI);
             }
         });
         alreadyAccount.setCursor(new Cursor(Cursor.HAND_CURSOR));

@@ -508,7 +508,7 @@ public class NewsFeedView extends View {
         logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Logout the user
-                new LoginView();
+                new LoginView(socialNetworkAPI);
                 dispose();
             }
         });

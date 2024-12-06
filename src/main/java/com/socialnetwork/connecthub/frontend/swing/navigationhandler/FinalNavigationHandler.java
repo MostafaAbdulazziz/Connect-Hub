@@ -6,13 +6,13 @@ import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 public class FinalNavigationHandler implements NavigationHandler {    @Override
-public LoginView goToLoginView() {
-    return new LoginView();
-}
+    public LoginView goToLoginView() {
+        return new LoginView(JavaSocialNetworkAPI.getInstance());
+    }
 
     @Override
     public SignUpView goToSignUpView() {
-        return new SignUpView();
+        return new SignUpView(JavaSocialNetworkAPI.getInstance());
 
     }
 
