@@ -1,6 +1,5 @@
 package com.socialnetwork.connecthub.frontend.swing.components;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
