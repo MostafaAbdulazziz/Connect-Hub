@@ -79,6 +79,7 @@ public class JavaContentService implements ContentService {
 
     @Override
     public List<ContentDTO> getUserPosts(String userId) {
+        deleteExpiredStories();
         // Get all posts for a user
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
         List<String> postIds = user.getPosts();
@@ -122,6 +123,7 @@ public class JavaContentService implements ContentService {
 
     @Override
     public List<ContentDTO> getFriendsStories(String userId) {
+        deleteExpiredStories();
         List<User> friends = getFriends(userId);
 
         // Create a list to store all story IDs from friends
