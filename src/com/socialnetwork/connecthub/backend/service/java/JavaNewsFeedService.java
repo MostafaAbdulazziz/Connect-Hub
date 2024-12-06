@@ -25,7 +25,7 @@ public class JavaNewsFeedService implements NewsFeedService {
 
     @Override
     public List<UserDTO> getOnlineFriends(String userId) {
-        List<User> friends = getFriends(userId);
+        List<User> friends = getFriendsHelper(userId);
         List<UserDTO> onlineFriends = new ArrayList<>();
         for (User friend : friends) {
             if (friend.isOnlineStatus()) {
@@ -45,10 +45,10 @@ public class JavaNewsFeedService implements NewsFeedService {
 
     @Override
     public List<UserDTO> getFriendSuggestions(String userId) {
-        List<User> friends = getFriends(userId);
+        List<User> friends = getFriendsHelper(userId);
         List<UserDTO> suggestions = new ArrayList<>();
         for (User friend : friends) {
-            List<User> friendsOfFriend = getFriends(friend.getUserId());
+            List<User> friendsOfFriend = getFriendsHelper(friend.getUserId());
             for (User secondFriend : friendsOfFriend) {
                 suggestions.add(
                     new UserDTO(
@@ -65,7 +65,7 @@ public class JavaNewsFeedService implements NewsFeedService {
         return suggestions;
     }
 
-    private List<User> getFriends(String userId) {
+    private List<User> getFriendsHelper(String userId) {
         // Get the user's friends
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
         List<User> friends = new ArrayList<>();

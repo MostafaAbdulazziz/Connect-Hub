@@ -1,15 +1,10 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
-import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
-import com.socialnetwork.connecthub.backend.interfaces.services.ProfileService;
-import com.socialnetwork.connecthub.backend.interfaces.services.UserAccountService;
+import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
-import test.ContentServiceTest;
-import test.ProfileServiceTest;
-import test.UserAccountServiceTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,15 +17,11 @@ public class ProfileView extends View {
     JLabel nameLabel;
     JLabel bioLabel;
     UserDTO user;
-    ContentService contentService;
-    ProfileService profileService;
-    UserAccountService userAccountService;
+    SocialNetworkAPI socialNetworkAPI;
 
-    public ProfileView(UserDTO user) {
-        contentService = new ContentServiceTest();
-        userAccountService = new UserAccountServiceTest();
+    public ProfileView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
         this.user = user;
-        profileService = new ProfileServiceTest();
+        this.socialNetworkAPI = socialNetworkAPI;
         profilePanel = new JPanel(null);
         profilePanel.setBackground(new Color(215, 215, 215));
         profilePanel.setLayout(null); // Use null layout for precise positioning
@@ -112,8 +103,8 @@ public class ProfileView extends View {
         timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
         timelinePanel.setBackground(new Color(215, 215, 215));
 
-        List<ContentDTO> contentList = contentService.getUserPosts(user.getUserId());
-        for (ContentDTO content :  contentService.getUserPosts(user.getUserId())) {
+        List<ContentDTO> contentList = socialNetworkAPI.getContentService().getUserPosts(user.getUserId());
+        for (ContentDTO content :  socialNetworkAPI.getContentService().getUserPosts(user.getUserId())) {
             JPanel contentLabel = createContentLabel(content);
             timelinePanel.add(contentLabel);
             timelinePanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
@@ -165,7 +156,7 @@ public class ProfileView extends View {
 
 
         // Add author name text
-        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
+        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()).getUsername());
         authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         authorNameLabel.setForeground(Color.BLACK);
 

@@ -1,19 +1,12 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
-import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
-import com.socialnetwork.connecthub.backend.interfaces.services.FriendService;
-import com.socialnetwork.connecthub.backend.interfaces.services.NewsFeedService;
-import com.socialnetwork.connecthub.backend.interfaces.services.UserAccountService;
-import com.socialnetwork.connecthub.backend.model.Story;
+import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
-import test.ContentServiceTest;
-import test.FriendServiceTest;
-import test.NewsFeedAPI;
-import test.UserAccountServiceTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,17 +19,12 @@ public class NewsFeedView extends View {
     JPanel panel;
     JScrollPane scrollPane;
     UserDTO user;
-    NewsFeedService newsFeedService;
-    ContentService contentService;
-    UserAccountService userAccountService;
-    FriendService friendService;
+    private SocialNetworkAPI socialNetworkAPI;
+    private String navigationHandlerType = "final";
 
-    public NewsFeedView(UserDTO user) {
-        newsFeedService = new NewsFeedAPI();
-        contentService = new ContentServiceTest();
-        userAccountService = new UserAccountServiceTest();
-        friendService = new FriendServiceTest();
+    public NewsFeedView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
         this.user = user;
+        this.socialNetworkAPI = socialNetworkAPI;
         setLayout(null);
 
         if (user == null) {
@@ -71,7 +59,7 @@ public class NewsFeedView extends View {
         myPanel.setVisible(true);
         myPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                new MyProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
                 dispose();
             }
         });
@@ -85,13 +73,13 @@ public class NewsFeedView extends View {
         myPhotoLabel.setBounds(8, 8, 100, 100);
         myPhotoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                new MyProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
                 dispose();
             }
         });
         myPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                new MyProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
                 dispose();
             }
         });
@@ -102,7 +90,7 @@ public class NewsFeedView extends View {
         myNameLabel.setBounds(140, 28, 200, 50);
         myNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                new MyProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
                 dispose();
             }
         });
@@ -125,7 +113,7 @@ public class NewsFeedView extends View {
         labelPanel.setBackground(new Color(215, 215, 215));
 
         // Add friend labels to the panel
-        List<UserDTO> friends = newsFeedService.getOnlineFriends(user.getUserId());
+        List<UserDTO> friends = socialNetworkAPI.getNewsFeedService().getOnlineFriends(user.getUserId());
         for (UserDTO friend : friends) {
             JPanel friendLabel = createFriendLabel(friend);
             labelPanel.add(friendLabel);
@@ -168,7 +156,7 @@ public class NewsFeedView extends View {
         contentPanel.setBackground(new Color(215, 215, 215));
 
         // Add content labels to the panel
-        List<ContentDTO> contentList = newsFeedService.getNewsFeed(user.getUserId());
+        List<ContentDTO> contentList = socialNetworkAPI.getContentService().getFriendsPosts(user.getUserId());
         for (ContentDTO content : contentList) {
             JPanel contentLabel = createContentLabel(content);
             contentPanel.add(contentLabel);
@@ -206,7 +194,7 @@ public class NewsFeedView extends View {
             authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     // Open the author's profile
-                    new ProfileView(userAccountService.getUserById(content.getAuthorId()));
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()));
                     dispose();
                 }
             });
@@ -218,7 +206,7 @@ public class NewsFeedView extends View {
             authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     // Open the author's profile
-                    new ProfileView(userAccountService.getUserById(content.getAuthorId()));
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()));
                     dispose();
                 }
             });
@@ -226,10 +214,10 @@ public class NewsFeedView extends View {
 
 
         // Add author name text
-        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
+        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()).getUsername());
         authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         authorNameLabel.setForeground(Color.BLACK);
-        for(UserDTO user1 : newsFeedService.getOnlineFriends(user.getUserId())){
+        for(UserDTO user1 : socialNetworkAPI.getNewsFeedService().getOnlineFriends(user.getUserId())){
             if(user1.getUserId().equals(content.getAuthorId())){
                 authorNameLabel.setForeground(Color.GREEN);
                 break;
@@ -239,7 +227,7 @@ public class NewsFeedView extends View {
         authorNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the author's profile
-                new ProfileView(userAccountService.getUserById(content.getAuthorId()));
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()));
                 dispose();
             }
         });
@@ -344,21 +332,21 @@ public class NewsFeedView extends View {
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                new ProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(user);
                 dispose();
             }
         });
         imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                new ProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(user);
                 dispose();
             }
         });
         friendPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                new ProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(user);
                 dispose();
             }
         });
@@ -373,19 +361,19 @@ public class NewsFeedView extends View {
         horizontalPanel.setBackground(new Color(215, 215, 215)); // Set background color
 
         // Add friends' stories to the panel
-        for (ContentDTO story : contentService.getFriendsStories("9999999999")) {
+        for (ContentDTO story : socialNetworkAPI.getContentService().getFriendsStories("9999999999")) {
             JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
             horizontalPanel.add(storyPanel);
         }
 
         // Add user's own stories to the panel
-        for (ContentDTO story : contentService.getUserStories(user.getUserId())) {
+        for (ContentDTO story : socialNetworkAPI.getContentService().getUserStories(user.getUserId())) {
             JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
             horizontalPanel.add(storyPanel);
         }
 
         // Set preferred size to ensure scroll works properly
-        int totalStories = contentService.getFriendsStories(user.getUserId()).size() + contentService.getUserStories(user.getUserId()).size();
+        int totalStories = socialNetworkAPI.getContentService().getFriendsStories(user.getUserId()).size() + socialNetworkAPI.getContentService().getUserStories(user.getUserId()).size();
         int panelWidth = Math.max(1000, totalStories * 110); // 110px per label including spacing
         horizontalPanel.setPreferredSize(new Dimension(panelWidth, 120));
 
@@ -458,7 +446,7 @@ public class NewsFeedView extends View {
     suggestionPanel.setBackground(new Color(215, 215, 215));
 
     // Add friend suggestion labels to the panel
-    List<UserDTO> friendSuggestions = newsFeedService.getFriendSuggestions(user.getUserId());
+    List<UserDTO> friendSuggestions = socialNetworkAPI.getNewsFeedService().getFriendSuggestions(user.getUserId());
     for (UserDTO suggestion : friendSuggestions) {
         JPanel suggestionLabel = createFriendSuggestionLabel(suggestion);
         suggestionPanel.add(suggestionLabel);
@@ -498,7 +486,7 @@ public class NewsFeedView extends View {
         createButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the create post view
-                new ContentCreationAreaView(contentService, user);
+                new ContentCreationAreaView(socialNetworkAPI, user);
                 dispose();
             }
         });
@@ -509,7 +497,7 @@ public class NewsFeedView extends View {
         refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Refresh the news feed
-                new NewsFeedView(user);
+                new NewsFeedView(socialNetworkAPI, user);
                 dispose();
             }
         });
@@ -533,7 +521,7 @@ public class NewsFeedView extends View {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the create story view
 
-                new StoryCreationAreaView(contentService, user);
+                new StoryCreationAreaView(socialNetworkAPI, user);
 
             }
         });
@@ -584,14 +572,14 @@ private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             if (requestSent) {
                 // Cancel friend request
-                friendService.declineFriendRequest(user.getUserId(), suggestion.getUserId());
+                socialNetworkAPI.getFriendService().declineFriendRequest(user.getUserId(), suggestion.getUserId());
                 friendRequestButton.setText(" Sent Friend Request ");
                 friendRequestButton.setBackground(Color.BLUE);
                 requestSent = false;
                 System.out.println("Friend request canceled for " + suggestion.getUsername());
             } else {
                 // Send friend request
-                friendService.sendFriendRequest(user.getUserId(), suggestion.getUserId());
+                socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), suggestion.getUserId());
                 friendRequestButton.setText(" Cancel ");
                 requestSent = true;
                 System.out.println("Friend request sent to " + suggestion.getUsername());
@@ -606,21 +594,21 @@ private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
     textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             // Open the suggestion's profile
-            new ProfileView(suggestion);
+            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion);
             dispose();
         }
     });
     imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             // Open the suggestion's profile
-            new ProfileView(suggestion);
+            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion);
             dispose();
         }
     });
     suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             // Open the suggestion's profile
-            new ProfileView(suggestion);
+            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion);
             dispose();
         }
     });

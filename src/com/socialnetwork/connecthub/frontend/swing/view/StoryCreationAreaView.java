@@ -5,12 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.util.Date;
 
+import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
-import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
@@ -26,11 +28,13 @@ public class StoryCreationAreaView extends JFrame {
 
     private ContentService contentService;
     private UserDTO currentUser;
-    private NavigationHandlerFactory navigationHandlerFactory;
+    private String navigationHandlerType = "final";
+    private SocialNetworkAPI socialNetworkAPI;
 
-    public StoryCreationAreaView(ContentService contentService, UserDTO currentUser) {
+    public StoryCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser) {
         this.contentService = contentService;
         this.currentUser = currentUser;
+        this.socialNetworkAPI = socialNetworkAPI;
         // Setup the frame
         setTitle("Create a New Story");
         setSize(1500, 800);
@@ -169,10 +173,7 @@ public class StoryCreationAreaView extends JFrame {
             JOptionPane.showMessageDialog(this, "Story content cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        ContentDTO contentDTO = new ContentDTO();
-        contentDTO.setAuthorId(currentUser.getUserId());
-        contentDTO.setContent(postContent);
-        contentDTO.setImagePath(imagePath);
+        ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), postContent, imagePath, new Date());
 
         // Call the content service
         try {
@@ -185,7 +186,7 @@ public class StoryCreationAreaView extends JFrame {
         // Reset UI
         JOptionPane.showMessageDialog(this, "Story submitted successfully!");
         this.dispose();
-        navigationHandlerFactory.getNavigationHandler().goToNewsFeedView(currentUser);
+        NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(currentUser);
         postTextArea.setText(placeholderText);
         postTextArea.setForeground(Color.GRAY);
         selectedImageFile = null;

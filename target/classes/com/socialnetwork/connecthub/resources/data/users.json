@@ -29,7 +29,7 @@
   "posts" : [ "103" ],
   "stories" : [ "202" ]
 }, {
-  "userId" : "3",
+  "userId" : "60ab08ee-0d5e-491a-b48b-2f5d3e35143a",
   "email" : "bob@example.com",
   "username" : "bob_smith",
   "hashedPassword" : "hashed_password_789",

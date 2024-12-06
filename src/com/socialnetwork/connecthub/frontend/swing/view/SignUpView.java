@@ -3,7 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
-import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.SignUpDTO;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JTextField;
@@ -17,7 +17,7 @@ import java.util.Date;
 
 public class SignUpView extends JFrame {
     private SocialNetworkAPI socialNetworkAPI;
-    private NavigationHandlerFactory navigationHandlerFactory;
+    private String navigationHandlerType = "final";
 
     public SignUpView() {
         super("Sign Up");
@@ -121,15 +121,15 @@ public class SignUpView extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 Date selectedDate = (Date) dateSpinner.getValue();
 
-                SignUpDTO signUpDTO = new SignUpDTO();
-                signUpDTO.setEmail(email.getText());
-                signUpDTO.setUsername(fullName.getText());
-                signUpDTO.setPassword(password.getText());
-                signUpDTO.setDateOfBirth(new java.sql.Date(selectedDate.getTime()));
+                SignUpDTO signUpDTO = new SignUpDTO(
+                        email.getText(),
+                        fullName.getText(),
+                        password.getText(),
+                        selectedDate);
 
                 try {
                     socialNetworkAPI.getUserAccountService().signup(signUpDTO);
-                    navigationHandlerFactory.getNavigationHandler().goToLoginView();
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
                     SignUpView.this.dispose();
                 } catch (InvalidSignupException ex) {
                     new Alert(ex.getMessage(), SignUpView.this);

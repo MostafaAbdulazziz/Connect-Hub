@@ -3,7 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
-import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.LoginDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
@@ -17,7 +17,7 @@ import java.awt.event.MouseListener;
 
 public class LoginView extends JFrame {
     private SocialNetworkAPI socialNetworkAPI;
-    private NavigationHandlerFactory navigationHandlerFactory;
+    private String navigationHandlerType = "final";
 
     public LoginView() {
         super("Login");
@@ -81,13 +81,11 @@ public class LoginView extends JFrame {
             public void mouseClicked(MouseEvent e) {
 
 
-                LoginDTO loginDTO = new LoginDTO();
-                loginDTO.setEmail(email.getText());
-                loginDTO.setPassword(password.getText());
+                LoginDTO loginDTO = new LoginDTO(email.getText(), password.getText());
 
                 try {
                     UserDTO userDTO = socialNetworkAPI.getUserAccountService().login(loginDTO);
-                    navigationHandlerFactory.getNavigationHandler().goToNewsFeedView(userDTO);
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(userDTO);
                     LoginView.this.dispose();
                 } catch (InvalidLoginException ex) {
                     new Alert(ex.getMessage(), LoginView.this);

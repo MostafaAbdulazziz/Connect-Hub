@@ -5,12 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.util.Date;
 
+import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
-import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandlerFactory;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
@@ -23,15 +25,15 @@ public class ContentCreationAreaView extends JFrame {
     private JLabel titleLabel;
     private File selectedImageFile;
     private String placeholderText = "Write your post here...";
+    private String navigationHandlerType = "final";
 
     private ContentService contentService;
     private UserDTO currentUser;
-    private NavigationHandlerFactory navigationHandlerFactory;
 
-    public ContentCreationAreaView(ContentService contentService, UserDTO currentUser) {
+    public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser) {
         this.contentService = contentService;
         this.currentUser = currentUser;
-        // Setup the frame
+        // Set up the frame
         setTitle("Create a New Post");
         setSize(1500, 800);
         setLocationRelativeTo(null);
@@ -169,10 +171,7 @@ public class ContentCreationAreaView extends JFrame {
             JOptionPane.showMessageDialog(this, "Post content cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        ContentDTO contentDTO = new ContentDTO();
-        contentDTO.setAuthorId(currentUser.getUserId());
-        contentDTO.setContent(postContent);
-        contentDTO.setImagePath(imagePath);
+        ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), postContent, imagePath, new Date());
 
         // Call the content service
         try {
@@ -185,7 +184,7 @@ public class ContentCreationAreaView extends JFrame {
         // Reset UI
         JOptionPane.showMessageDialog(this, "Post submitted successfully!");
         this.dispose();
-        navigationHandlerFactory.getNavigationHandler().goToNewsFeedView(currentUser);
+        NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(currentUser);
         postTextArea.setText(placeholderText);
         postTextArea.setForeground(Color.GRAY);
         selectedImageFile = null;

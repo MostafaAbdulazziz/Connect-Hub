@@ -1,17 +1,17 @@
 package com.socialnetwork.connecthub.frontend.swing.navigationhandler;
 
-import com.socialnetwork.connecthub.frontend.swing.view.View;
+import com.socialnetwork.connecthub.frontend.swing.view.*;
+import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 public interface NavigationHandler {
-    View goToLoginView();
-    View goToSignUpView();
-    View goToBlockedUsersView(UserDTO userDTO);
-    View goToContentCreationAreaView(UserDTO userDTO);
-    View goToFriendRequestView(UserDTO userDTO);
-    View goToMyProfileView(UserDTO userDTO);
-    View goToNewsFeedView(UserDTO userDTO);
-    View goToProfileView(UserDTO userDTO);
-    View goToStoryView(UserDTO userDTO);
+    LoginView goToLoginView();
+    SignUpView goToSignUpView();
+    ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO);
+    ManageFriendsView goToManageFriendsView(UserDTO userDTO);
+    MyProfileView goToMyProfileView(UserDTO userDTO);
+    NewsFeedView goToNewsFeedView(UserDTO userDTO);
+    ProfileView goToProfileView(UserDTO userDTO);
+    StoryView goToStoryView(ContentDTO userDTO);
 
 }

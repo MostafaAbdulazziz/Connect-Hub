@@ -5,6 +5,20 @@ import com.socialnetwork.connecthub.backend.interfaces.services.*;
 import com.socialnetwork.connecthub.backend.service.java.*;
 
 public class JavaSocialNetworkAPI implements SocialNetworkAPI {
+    private static JavaSocialNetworkAPI instance;
+
+    private JavaSocialNetworkAPI() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static synchronized JavaSocialNetworkAPI getInstance() {
+        if (instance == null) {
+            instance = new JavaSocialNetworkAPI();
+        }
+        return instance;
+    }
+
+
     @Override
     public ContentService getContentService() {
         return JavaContentService.getInstance();

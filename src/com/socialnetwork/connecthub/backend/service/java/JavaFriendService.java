@@ -7,7 +7,9 @@ import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonBlockRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonFriendRequestRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
+import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JavaFriendService implements FriendService {
@@ -80,4 +82,62 @@ public class JavaFriendService implements FriendService {
     public List<FriendRequest> getFriendRequests(String userId) {
         return JsonFriendRequestRepository.getInstance().findRequestsByReceiver(userId);
     }
+
+    @Override
+    public List<UserDTO> getFriends(String userId) {
+        List<User> friends = getFriendsHelper(userId);
+        List<UserDTO> friendsDTOs = new ArrayList<>();
+        for (User friend : friends) {
+            friendsDTOs.add(
+                new UserDTO(
+                        friend.getUserId(),
+                        friend.getUsername(),
+                        friend.getProfilePhotoPath(),
+                        friend.getCoverPhotoPath(),
+                        friend.getBio(),
+                        friend.isOnlineStatus()
+                )
+            );
+        }
+
+        return friendsDTOs;
+    }
+
+    @Override
+    public List<UserDTO> getBlockedUsers(String userId) {
+        List<Block> blocks = JsonBlockRepository.getInstance().findAllByBlockingUserId(userId);
+        List<UserDTO> blockedUsersDTOs = new ArrayList<>();
+        for (Block block : blocks) {
+            User blockedUser = JsonUserRepository.getInstance().findById(block.getBlockedUserId()).orElseThrow();
+            blockedUsersDTOs.add(
+                    new UserDTO(
+                            blockedUser.getUserId(),
+                            blockedUser.getUsername(),
+                            blockedUser.getProfilePhotoPath(),
+                            blockedUser.getCoverPhotoPath(),
+                            blockedUser.getBio(),
+                            blockedUser.isOnlineStatus()
+                    )
+            );
+        }
+
+        return blockedUsersDTOs;
+    }
+
+    private List<User> getFriendsHelper(String userId) {
+        // Get the user's friends
+        User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+        List<User> friends = new ArrayList<>();
+
+        // Retrieve friends using a for loop
+        for (String friendId : user.getFriends()) {
+            User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
+            // Don't get content from blocked users in the content service
+            if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
+                friends.add(friend);
+        }
+
+        return friends;
+    }
+
 }
