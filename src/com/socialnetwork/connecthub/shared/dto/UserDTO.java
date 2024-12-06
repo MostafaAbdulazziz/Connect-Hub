@@ -10,4 +10,5 @@ public class UserDTO {
     private String coverPhotoPath;
     private String bio;
     private boolean onlineStatus;
+
 }
