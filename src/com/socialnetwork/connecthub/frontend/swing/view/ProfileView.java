@@ -1,10 +1,15 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
+import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
 import com.socialnetwork.connecthub.backend.interfaces.services.ProfileService;
+import com.socialnetwork.connecthub.backend.interfaces.services.UserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
+import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
+import test.ContentServiceTest;
 import test.ProfileServiceTest;
+import test.UserAccountServiceTest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,21 +22,18 @@ public class ProfileView extends View {
     JLabel nameLabel;
     JLabel bioLabel;
     UserDTO user;
+    ContentService contentService;
     ProfileService profileService;
+    UserAccountService userAccountService;
+
     public ProfileView(UserDTO user) {
+        contentService = new ContentServiceTest();
+        userAccountService = new UserAccountServiceTest();
         this.user = user;
         profileService = new ProfileServiceTest();
-        initialize();
-
-
-
-    }
-
-
-    public void initialize() {
-        profilePanel = new JPanel();
-        profilePanel.setLayout(null); // Use null layout for precise positioning
+        profilePanel = new JPanel(null);
         profilePanel.setBackground(new Color(215, 215, 215));
+        profilePanel.setLayout(null); // Use null layout for precise positioning
         profilePanel.setBounds(0, 0, getWidth(), getHeight());
 
         if (user.getCoverPhotoPath() == null || user.getCoverPhotoPath().isEmpty()) {
@@ -40,6 +42,7 @@ public class ProfileView extends View {
         if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
             user.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
         }
+
         // Set up background panel for the cover photo
         backgroundPanel = new JPanel() {
             @Override
@@ -72,129 +75,154 @@ public class ProfileView extends View {
         bioLabel.setBounds(50, 175, 200, 20);  // Positioned below username
         leftPanel.add(bioLabel);
 
-        // Add left panel to the main profile panel
-        profilePanel.add(leftPanel);  // Add the left panel containing profile photo, username, and bio to profilePanel
-
-        // Add profile panel to the main view
-
-        leftPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
-
-
-
-
-
-
-
-
-        JPanel labelPanel1 = new JPanel();
-        labelPanel1.setLayout(new BoxLayout(labelPanel1, BoxLayout.Y_AXIS));
-        labelPanel1.setBackground(new Color(215, 215, 215));
-
-        // Add friend labels to the panel
-        List<UserDTO> friends = profileService.getUserFriends(user.getUserId());
-        for (UserDTO friend : friends) {
-            JPanel friendLabel = createFriendLabel(friend);
-            labelPanel1.add(friendLabel);
-        }
-
-        // Adjust label panel's preferred size dynamically
-        int panelHeight = Math.max(1000, friends.size() * 100); // 60px per friend
-        labelPanel1.setPreferredSize(new Dimension(300, panelHeight));
-
-        // Add scroll pane
-        com.socialnetwork.connecthub.frontend.swing.components.JScrollPane scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(labelPanel1);
-        scrollPane.setBounds(1200, 200, 300, 600); // Position and size
-        scrollPane.setBackground(new Color(215, 215, 215));
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-        profilePanel.add(scrollPane);
-
-
-
+        // Add buttons
+        com.socialnetwork.connecthub.frontend.swing.components.JButton editProfileButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Edit Profile", 16, 12);
+        com.socialnetwork.connecthub.frontend.swing.components.JButton friendManagerButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Friend Manager", 16, 12);
         com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
 
 
         homeButton.setBounds(75, 440, 150, 50);
 
-        homeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        leftPanel.add(homeButton);
+        editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
-                new NewsFeedView(user);
-                dispose();
+                        //open edit profile view
             }
         });
-        leftPanel.add(homeButton);
 
+        friendManagerButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open friend manager view
 
+            }
+        });
 
+        homeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open news feed view
 
+            }
+        });
+
+        profilePanel.add(leftPanel); // Add left panel
+        leftPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
+
+        // Create a timeline panel and add it inside a JScrollPane
+        JPanel timelinePanel = new JPanel(null);
+        timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
+        timelinePanel.setBackground(new Color(215, 215, 215));
+
+        List<ContentDTO> contentList = contentService.getUserPosts(user.getUserId());
+        for (ContentDTO content :  contentService.getUserPosts(user.getUserId())) {
+            JPanel contentLabel = createContentLabel(content);
+            timelinePanel.add(contentLabel);
+            timelinePanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
+        }
+
+        // Adjust preferred size based on content
+        // Adjust content panel's preferred size dynamically
+        int panelHeight = Math.max(1500, contentList.size() * 1210); // 1210px per content including spacing
+        timelinePanel.setPreferredSize(new Dimension(800, panelHeight));
+
+        // Create the scroll pane and set its bounds
+        JScrollPane scrollPane = new JScrollPane(timelinePanel);
+        scrollPane.setBounds(310, 200, 900, 600); // Set the size and position of the scroll pane
+        scrollPane.setBackground(new Color(215, 215, 215));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizont
+
+        profilePanel.add(scrollPane);
+
+        // Add profile panel to main view
         add(profilePanel);
         repaint();
-        validate();
+        revalidate();
+        setVisible(true);
     }
 
 
 
 
 
+    private JPanel createContentLabel(ContentDTO content) {
+        // Create the content panel with a null layout for custom positioning
+        JPanel contentPanel = new JPanel(null);
+        contentPanel.setBackground(Color.WHITE);
 
+        // Add rounded image for the author
+        if (content.getImagePath() == null || content.getImagePath().isEmpty()) {
+            RoundedImageLabel authorImageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
+            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+            contentPanel.add(authorImageLabel);
 
-    private JPanel createFriendLabel(UserDTO user) {
-        // Create the friend panel with a null layout for custom positioning
-        JPanel friendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        RoundedImageLabel imageLabel;
-        friendPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
-        friendPanel.setMaximumSize(new Dimension(300, 60));
-        friendPanel.setBackground(Color.WHITE);
+        }
+        else {
+            RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
+            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+            contentPanel.add(authorImageLabel);
 
-        // Add rounded image for the friend
-        if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
-            imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
-            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-            friendPanel.add(imageLabel);
-        } else {
-            imageLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 50, 50);
-            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-            friendPanel.add(imageLabel);
         }
 
 
-        // Add username text
-        javax.swing.JLabel textLabel = new javax.swing.JLabel(user.getUsername());
-        textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        textLabel.setFont(new Font("Arial", Font.BOLD, 13));
-        textLabel.setForeground(Color.GRAY); // Ensure visible text color
-        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
-        textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // Add author name text
+        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
+        authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        authorNameLabel.setForeground(Color.BLACK);
 
-        friendPanel.add(textLabel);
+        authorNameLabel.setBounds(70, 20, 200, 30); // Adjusted position
+
+        contentPanel.add(authorNameLabel);
+
+        // Add timestamp text
+        javax.swing.JLabel timestampLabel = new javax.swing.JLabel(content.getTimestamp().toString());
+        timestampLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        timestampLabel.setForeground(Color.GRAY);
+        timestampLabel.setBounds(650, 20, 170, 30); // Adjusted position
+        contentPanel.add(timestampLabel);
+
+        // Add content text
+        javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent() + "</html>");
+        contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        contentTextLabel.setForeground(Color.BLACK);
+        contentTextLabel.setBounds(50, 80, 750, content.getContent().length() / 5); // Adjusted position and size
+//        contentTextLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        contentPanel.add(contentTextLabel);
+
+        JPanel contentImagePanel = null;
+        if (content.getImagePath() != null && !content.getImagePath().isEmpty()) {
+            contentImagePanel = new JPanel() {
+                private Image image = new ImageIcon(content.getImagePath()).getImage();
+
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    // Draw the image scaled to fit the panel
+                    g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+                }
+            };
+
+            contentImagePanel.setBounds(70, contentTextLabel.getHeight() + 100, 700, 400); // Position the image panel
+            contentPanel.add(contentImagePanel);
+        }
+
+        // Add spacing at the bottom to maintain consistent height
+
 
         // Add a border for better visuals
-        friendPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-        textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
-                new ProfileView(user);
-                dispose();
-            }
-        });
-        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
-                new ProfileView(user);
-                dispose();
-            }
-        });
-        friendPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
-                new ProfileView(user);
-                dispose();
-            }
-        });
+        contentPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 5));
+//        contentPanel.setPreferredSize(new Dimension(800, contentPanel.getY()+400)); // Set fixed size
+        if( contentImagePanel != null){
+            contentPanel.setSize(1900, contentImagePanel.getY() + 450);
+            contentPanel.setMaximumSize(new Dimension(1900, contentImagePanel.getY() + 450));
+        }
+        else
+        {
+            contentPanel.setSize(1900, 450);
+            contentPanel.setMaximumSize(new Dimension(1900, 450));
+        }
+        contentPanel.repaint();
+        contentPanel.revalidate();
 
-        return friendPanel;
+        return contentPanel;
     }
-
-
-
 }

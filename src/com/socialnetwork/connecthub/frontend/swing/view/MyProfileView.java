@@ -86,12 +86,32 @@ public class MyProfileView extends View {
         leftPanel.add(editProfileButton);
         leftPanel.add(friendManagerButton);
         leftPanel.add(homeButton);
+        editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open edit profile view
+                new EditMyProfileView(user);
+            }
+        });
+
+        friendManagerButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open friend manager view
+                new FriendManager(user);
+            }
+        });
+
+        homeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open news feed view
+                new NewsFeedView(user);
+            }
+        });
 
         profilePanel.add(leftPanel); // Add left panel
         leftPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
 
         // Create a timeline panel and add it inside a JScrollPane
-        JPanel timelinePanel = new JPanel();
+        JPanel timelinePanel = new JPanel(null);
         timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
         timelinePanel.setBackground(new Color(215, 215, 215));
 
@@ -103,12 +123,16 @@ public class MyProfileView extends View {
         }
 
         // Adjust preferred size based on content
-        timelinePanel.setPreferredSize(new Dimension(900, Math.max(contentList.size() * 450, 600))); // Adjust as needed
+        // Adjust content panel's preferred size dynamically
+        int panelHeight = Math.max(1500, contentList.size() * 1210); // 1210px per content including spacing
+        timelinePanel.setPreferredSize(new Dimension(800, panelHeight));
 
+        // Create the scroll pane and set its bounds
         JScrollPane scrollPane = new JScrollPane(timelinePanel);
-        scrollPane.setBounds(310, 200, 900, 600);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // No horizontal scrolling
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBounds(310, 200, 900, 600); // Set the size and position of the scroll pane
+        scrollPane.setBackground(new Color(215, 215, 215));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizont
 
         profilePanel.add(scrollPane);
 

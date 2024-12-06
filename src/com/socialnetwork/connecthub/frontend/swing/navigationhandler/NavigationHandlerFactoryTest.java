@@ -3,7 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.navigationhandler;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.interfaces.NavigationHandler;
 import com.socialnetwork.connecthub.frontend.swing.view.*;
 
-public class NavigationHandlerTest implements NavigationHandler {
+public class NavigationHandlerFactoryTest implements NavigationHandler {
 
     @Override
     public View goToLoginView() {
