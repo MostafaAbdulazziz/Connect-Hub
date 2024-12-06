@@ -77,9 +77,6 @@ public class JavaContentService implements ContentService {
         }
     }
 
-import java.util.Collections;
-import java.util.Comparator;
-
     @Override
     public List<ContentDTO> getUserPosts(String userId) {
         // Get all posts for a user
