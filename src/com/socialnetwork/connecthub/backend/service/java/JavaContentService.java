@@ -7,6 +7,7 @@ import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -76,17 +77,20 @@ public class JavaContentService implements ContentService {
         }
     }
 
+import java.util.Collections;
+import java.util.Comparator;
+
     @Override
     public List<ContentDTO> getUserPosts(String userId) {
         // Get all posts for a user
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
         List<String> postIds = user.getPosts();
 
-        // Create a list to store the ContentDTOs
-        return getContentDTOS(postIds);
+        // Create a list to store the ContentDTOs and sort them
+        List<ContentDTO> contentDTOs = getContentDTOS(postIds);
+        contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
+        return contentDTOs;
     }
-
-
 
     @Override
     public List<ContentDTO> getFriendsPosts(String userId) {
@@ -101,8 +105,10 @@ public class JavaContentService implements ContentService {
             allPostIds.addAll(friendPostIds);
         }
 
-        // Create a list to store the ContentDTOs
-        return getContentDTOS(allPostIds);
+        // Create a list to store the ContentDTOs and sort them
+        List<ContentDTO> contentDTOs = getContentDTOS(allPostIds);
+        contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
+        return contentDTOs;
     }
 
     @Override
@@ -111,9 +117,11 @@ public class JavaContentService implements ContentService {
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
         List<String> storyIds = user.getStories();
 
-        return getContentDTOS(storyIds);
+        // Create a list to store the ContentDTOs and sort them
+        List<ContentDTO> contentDTOs = getContentDTOS(storyIds);
+        contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
+        return contentDTOs;
     }
-
 
     @Override
     public List<ContentDTO> getFriendsStories(String userId) {
@@ -128,9 +136,12 @@ public class JavaContentService implements ContentService {
             allStoryIds.addAll(friendStoryIds);
         }
 
-        // Create a list to store the ContentDTOs
-        return getContentDTOS(allStoryIds);
+        // Create a list to store the ContentDTOs and sort them
+        List<ContentDTO> contentDTOs = getContentDTOS(allStoryIds);
+        contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
+        return contentDTOs;
     }
+
 
     private List<User> getFriends(String userId) {
         // Get the user's friends
