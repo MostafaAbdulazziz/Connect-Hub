@@ -8,6 +8,7 @@ import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import test.ContentServiceTest;
+import test.FriendServiceTest;
 import test.ProfileServiceTest;
 import test.UserAccountServiceTest;
 
@@ -90,13 +91,15 @@ public class MyProfileView extends View {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open edit profile view
                 new EditMyProfileView(user);
+                dispose();
             }
         });
 
         friendManagerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open friend manager view
-                new FriendRequestReview(user);
+                new FriendRequestsView(new FriendServiceTest(),user.getUserId(), new UserAccountServiceTest());
+                dispose();
             }
         });
 
@@ -104,8 +107,10 @@ public class MyProfileView extends View {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open news feed view
                 new NewsFeedView(user);
+                dispose();
             }
         });
+
 
         profilePanel.add(leftPanel); // Add left panel
         leftPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));

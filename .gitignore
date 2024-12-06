@@ -3,6 +3,8 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea
+*.iws
+*.iml
 
 
 ### Eclipse ###
@@ -29,5 +31,3 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-
-*.iml
