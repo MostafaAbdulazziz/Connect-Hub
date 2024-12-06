@@ -176,7 +176,7 @@ public class StoryCreationAreaView extends JFrame {
 
         // Call the content service
         try {
-            contentService.createPost(currentUser.getUserId(), contentDTO);
+            contentService.createStory(currentUser.getUserId(), contentDTO);
         } catch (ContentCreationException ex) {
             new Alert(ex.getMessage(), StoryCreationAreaView.this);
         } catch (Exception ex) {
