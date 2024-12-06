@@ -1,11 +1,12 @@
 package com.socialnetwork.connecthub.frontend.swing.components;
 
-import java.awt.*;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Shape;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
-import javax.swing.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 
 public class JButton extends JLabel {
