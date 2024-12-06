@@ -2,6 +2,8 @@ package com.socialnetwork.connecthub.backend.persistence.json;
 
 import com.socialnetwork.connecthub.backend.model.Story;
 import com.socialnetwork.connecthub.backend.persistence.repository.StoryRepository;
+import com.socialnetwork.connecthub.util.idgenerator.IdGenerator;
+import com.socialnetwork.connecthub.util.idgenerator.IdGeneratorFactory;
 import com.socialnetwork.connecthub.util.JsonFileUtil;
 
 import java.util.ArrayList;
@@ -13,9 +15,11 @@ public class JsonStoryRepository implements StoryRepository {
     private static JsonStoryRepository instance;
     private final JsonFileUtil<Story> jsonFileUtil = new JsonFileUtil<>(Story[].class);
     private List<Story> stories;
+    private final IdGenerator idGenerator;
 
     private JsonStoryRepository() {
         stories = new ArrayList<>(jsonFileUtil.loadFromFile(FILE_PATH));
+        this.idGenerator = IdGeneratorFactory.getIdGenerator("incremental");
     }
 
     public static synchronized JsonStoryRepository getInstance() {
@@ -46,6 +50,7 @@ public class JsonStoryRepository implements StoryRepository {
             }
         }
         if (!storyExists) {
+            story.setContentId(idGenerator.generateId());
             stories.add(story);
         }
         jsonFileUtil.saveToFile(FILE_PATH, stories);

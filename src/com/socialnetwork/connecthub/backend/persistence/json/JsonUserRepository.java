@@ -2,6 +2,8 @@ package com.socialnetwork.connecthub.backend.persistence.json;
 
 import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.backend.persistence.repository.UserRepository;
+import com.socialnetwork.connecthub.util.idgenerator.IdGenerator;
+import com.socialnetwork.connecthub.util.idgenerator.IdGeneratorFactory;
 import com.socialnetwork.connecthub.util.JsonFileUtil;
 
 import java.util.ArrayList;
@@ -13,9 +15,11 @@ public class JsonUserRepository implements UserRepository {
     private static JsonUserRepository instance;
     private final JsonFileUtil<User> jsonFileUtil = new JsonFileUtil<>(User[].class);
     private List<User> users;
+    private final IdGenerator idGenerator;
 
     private JsonUserRepository() {
         users = new ArrayList<>(jsonFileUtil.loadFromFile(FILE_PATH));
+        this.idGenerator = IdGeneratorFactory.getIdGenerator("uuid");
     }
 
     public static synchronized JsonUserRepository getInstance() {
@@ -66,6 +70,7 @@ public class JsonUserRepository implements UserRepository {
             }
         }
         if (!userExists) {
+            user.setUserId(idGenerator.generateId());
             users.add(user);
         }
         jsonFileUtil.saveToFile(FILE_PATH, users);
