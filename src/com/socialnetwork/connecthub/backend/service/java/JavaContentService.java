@@ -141,7 +141,7 @@ public class JavaContentService implements ContentService {
         for (String friendId : user.getFriends()) {
             User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
             // Don't get content from blocked users in the content service
-            if(!user.getBlockedUsers().contains(friendId))
+            if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
                 friends.add(friend);
         }
 

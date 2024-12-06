@@ -1,8 +1,10 @@
 package com.socialnetwork.connecthub.backend.service.java;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.FriendService;
+import com.socialnetwork.connecthub.backend.model.Block;
 import com.socialnetwork.connecthub.backend.model.FriendRequest;
 import com.socialnetwork.connecthub.backend.model.User;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonBlockRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonFriendRequestRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
 
@@ -34,12 +36,6 @@ public class JavaFriendService implements FriendService {
     @Override
     public void declineFriendRequest(String userId, String senderId) {
         JsonFriendRequestRepository.getInstance().deleteRequest(senderId, userId);
-
-        User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
-
-        user.getReceivedFriendRequests().remove(senderId);
-
-        JsonUserRepository.getInstance().save(user);
     }
 
     @Override
@@ -56,12 +52,15 @@ public class JavaFriendService implements FriendService {
 
     @Override
     public void blockUser(String userId, String blockedUserId) {
-
+        Block block = new Block();
+        block.setBlockingUserId(userId);
+        block.setBlockedUserId(blockedUserId);
+        JsonBlockRepository.getInstance().save(block);
     }
 
     @Override
     public void unblockUser(String userId, String blockedUserId) {
-
+        JsonBlockRepository.getInstance().unblock(userId, blockedUserId);
     }
 
     @Override
