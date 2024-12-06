@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class Block {
-    String blockingUserId;
-    String blockedUserId;
+    private String blockingUserId;
+    private String blockedUserId;
 }
