@@ -121,16 +121,17 @@ public class SignUpView extends JFrame {
                 Date selectedDate = (Date) dateSpinner.getValue();
 
                 SignUpDTO signUpDTO = new SignUpDTO(
-                        email.getText(),
-                        fullName.getText(),
-                        password.getText(),
+                        email.getText().equals("Email") ? "" : email.getText(),
+                        fullName.getText().equals("Full Name") ? "" : fullName.getText(),
+                        password.getText().equals("Password") ? "" : password.getText(),
+                        confirmPassword.getText().equals("Confirm Password") ? "" : confirmPassword.getText(),
                         selectedDate);
 
                 try {
                     socialNetworkAPI.getUserAccountService().signup(signUpDTO);
                     NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
                     SignUpView.this.dispose();
-                } catch (InvalidSignupException ex) {
+                } catch (Exception ex) {
                     new Alert(ex.getMessage(), SignUpView.this);
                 }
             }

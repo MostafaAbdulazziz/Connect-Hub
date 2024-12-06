@@ -13,5 +13,6 @@ public interface NavigationHandler {
     NewsFeedView goToNewsFeedView(UserDTO userDTO);
     ProfileView goToProfileView(UserDTO userDTO);
     StoryView goToStoryView(ContentDTO userDTO);
+    EditMyProfileView goToEditMyProfileView(UserDTO userDTO);
 
 }

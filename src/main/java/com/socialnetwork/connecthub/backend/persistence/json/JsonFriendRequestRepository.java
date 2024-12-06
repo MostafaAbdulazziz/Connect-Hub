@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonFriendRequestRepository implements FriendRequestRepository {
-    private static final String FILE_PATH = "src/com/socialnetwork/connecthub/resources/data/friend_requests.json";
+    private static final String FILE_PATH = "src/main/java/com/socialnetwork/connecthub/resources/data/friend_requests.json";
     private static JsonFriendRequestRepository instance;
     private final JsonFileUtil<FriendRequest> jsonFileUtil = new JsonFileUtil<>(FriendRequest[].class);
     private List<FriendRequest> friendRequests;

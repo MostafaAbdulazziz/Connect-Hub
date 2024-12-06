@@ -6,6 +6,7 @@ public class IncrementalIdGenerator implements IdGenerator {
     @Override
     public String generateId() {
         // Increment the counter and return as a string
-        return String.valueOf(++counter);
+        counter++;
+        return String.valueOf(counter);
     }
 }

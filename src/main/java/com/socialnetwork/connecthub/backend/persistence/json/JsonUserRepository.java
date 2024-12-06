@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class JsonUserRepository implements UserRepository {
-    private static final String FILE_PATH = "src/com/socialnetwork/connecthub/resources/data/users.json";
+    private static final String FILE_PATH = "src/main/java/com/socialnetwork/connecthub/resources/data/users.json";
     private static JsonUserRepository instance;
     private final JsonFileUtil<User> jsonFileUtil = new JsonFileUtil<>(User[].class);
     private List<User> users;

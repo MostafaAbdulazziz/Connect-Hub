@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class JsonBlockRepository implements BlockRepository {
 
-    private static final String FILE_PATH = "src/com/socialnetwork/connecthub/resources/data/blocks.json";
+    private static final String FILE_PATH = "src/main/java/com/socialnetwork/connecthub/resources/data/blocks.json";
     private static JsonBlockRepository instance;
     private final JsonFileUtil<Block> jsonFileUtil = new JsonFileUtil<>(Block[].class);
     private List<Block> blocks;

@@ -67,7 +67,7 @@ public class NewsFeedView extends View {
         if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
             myPhotoLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
         } else {
-            myPhotoLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 100, 100);
+            myPhotoLabel = new RoundedImageLabel(user.getProfilePhotoPath(), 100, 100);
         }
         myPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
         myPhotoLabel.setBounds(8, 8, 100, 100);
@@ -361,7 +361,7 @@ public class NewsFeedView extends View {
         horizontalPanel.setBackground(new Color(215, 215, 215)); // Set background color
 
         // Add friends' stories to the panel
-        for (ContentDTO story : socialNetworkAPI.getContentService().getFriendsStories("9999999999")) {
+        for (ContentDTO story : socialNetworkAPI.getContentService().getFriendsStories(user.getUserId())) {
             JPanel storyPanel = createStoryPanel(story); // Create a panel for each story
             horizontalPanel.add(storyPanel);
         }

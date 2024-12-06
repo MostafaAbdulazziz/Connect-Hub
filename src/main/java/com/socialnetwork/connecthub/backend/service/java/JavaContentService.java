@@ -94,6 +94,9 @@ public class JavaContentService implements ContentService {
         deleteExpiredStories();
         // Get all posts for a user
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+        if(user.getPosts() == null) {
+            return new ArrayList<>();
+        }
         List<String> postIds = user.getPosts();
 
         // Create a list to store the ContentDTOs and sort them
@@ -125,6 +128,9 @@ public class JavaContentService implements ContentService {
     public List<ContentDTO> getUserStories(String userId) {
         // Get the user's stories
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+        if(user.getStories() == null) {
+            return new ArrayList<>();
+        }
         List<String> storyIds = user.getStories();
 
         // Create a list to store the ContentDTOs and sort them
@@ -160,12 +166,13 @@ public class JavaContentService implements ContentService {
         List<User> friends = new ArrayList<>();
 
         // Retrieve friends using a for loop
-        for (String friendId : user.getFriends()) {
-            User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
-            // Don't get content from blocked users in the content service
-            if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
-                friends.add(friend);
-        }
+        if(user.getFriends() != null)
+            for (String friendId : user.getFriends()) {
+                User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
+                // Don't get content from blocked users in the content service
+                if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
+                    friends.add(friend);
+            }
 
         return friends;
     }

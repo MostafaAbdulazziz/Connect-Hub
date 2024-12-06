@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class JsonPostRepository implements PostRepository {
-    private static final String FILE_PATH = "src/com/socialnetwork/connecthub/resources/data/posts.json";
+    private static final String FILE_PATH = "src/main/java/com/socialnetwork/connecthub/resources/data/posts.json";
     private static JsonPostRepository instance;
     private final JsonFileUtil<Post> jsonFileUtil = new JsonFileUtil<>(Post[].class);
     private List<Post> posts;
@@ -19,7 +19,7 @@ public class JsonPostRepository implements PostRepository {
 
     private JsonPostRepository() {
         posts = new ArrayList<>(jsonFileUtil.loadFromFile(FILE_PATH));
-        this.idGenerator = IdGeneratorFactory.getIdGenerator("incremental");
+        this.idGenerator = IdGeneratorFactory.getIdGenerator("uuid");
     }
 
     public static synchronized JsonPostRepository getInstance() {

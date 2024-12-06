@@ -168,20 +168,13 @@ public class StoryCreationAreaView extends JFrame {
         String postContent = postTextArea.getText().trim();
         String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
 
-        // Validate input
-        if (postContent.isEmpty() || postContent.equals(placeholderText)) {
-            JOptionPane.showMessageDialog(this, "Story content cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
         ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), postContent, imagePath, new Date());
 
         // Call the content service
         try {
             contentService.createStory(currentUser.getUserId(), contentDTO);
-        } catch (ContentCreationException ex) {
-            new Alert(ex.getMessage(), StoryCreationAreaView.this);
         } catch (Exception ex) {
-            new Alert("An error occurred during posting. Please try again.", StoryCreationAreaView.this);
+            new Alert(ex.getMessage(), StoryCreationAreaView.this);
         }
         // Reset UI
         JOptionPane.showMessageDialog(this, "Story submitted successfully!");

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class JsonStoryRepository implements StoryRepository {
-    private static final String FILE_PATH = "src/com/socialnetwork/connecthub/resources/data/stories.json";
+    private static final String FILE_PATH = "src/main/java/com/socialnetwork/connecthub/resources/data/stories.json";
     private static JsonStoryRepository instance;
     private final JsonFileUtil<Story> jsonFileUtil = new JsonFileUtil<>(Story[].class);
     private List<Story> stories;
@@ -19,7 +19,7 @@ public class JsonStoryRepository implements StoryRepository {
 
     private JsonStoryRepository() {
         stories = new ArrayList<>(jsonFileUtil.loadFromFile(FILE_PATH));
-        this.idGenerator = IdGeneratorFactory.getIdGenerator("incremental");
+        this.idGenerator = IdGeneratorFactory.getIdGenerator("uuid");
     }
 
     public static synchronized JsonStoryRepository getInstance() {

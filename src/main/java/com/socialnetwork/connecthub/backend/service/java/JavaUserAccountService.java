@@ -10,6 +10,7 @@ import com.socialnetwork.connecthub.shared.exceptions.InvalidLoginException;
 import com.socialnetwork.connecthub.shared.exceptions.InvalidSignupException;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
@@ -29,21 +30,25 @@ public class JavaUserAccountService implements UserAccountService {
 
     @Override
     public void signup(SignUpDTO signUpDTO) throws InvalidSignupException {
-        // Validate Email
-        if (signUpDTO.getEmail() == null || signUpDTO.getEmail().isEmpty()) {
-            throw new InvalidSignupException("Email is required.");
-        } else if (!signUpDTO.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$")) {
-            throw new InvalidSignupException("Write Valid Email Address.");
-        }
-
         // Validate username
         if (signUpDTO.getUsername() == null || signUpDTO.getUsername().isEmpty()) {
             throw new InvalidSignupException("Username is required.");
         }
 
+        // Validate Email
+        if (signUpDTO.getEmail() == null || signUpDTO.getEmail().isEmpty()) {
+            throw new InvalidSignupException("Email is required.");
+        } else if (!signUpDTO.getEmail().matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$")) {
+            throw new InvalidSignupException("Write Valid Email Address.");
+        } else if (JsonUserRepository.getInstance().findByEmail(signUpDTO.getEmail()).isPresent()) {
+            throw new InvalidSignupException("Email is already in use.");
+        }
+
         // Validate password
         if (signUpDTO.getPassword() == null || signUpDTO.getPassword().isEmpty()) {
             throw new InvalidSignupException("Password is required.");
+        } else if (!signUpDTO.getPassword().equals(signUpDTO.getConfirmPassword())) {
+            throw new InvalidSignupException("Passwords do not match.");
         }
 
         // Validate DOB
@@ -64,6 +69,13 @@ public class JavaUserAccountService implements UserAccountService {
         newUser.setHashedPassword(hashPassword(signUpDTO.getPassword()));
         newUser.setDateOfBirth(signUpDTO.getDateOfBirth());
         newUser.setOnlineStatus(false); // Default to offline
+
+        newUser.setFriends(new ArrayList<>());
+        newUser.setPosts(new ArrayList<>());
+        newUser.setStories(new ArrayList<>());
+
+        newUser.setProfilePhotoPath("src/main/java/com/socialnetwork/connecthub/resources/pics/friends.png");
+        newUser.setProfilePhotoPath("src/main/java/com/socialnetwork/connecthub/resources/pics/friends.png");
 
         JsonUserRepository.getInstance().save(newUser);
     }

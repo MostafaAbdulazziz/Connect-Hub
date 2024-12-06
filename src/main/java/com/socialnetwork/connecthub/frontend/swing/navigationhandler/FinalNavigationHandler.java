@@ -50,4 +50,9 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     public StoryView goToStoryView(ContentDTO contentDTO) {
         return new StoryView(contentDTO);
     }
+
+    @Override
+    public EditMyProfileView goToEditMyProfileView(UserDTO userDTO) {
+        return new EditMyProfileView(JavaSocialNetworkAPI.getInstance(), userDTO);
+    }
 }

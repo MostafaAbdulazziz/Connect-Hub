@@ -3,6 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
@@ -18,6 +19,7 @@ public class MyProfileView extends View {
     JLabel bioLabel;
     UserDTO user;
     private SocialNetworkAPI socialNetworkAPI;
+    private String navigationHandlerType = "final";
 
     public MyProfileView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
         this.user = user;
@@ -28,10 +30,10 @@ public class MyProfileView extends View {
         profilePanel.setBounds(0, 0, getWidth(), getHeight());
 
         if (user.getCoverPhotoPath() == null || user.getCoverPhotoPath().isEmpty()) {
-            user.setCoverPhotoPath("src/test/Screenshot 2024-12-03 011157.png");
+            user.setCoverPhotoPath(user.getCoverPhotoPath());
         }
         if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
-            user.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
+            user.setProfilePhotoPath(user.getProfilePhotoPath());
         }
 
         // Set up background panel for the cover photo
@@ -56,7 +58,7 @@ public class MyProfileView extends View {
         profilePhoto.setBounds(90, 10, 120, 120); // Positioned within the left panel
         leftPanel.add(profilePhoto); // Add profile photo to left panel
 
-        // Set up user name label under the profile photo
+        // Set up username label under the profile photo
         nameLabel = new JLabel(user.getUsername(), 24, Color.BLACK, Font.BOLD);
         nameLabel.setBounds(90, 140, 200, 20);  // Positioned below profile photo
         leftPanel.add(nameLabel);
@@ -80,7 +82,7 @@ public class MyProfileView extends View {
         editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open edit profile view
-                new EditMyProfileView(socialNetworkAPI, user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToEditMyProfileView(user);
                 dispose();
             }
         });
@@ -88,7 +90,7 @@ public class MyProfileView extends View {
         friendManagerButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open friend manager view
-                new ManageFriendsView(socialNetworkAPI, user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToManageFriendsView(user);
                 dispose();
             }
         });
@@ -96,7 +98,7 @@ public class MyProfileView extends View {
         homeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open news feed view
-                new NewsFeedView(socialNetworkAPI, user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
                 dispose();
             }
         });

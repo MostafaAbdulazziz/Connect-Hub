@@ -71,12 +71,13 @@ public class JavaNewsFeedService implements NewsFeedService {
         List<User> friends = new ArrayList<>();
 
         // Retrieve friends using a for loop
-        for (String friendId : user.getFriends()) {
-            User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
-            // Don't get content from blocked users in the content service
-            if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
-                friends.add(friend);
-        }
+        if(user.getFriends() != null)
+            for (String friendId : user.getFriends()) {
+                User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
+                // Don't get content from blocked users in the content service
+                if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
+                    friends.add(friend);
+            }
 
         return friends;
     }

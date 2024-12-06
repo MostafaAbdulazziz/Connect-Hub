@@ -60,4 +60,10 @@ public class TestNavigationHandler implements NavigationHandler {
         return null;
     }
 
+    @Override
+    public EditMyProfileView goToEditMyProfileView(UserDTO userDTO) {
+        System.out.println("new EditMyProfileView()");
+        return null;
+    }
+
 }

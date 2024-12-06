@@ -27,11 +27,11 @@ public class ContentCreationAreaView extends JFrame {
     private String placeholderText = "Write your post here...";
     private String navigationHandlerType = "final";
 
-    private ContentService contentService;
     private UserDTO currentUser;
+    private SocialNetworkAPI socialNetworkAPI;
 
     public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser) {
-        this.contentService = contentService;
+        this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
         // Set up the frame
         setTitle("Create a New Post");
@@ -175,11 +175,9 @@ public class ContentCreationAreaView extends JFrame {
 
         // Call the content service
         try {
-            contentService.createPost(currentUser.getUserId(), contentDTO);
+            socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
         } catch (ContentCreationException ex) {
             new Alert(ex.getMessage(), ContentCreationAreaView.this);
-        } catch (Exception ex) {
-            new Alert("An error occurred during posting. Please try again.", ContentCreationAreaView.this);
         }
         // Reset UI
         JOptionPane.showMessageDialog(this, "Post submitted successfully!");
