@@ -16,5 +16,4 @@ public class LoginView extends View {
         add(loginButton);
         add(signUpButton);
     }
-
 }
