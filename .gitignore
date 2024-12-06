@@ -31,3 +31,7 @@ bin/
 .DS_Store
 
 *.iml
+
+# Database files
+
+src/com/socialnetwork/connecthub/resources/data

@@ -19,6 +19,6 @@ public class User {
     private List<String> friends;
     private List<String> blockedUsers;
     private List<String> receivedFriendRequests;
-    private List<Post> posts;
-    private List<Story> stories;
+    private List<String> posts;
+    private List<String> stories;
 }
