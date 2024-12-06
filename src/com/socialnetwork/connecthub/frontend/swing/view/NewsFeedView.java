@@ -196,12 +196,27 @@ public class NewsFeedView extends View {
             RoundedImageLabel authorImageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
             authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
             contentPanel.add(authorImageLabel);
+            authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // Open the author's profile
+                    new ProfileView(userAccountService.getUserById(content.getAuthorId()));
+                    dispose();
+                }
+            });
         }
         else {
             RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
             authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
             contentPanel.add(authorImageLabel);
+            authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    // Open the author's profile
+                    new ProfileView(userAccountService.getUserById(content.getAuthorId()));
+                    dispose();
+                }
+            });
         }
+
 
         // Add author name text
         javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(userAccountService.getUserById(content.getAuthorId()).getUsername());
@@ -214,6 +229,13 @@ public class NewsFeedView extends View {
             }
         }
         authorNameLabel.setBounds(70, 20, 200, 30); // Adjusted position
+        authorNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the author's profile
+                new ProfileView(userAccountService.getUserById(content.getAuthorId()));
+                dispose();
+            }
+        });
         contentPanel.add(authorNameLabel);
 
         // Add timestamp text
@@ -265,15 +287,6 @@ public class NewsFeedView extends View {
         return contentPanel;
     }
 
-    // Helper method to scale images while maintaining aspect ratio
-    private ImageIcon scaleImageIcon(ImageIcon icon, int maxWidth, int maxHeight) {
-        Image img = icon.getImage();
-        double scale = Math.min((double) maxWidth / img.getWidth(null), (double) maxHeight / img.getHeight(null));
-        int newWidth = (int) (img.getWidth(null) * scale);
-        int newHeight = (int) (img.getHeight(null) * scale);
-        Image scaledImg = img.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-        return new ImageIcon(scaledImg);
-    }
 
 
 

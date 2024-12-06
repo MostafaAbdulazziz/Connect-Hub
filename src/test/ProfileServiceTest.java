@@ -28,6 +28,14 @@ public class ProfileServiceTest implements ProfileService {
 
     @Override
     public List<UserDTO> getUserFriends(String userId) {
-        return List.of();
+        List<UserDTO> friends = new java.util.ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            UserDTO user = new UserDTO();
+            user.setUserId(String.valueOf(i));
+            user.setUsername("User " + i);
+            user.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
+            friends.add(user);
+        }
+        return friends;
     }
 }
