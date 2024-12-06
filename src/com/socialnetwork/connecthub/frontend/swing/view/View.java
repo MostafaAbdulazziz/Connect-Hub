@@ -8,6 +8,7 @@ public class View extends JFrame {
         setSize(1500, 800);
         setLocationRelativeTo(null);
         setLayout(null);
+        setResizable(false);
         setVisible(true);
 
     }

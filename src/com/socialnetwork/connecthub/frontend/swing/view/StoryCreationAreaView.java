@@ -15,24 +15,24 @@ import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
 
-public class ContentCreationAreaView extends JFrame {
+public class StoryCreationAreaView extends JFrame {
     private JTextArea postTextArea;
     private JPanel imagePanel;
     private JButton addImageButton;
     private JButton submitButton;
     private JLabel titleLabel;
     private File selectedImageFile;
-    private String placeholderText = "Write your post here...";
+    private String placeholderText = "Write your Story here...";
 
     private ContentService contentService;
     private UserDTO currentUser;
     private NavigationHandlerFactory navigationHandlerFactory;
 
-    public ContentCreationAreaView(ContentService contentService, UserDTO currentUser) {
+    public StoryCreationAreaView(ContentService contentService, UserDTO currentUser) {
         this.contentService = contentService;
         this.currentUser = currentUser;
         // Setup the frame
-        setTitle("Create a New Post");
+        setTitle("Create a New Story");
         setSize(1500, 800);
         setLocationRelativeTo(null);
         setBackground(new Color(255, 255, 255));
@@ -40,7 +40,7 @@ public class ContentCreationAreaView extends JFrame {
 
 
         postTextArea = new JTextArea();
-        postTextArea.setText("Write your post here...");
+        postTextArea.setText("Write your Story here...");
         postTextArea.setFont(new Font("Arial", Font.PLAIN, 16));
         postTextArea.setPreferredSize(new Dimension(600, 100));
         postTextArea.setWrapStyleWord(true);
@@ -67,9 +67,9 @@ public class ContentCreationAreaView extends JFrame {
 
         addImageButton = new JButton("Add Image", 12, 14);
         addImageButton.setPreferredSize(new Dimension(300, 40));
-        submitButton = new JButton("Submit Post", 12, 14);
+        submitButton = new JButton("Submit Story", 12, 14);
         submitButton.setPreferredSize(new Dimension(300, 40));
-        titleLabel = new JLabel("Create a Post", 12, GUIConstants.blue, JLabel.CENTER);
+        titleLabel = new JLabel("Create a Story", 12, GUIConstants.blue, JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
         imagePanel = new JPanel();
@@ -166,7 +166,7 @@ public class ContentCreationAreaView extends JFrame {
 
         // Validate input
         if (postContent.isEmpty() || postContent.equals(placeholderText)) {
-            JOptionPane.showMessageDialog(this, "Post content cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Story content cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         ContentDTO contentDTO = new ContentDTO();
@@ -178,12 +178,12 @@ public class ContentCreationAreaView extends JFrame {
         try {
             contentService.createPost(currentUser.getUserId(), contentDTO);
         } catch (ContentCreationException ex) {
-            new Alert(ex.getMessage(), ContentCreationAreaView.this);
+            new Alert(ex.getMessage(), StoryCreationAreaView.this);
         } catch (Exception ex) {
-            new Alert("An error occurred during posting. Please try again.", ContentCreationAreaView.this);
+            new Alert("An error occurred during posting. Please try again.", StoryCreationAreaView.this);
         }
         // Reset UI
-        JOptionPane.showMessageDialog(this, "Post submitted successfully!");
+        JOptionPane.showMessageDialog(this, "Story submitted successfully!");
         this.dispose();
         navigationHandlerFactory.getNavigationHandler().goToNewsFeedView(currentUser);
         postTextArea.setText(placeholderText);
