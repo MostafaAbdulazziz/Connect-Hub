@@ -12,4 +12,7 @@ public interface FriendService {
     void blockUser(String userId, String blockedUserId);
     void unblockUser(String userId, String blockedUserId);
     List<FriendRequest> getFriendRequests(String userId);
+    List<UserDTO> getFriends(String userId);
+    List<UserDTO> getBlockedUsers(String userId);
+
 }
