@@ -5,7 +5,6 @@ import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import java.util.List;
 
 public interface NewsFeedService {
-    List<ContentDTO> getNewsFeed(String userId);
     List<UserDTO> getOnlineFriends(String userId);
     List<UserDTO> getFriendSuggestions(String userId);
 }

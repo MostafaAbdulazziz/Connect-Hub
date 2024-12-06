@@ -1,5 +1,7 @@
 package com.socialnetwork.connecthub.backend.persistence.json;
 
+import com.socialnetwork.connecthub.backend.model.Block;
+import com.socialnetwork.connecthub.backend.model.FriendRequest;
 import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.backend.persistence.repository.UserRepository;
 import com.socialnetwork.connecthub.util.idgenerator.IdGenerator;
@@ -108,9 +110,9 @@ public class JsonUserRepository implements UserRepository {
         List<User> blockedUsers = new ArrayList<>();
         Optional<User> user = findById(userId);
         if (user.isPresent()) {
-            List<String> blockedIds = user.get().getBlockedUsers();
-            for (String blockedId : blockedIds) {
-                Optional<User> blockedUser = findById(blockedId);
+            List<Block> blocks = JsonBlockRepository.getInstance().findAllByBlockingUserId(userId);
+            for (Block block : blocks) {
+                Optional<User> blockedUser = findById(block.getBlockedUserId());
                 if (blockedUser.isPresent()) {
                     blockedUsers.add(blockedUser.get());
                 }
@@ -121,12 +123,12 @@ public class JsonUserRepository implements UserRepository {
 
     @Override
     public List<String> getReceivedFriendRequests(String userId) {
-        List<String> receivedRequests = new ArrayList<>();
-        Optional<User> user = findById(userId);
-        if (user.isPresent()) {
-            receivedRequests = user.get().getReceivedFriendRequests();
+        List<FriendRequest> recievedRequests = JsonFriendRequestRepository.getInstance().findRequestsByReceiver(userId);
+        List<String> sendersIds = new ArrayList<>();
+        for (FriendRequest request : recievedRequests) {
+            sendersIds.add(request.getSenderId());
         }
-        return receivedRequests;
+        return sendersIds;
     }
 
     @Override

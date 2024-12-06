@@ -5,12 +5,10 @@ import com.socialnetwork.connecthub.backend.model.Post;
 import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonPostRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
-import com.socialnetwork.connecthub.backend.persistence.repository.UserRepository;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.exceptions.ContentCreationException;
 
 import java.util.List;
-import java.util.Optional;
 
 public class JavaContentService implements ContentService {
     @Override
