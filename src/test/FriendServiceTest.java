@@ -42,6 +42,15 @@ public class FriendServiceTest implements FriendService {
     public void removeFriend(String userId, String friendId) {
 
     }
+    @Override
+    public List<UserDTO> getFriends(String userId) {
+        return List.of();
+    }
+
+    @Override
+    public List<UserDTO> getBlockedUsers(String userId) {
+        return List.of();
+    }
 
 
 }
