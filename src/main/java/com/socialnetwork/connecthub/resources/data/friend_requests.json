@@ -1,7 +1,0 @@
-[ {
-  "senderId" : "1",
-  "receiverId" : "2"
-}, {
-  "senderId" : "2",
-  "receiverId" : "3"
-} ]
