@@ -35,4 +35,4 @@ bin/
 
 # Database files
 
-src/main/java/com/socialnetwork/connecthub/resources/data/
+src/main/java/com/socialnetwork/connecthub/resources/
