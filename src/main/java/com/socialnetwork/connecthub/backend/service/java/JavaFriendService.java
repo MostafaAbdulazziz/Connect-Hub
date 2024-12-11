@@ -49,8 +49,8 @@ public class JavaFriendService implements FriendService {
     }
 
     @Override
-    public void declineFriendRequest(String userId, String senderId) {
-        JsonFriendRequestRepository.getInstance().deleteRequest(senderId, userId);
+    public void declineFriendRequest(String senderId, String receiverId) {
+        JsonFriendRequestRepository.getInstance().deleteRequest(senderId, receiverId);
     }
 
     @Override
@@ -71,6 +71,13 @@ public class JavaFriendService implements FriendService {
         block.setBlockingUserId(userId);
         block.setBlockedUserId(blockedUserId);
         JsonBlockRepository.getInstance().save(block);
+
+        // Remove user from each other's friend list
+        removeFriend(userId, blockedUserId);
+
+        // Remove friend request if one sent to other
+        JsonFriendRequestRepository.getInstance().deleteRequest(userId, blockedUserId);
+        JsonFriendRequestRepository.getInstance().deleteRequest(blockedUserId, userId);
     }
 
     @Override
@@ -132,7 +139,7 @@ public class JavaFriendService implements FriendService {
         // Retrieve friends using a for loop
         for (String friendId : user.getFriends()) {
             User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
-            // Don't get content from blocked users in the content service
+            // Don't process blocked users
             if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
                 friends.add(friend);
         }

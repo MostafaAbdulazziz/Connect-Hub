@@ -41,18 +41,11 @@ public class JsonStoryRepository implements StoryRepository {
 
     @Override
     public void save(Story story) {
-        boolean storyExists = false;
-        for (int i = 0; i < stories.size(); i++) {
-            if (stories.get(i).getContentId().equals(story.getContentId())) {
-                stories.set(i, story);
-                storyExists = true;
-                break;
-            }
+        story.setContentId(idGenerator.generateId());
+        if (story.getImagePath() == null || story.getImagePath().isEmpty()) {
+            story.setImagePath("src/main/java/com/socialnetwork/connecthub/resources/pics/black-background.jpg");
         }
-        if (!storyExists) {
-            story.setContentId(idGenerator.generateId());
-            stories.add(story);
-        }
+        stories.add(story);
         jsonFileUtil.saveToFile(FILE_PATH, stories);
     }
 

@@ -20,7 +20,7 @@ public class SignUpView extends JFrame {
 
     public SignUpView(SocialNetworkAPI socialNetworkAPI) {
         super("Sign Up");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 800);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -156,7 +156,7 @@ public class SignUpView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 SignUpView.this.dispose();
-                new LoginView(socialNetworkAPI);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
             }
         });
         alreadyAccount.setCursor(new Cursor(Cursor.HAND_CURSOR));

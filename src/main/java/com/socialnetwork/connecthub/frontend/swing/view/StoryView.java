@@ -1,5 +1,6 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
+import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import lombok.Getter;
 
@@ -12,11 +13,13 @@ public class StoryView extends View {
     private ContentDTO content;
     @Getter
     private JPanel panel;
+    SocialNetworkAPI socialNetworkAPI;
 
-    public StoryView(ContentDTO content) {
+    public StoryView(ContentDTO content, SocialNetworkAPI socialNetworkAPI) {
         setSize(800, 800);
         setLocationRelativeTo(null);
         this.content = content;
+        this.socialNetworkAPI = socialNetworkAPI;
         initializeComponents();
         add(getPanel());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -42,7 +45,7 @@ public class StoryView extends View {
         imageLabel.setBounds(0, 0, 800, 800);
 
         // Add a label for the author's name
-        JLabel authorLabel = new JLabel("Author: " + content.getAuthorId());
+        JLabel authorLabel = new JLabel("Author: " + socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()).getUsername());
         authorLabel.setForeground(Color.WHITE);
         authorLabel.setFont(new Font("Arial", Font.BOLD, 18));
         authorLabel.setBounds(20, 20, 300, 30);

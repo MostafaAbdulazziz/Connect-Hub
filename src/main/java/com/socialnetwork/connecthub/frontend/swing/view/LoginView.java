@@ -20,7 +20,7 @@ public class LoginView extends JFrame {
 
     public LoginView(SocialNetworkAPI socialNetworkAPI) {
         super("Login");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1000, 800);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -124,7 +124,7 @@ public class LoginView extends JFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 LoginView.this.dispose();
-                new SignUpView(socialNetworkAPI);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToSignUpView();
             }
         });
         createAcc.setCursor(new Cursor(Cursor.HAND_CURSOR));

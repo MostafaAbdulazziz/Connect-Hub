@@ -24,25 +24,28 @@ public class ContentCreationAreaView extends JFrame {
     private JButton submitButton;
     private JLabel titleLabel;
     private File selectedImageFile;
-    private String placeholderText = "Write your post here...";
-    private String navigationHandlerType = "final";
+    private String placeholderText = "Write your text here...";
+    private boolean isPost;
+    private String type;
 
     private UserDTO currentUser;
     private SocialNetworkAPI socialNetworkAPI;
 
-    public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser) {
+    public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
+        this.isPost = isPost;
+        this.type = (isPost? "Post" : "Story");
         // Set up the frame
-        setTitle("Create a New Post");
+        setTitle("Create a New " + type);
         setSize(1500, 800);
         setLocationRelativeTo(null);
         setBackground(new Color(255, 255, 255));
         setResizable(true);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 
         postTextArea = new JTextArea();
-        postTextArea.setText("Write your post here...");
         postTextArea.setFont(new Font("Arial", Font.PLAIN, 16));
         postTextArea.setPreferredSize(new Dimension(600, 100));
         postTextArea.setWrapStyleWord(true);
@@ -69,9 +72,9 @@ public class ContentCreationAreaView extends JFrame {
 
         addImageButton = new JButton("Add Image", 12, 14);
         addImageButton.setPreferredSize(new Dimension(300, 40));
-        submitButton = new JButton("Submit Post", 12, 14);
+        submitButton = new JButton("Submit " + type, 12, 14);
         submitButton.setPreferredSize(new Dimension(300, 40));
-        titleLabel = new JLabel("Create a Post", 12, GUIConstants.blue, JLabel.CENTER);
+        titleLabel = new JLabel("Create a " + type, 12, GUIConstants.blue, JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
         imagePanel = new JPanel();
@@ -163,30 +166,29 @@ public class ContentCreationAreaView extends JFrame {
     }
 
     private void submitPost() {
-        String postContent = postTextArea.getText().trim();
+        String content = postTextArea.getText().trim();
         String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
 
-        // Validate input
-        if (postContent.isEmpty() || postContent.equals(placeholderText)) {
-            JOptionPane.showMessageDialog(this, "Post content cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), postContent, imagePath, new Date());
+        ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), content, imagePath, new Date());
 
         // Call the content service
         try {
-            socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
+            if(isPost)
+                socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
+            else
+                socialNetworkAPI.getContentService().createStory(currentUser.getUserId(), contentDTO);
+
+            // Reset UI
+            JOptionPane.showMessageDialog(this, type + " submitted successfully!");
+            this.dispose();
+            postTextArea.setText(placeholderText);
+            postTextArea.setForeground(Color.GRAY);
+            selectedImageFile = null;
+            updateImageLabels();
+
         } catch (ContentCreationException ex) {
             new Alert(ex.getMessage(), ContentCreationAreaView.this);
         }
-        // Reset UI
-        JOptionPane.showMessageDialog(this, "Post submitted successfully!");
-        this.dispose();
-        NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(currentUser);
-        postTextArea.setText(placeholderText);
-        postTextArea.setForeground(Color.GRAY);
-        selectedImageFile = null;
-        updateImageLabels();
     }
 
 

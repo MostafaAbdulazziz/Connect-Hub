@@ -27,10 +27,11 @@ public class JavaContentService implements ContentService {
 
     @Override
     public void createPost(String userId, ContentDTO contentDTO) throws ContentCreationException {
-        if (contentDTO.getContent().isEmpty() && contentDTO.getImagePath().isEmpty()) {
+        String content = contentDTO.getContent();
+        String imagePath = contentDTO.getImagePath();
+        if ((content == null || content.isEmpty()) && (imagePath == null || imagePath.isEmpty()) ) {
             throw new ContentCreationException("Content is empty");
         }
-
         // Create new Post object
         Post post = new Post();
         post.setAuthorId(userId);
@@ -51,7 +52,9 @@ public class JavaContentService implements ContentService {
 
     @Override
     public void createStory(String userId, ContentDTO contentDTO) throws ContentCreationException {
-        if (contentDTO.getContent().isEmpty() && contentDTO.getImagePath().isEmpty()) {
+        String content = contentDTO.getContent();
+        String imagePath = contentDTO.getImagePath();
+        if ((content == null || content.isEmpty()) && (imagePath == null || imagePath.isEmpty()) ) {
             throw new ContentCreationException("Content is empty");
         }
 
@@ -84,6 +87,8 @@ public class JavaContentService implements ContentService {
         for (String storyId : allStoriesIds) {
             Story story = JsonStoryRepository.getInstance().findById(storyId).orElseThrow();
             if (story.getExpiryDate().before(currentDate)) {
+                JsonUserRepository.getInstance().findById(story.getAuthorId()).orElseThrow().getStories().remove(story.getContentId());
+                JsonUserRepository.getInstance().save(JsonUserRepository.getInstance().findById(story.getAuthorId()).orElseThrow());
                 JsonStoryRepository.getInstance().delete(story.getContentId());
             }
         }
@@ -100,14 +105,17 @@ public class JavaContentService implements ContentService {
         List<String> postIds = user.getPosts();
 
         // Create a list to store the ContentDTOs and sort them
-        List<ContentDTO> contentDTOs = getContentDTOS(postIds);
+        List<ContentDTO> contentDTOs = new ArrayList<>();
+        for(String postId : postIds) {
+            contentDTOs.add(new ContentDTO(JsonPostRepository.getInstance().findById(postId).orElseThrow()));
+        }
         contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
         return contentDTOs;
     }
 
     @Override
     public List<ContentDTO> getFriendsPosts(String userId) {
-        List<User> friends = getFriends(userId);
+        List<User> friends = JsonUserRepository.getInstance().findAllFriends(userId);
 
         // Create a list to store all post IDs from friends
         List<String> allPostIds = new ArrayList<>();
@@ -119,7 +127,10 @@ public class JavaContentService implements ContentService {
         }
 
         // Create a list to store the ContentDTOs and sort them
-        List<ContentDTO> contentDTOs = getContentDTOS(allPostIds);
+        List<ContentDTO> contentDTOs = new ArrayList<>();
+        for(String postId : allPostIds) {
+            contentDTOs.add(new ContentDTO(JsonPostRepository.getInstance().findById(postId).orElseThrow()));
+        }
         contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
         return contentDTOs;
     }
@@ -134,7 +145,10 @@ public class JavaContentService implements ContentService {
         List<String> storyIds = user.getStories();
 
         // Create a list to store the ContentDTOs and sort them
-        List<ContentDTO> contentDTOs = getContentDTOS(storyIds);
+        List<ContentDTO> contentDTOs = new ArrayList<>();
+        for(String storyId : storyIds) {
+            contentDTOs.add(new ContentDTO(JsonStoryRepository.getInstance().findById(storyId).orElseThrow()));
+        }
         contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
         return contentDTOs;
     }
@@ -142,7 +156,7 @@ public class JavaContentService implements ContentService {
     @Override
     public List<ContentDTO> getFriendsStories(String userId) {
         deleteExpiredStories();
-        List<User> friends = getFriends(userId);
+        List<User> friends = JsonUserRepository.getInstance().findAllFriends(userId);
 
         // Create a list to store all story IDs from friends
         List<String> allStoryIds = new ArrayList<>();
@@ -154,38 +168,12 @@ public class JavaContentService implements ContentService {
         }
 
         // Create a list to store the ContentDTOs and sort them
-        List<ContentDTO> contentDTOs = getContentDTOS(allStoryIds);
+        List<ContentDTO> contentDTOs = new ArrayList<>();
+        for(String storyId : allStoryIds) {
+            contentDTOs.add(new ContentDTO(JsonStoryRepository.getInstance().findById(storyId).orElseThrow()));
+        }
         contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
         return contentDTOs;
-    }
-
-
-    private List<User> getFriends(String userId) {
-        // Get the user's friends
-        User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
-        List<User> friends = new ArrayList<>();
-
-        // Retrieve friends using a for loop
-        if(user.getFriends() != null)
-            for (String friendId : user.getFriends()) {
-                User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
-                // Don't get content from blocked users in the content service
-                if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
-                    friends.add(friend);
-            }
-
-        return friends;
-    }
-
-    private List<ContentDTO> getContentDTOS(List<String> ContentIds) {
-        List<ContentDTO> contentDTOList = new ArrayList<>();// Retrieve posts by their IDs and convert to ContentDTO
-        for (String postId : ContentIds) {
-            Content post = JsonPostRepository.getInstance().findById(postId).orElseThrow();
-            ContentDTO contentDTO = new ContentDTO(post.getAuthorId(), post.getContent(), post.getImagePath(), post.getTimestamp());
-            contentDTOList.add(contentDTO);
-        }
-
-        return contentDTOList;
     }
 
 }

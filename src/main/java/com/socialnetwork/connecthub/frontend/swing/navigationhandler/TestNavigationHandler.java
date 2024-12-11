@@ -4,6 +4,8 @@ import com.socialnetwork.connecthub.frontend.swing.view.*;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
+import javax.swing.*;
+
 public class TestNavigationHandler implements NavigationHandler {
 
     @Override
@@ -20,14 +22,14 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
-    public ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO) {
+    public ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, boolean isPost) {
         System.out.println("new ContentCreationAreaView()");
         return null;
 
     }
 
     @Override
-    public ManageFriendsView goToManageFriendsView(UserDTO userDTO) {
+    public ManageFriendsView goToManageFriendsView(UserDTO userDTO, JFrame parentFrame) {
         System.out.println("new ManageFriendsView()");
         return null;
 
@@ -48,7 +50,7 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
-    public ProfileView goToProfileView(UserDTO userDTO) {
+    public ProfileView goToProfileView(UserDTO anotherUserDTO, UserDTO userDTO) {
         System.out.println("new ProfileView()");
         return null;
 

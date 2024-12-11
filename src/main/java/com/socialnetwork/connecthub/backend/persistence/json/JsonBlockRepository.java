@@ -2,6 +2,7 @@ package com.socialnetwork.connecthub.backend.persistence.json;
 
 import com.socialnetwork.connecthub.backend.model.Block;
 import com.socialnetwork.connecthub.backend.persistence.repository.BlockRepository;
+import com.socialnetwork.connecthub.backend.service.java.JavaFriendService;
 import com.socialnetwork.connecthub.util.JsonFileUtil;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class JsonBlockRepository implements BlockRepository {
 
     private JsonBlockRepository() {
         // Load the block records from the JSON file
-        blocks = jsonFileUtil.loadFromFile(FILE_PATH);
+        blocks = new ArrayList<>(jsonFileUtil.loadFromFile(FILE_PATH));
     }
 
     public static synchronized JsonBlockRepository getInstance() {

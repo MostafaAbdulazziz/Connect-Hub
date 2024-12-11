@@ -42,13 +42,8 @@ public class JsonUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        for (User user : users) {
-            if (user.getUsername().equals(username)) {
-                return Optional.of(user);
-            }
-        }
-        return Optional.empty();
+    public List<User> findAll() {
+        return users;
     }
 
     @Override

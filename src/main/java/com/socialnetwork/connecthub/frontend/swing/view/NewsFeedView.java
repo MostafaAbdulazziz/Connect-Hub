@@ -1,6 +1,7 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
+import com.socialnetwork.connecthub.backend.service.java.JavaUserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
@@ -10,6 +11,8 @@ import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class NewsFeedView extends View {
@@ -23,6 +26,17 @@ public class NewsFeedView extends View {
     private String navigationHandlerType = "final";
 
     public NewsFeedView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default behavior
+
+        // Add a custom window listener
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                JavaUserAccountService.getInstance().logout(user.getUserId());
+                dispose();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
+            }
+        });
         this.user = user;
         this.socialNetworkAPI = socialNetworkAPI;
         setLayout(null);
@@ -44,7 +58,7 @@ public class NewsFeedView extends View {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(new ImageIcon("src/com/socialnetwork/connecthub/resources/pics/BG1.jpg").getImage(), 0, 0, null)
+                g.drawImage(new ImageIcon("src/main/java/com/socialnetwork/connecthub/resources/pics/BG1.jpg").getImage(), 0, 0, null)
                 ;
             }
         };
@@ -64,11 +78,7 @@ public class NewsFeedView extends View {
             }
         });
         panel.add(myPanel);
-        if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
-            myPhotoLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 100, 100);
-        } else {
-            myPhotoLabel = new RoundedImageLabel(user.getProfilePhotoPath(), 100, 100);
-        }
+        myPhotoLabel = new RoundedImageLabel(user.getProfilePhotoPath(), 100, 100);
         myPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 6));
         myPhotoLabel.setBounds(8, 8, 100, 100);
         myPhotoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -84,7 +94,7 @@ public class NewsFeedView extends View {
             }
         });
         myPanel.setOpaque(true);
-        javax.swing.JLabel myNameLabel = new javax.swing.JLabel("userName");
+        javax.swing.JLabel myNameLabel = new javax.swing.JLabel(user.getUsername());
         myNameLabel.setFont(new Font("Arial", Font.BOLD, 20));
         myNameLabel.setForeground(GUIConstants.blue);
         myNameLabel.setBounds(140, 28, 200, 50);
@@ -139,16 +149,6 @@ public class NewsFeedView extends View {
         repaint();
     }
 
-
-
-
-
-
-
-
-
-
-
     private void addTimeline() {
         // Panel to hold dynamic content labels
         JPanel contentPanel = new JPanel();
@@ -164,7 +164,13 @@ public class NewsFeedView extends View {
         }
 
         // Adjust content panel's preferred size dynamically
-        int panelHeight = Math.max(1500, contentList.size() * 1210); // 1210px per content including spacing
+        int panelHeight = 0; //Math.min(1500, contentList.size() * 800); // 1210 px per content including spacing
+        for(ContentDTO content : contentList) {
+            if(content.getImagePath() == null || content.getImagePath().isEmpty())
+                panelHeight += 300;
+            else
+                panelHeight += 800;
+        }
         contentPanel.setPreferredSize(new Dimension(800, panelHeight));
 
         // Create the scroll pane and set its bounds
@@ -185,52 +191,33 @@ public class NewsFeedView extends View {
         // Create the content panel with a null layout for custom positioning
         JPanel contentPanel = new JPanel(null);
         contentPanel.setBackground(Color.WHITE);
+        UserDTO author = socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId());
 
         // Add rounded image for the author
-        if (content.getImagePath() == null || content.getImagePath().isEmpty()) {
-            RoundedImageLabel authorImageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
-            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
-            contentPanel.add(authorImageLabel);
-            authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    // Open the author's profile
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()));
-                    dispose();
-                }
-            });
-        }
-        else {
-            RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
-            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
-            contentPanel.add(authorImageLabel);
-            authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    // Open the author's profile
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()));
-                    dispose();
-                }
-            });
-        }
-
-
-        // Add author name text
-        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()).getUsername());
-        authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        authorNameLabel.setForeground(Color.BLACK);
-        for(UserDTO user1 : socialNetworkAPI.getNewsFeedService().getOnlineFriends(user.getUserId())){
-            if(user1.getUserId().equals(content.getAuthorId())){
-                authorNameLabel.setForeground(Color.GREEN);
-                break;
-            }
-        }
-        authorNameLabel.setBounds(70, 20, 200, 30); // Adjusted position
-        authorNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+        RoundedImageLabel authorImageLabel = new RoundedImageLabel(author.getProfilePhotoPath(), 50, 50);
+        authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+        contentPanel.add(authorImageLabel);
+        authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the author's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()));
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(author, user);
                 dispose();
             }
         });
+
+
+        // Add author name text
+        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(author.getUsername());
+        authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        authorNameLabel.setForeground(author.isOnlineStatus()? Color.GREEN : Color.BLACK);
+        authorNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(author, user);
+                dispose();
+            }
+        });
+
+        authorNameLabel.setBounds(70, 20, 200, 30); // Adjusted position
+
         contentPanel.add(authorNameLabel);
 
         // Add timestamp text
@@ -241,13 +228,16 @@ public class NewsFeedView extends View {
         contentPanel.add(timestampLabel);
 
         // Add content text
-        javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent() + "</html>");
+        javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");
         contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         contentTextLabel.setForeground(Color.BLACK);
-        contentTextLabel.setBounds(50, 80, 750, content.getContent().length() / 5); // Adjusted position and size
-//        contentTextLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+
+        // Calculate dynamic height based on text length
+        int textHeight = (content.getContent().split("\n").length + 1) * 20; // Approx 20px per line
+        contentTextLabel.setBounds(50, 80, 750, textHeight);
         contentPanel.add(contentTextLabel);
 
+        // Add content image if image path is valid
         JPanel contentImagePanel = null;
         if (content.getImagePath() != null && !content.getImagePath().isEmpty()) {
             contentImagePanel = new JPanel() {
@@ -261,43 +251,31 @@ public class NewsFeedView extends View {
                 }
             };
 
-            contentImagePanel.setBounds(70, contentTextLabel.getHeight() + 100, 700, 400); // Position the image panel
+            // Position the image panel below the text
+            contentImagePanel.setBounds(70, textHeight + 100, 700, 400);
             contentPanel.add(contentImagePanel);
         }
 
-        // Add spacing at the bottom to maintain consistent height
-
-
         // Add a border for better visuals
         contentPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 5));
-//        contentPanel.setPreferredSize(new Dimension(800, contentPanel.getY()+400)); // Set fixed size
-        if( contentImagePanel != null){
-        contentPanel.setMaximumSize(new Dimension(1900, contentImagePanel.getY() + 450));
+
+        // Set the size of contentPanel dynamically
+        if (contentImagePanel != null) {
+            contentPanel.setSize(1900, contentImagePanel.getY() + 450);
+            contentPanel.setMaximumSize(new Dimension(1900, contentImagePanel.getY() + 450));
+        } else {
+            contentPanel.setSize(1900, textHeight + 150);
+            contentPanel.setMaximumSize(new Dimension(1900, textHeight + 150));
         }
-        else
-          {
-            contentPanel.setMaximumSize(new Dimension(1900, 450));
-         }
+
+        // Repaint and revalidate to reflect changes
+        contentPanel.repaint();
+        contentPanel.revalidate();
 
         return contentPanel;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private JPanel createFriendLabel(UserDTO user) {
+    private JPanel createFriendLabel(UserDTO friend) {
         // Create the friend panel with a null layout for custom positioning
         JPanel friendPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         RoundedImageLabel imageLabel;
@@ -306,19 +284,13 @@ public class NewsFeedView extends View {
         friendPanel.setBackground(Color.WHITE);
 
         // Add rounded image for the friend
-        if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
-            imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
-            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-            friendPanel.add(imageLabel);
-        } else {
-            imageLabel = new RoundedImageLabel("src/test/Screenshot 2024-12-03 011157.png", 50, 50);
-            imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-            friendPanel.add(imageLabel);
-        }
+        imageLabel = new RoundedImageLabel(friend.getProfilePhotoPath(), 50, 50);
+        imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
+        friendPanel.add(imageLabel);
 
 
         // Add username text
-        javax.swing.JLabel textLabel = new javax.swing.JLabel(user.getUsername());
+        javax.swing.JLabel textLabel = new javax.swing.JLabel(friend.getUsername());
         textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         textLabel.setFont(new Font("Arial", Font.BOLD, 13));
         textLabel.setForeground(Color.GRAY); // Ensure visible text color
@@ -332,21 +304,21 @@ public class NewsFeedView extends View {
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
                 dispose();
             }
         });
         imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
                 dispose();
             }
         });
         friendPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
                 dispose();
             }
         });
@@ -403,16 +375,14 @@ public class NewsFeedView extends View {
         storyPanel.setBackground(new Color(215, 215, 215)); // Set background color
 
         // Add the rounded image label for the story
-        String imagePath = (story.getImagePath() == null || story.getImagePath().isEmpty()) ?
-                "src/com/socialnetwork/connecthub/resources/pics/friends.png" :
-                story.getImagePath();
+        String imagePath = story.getImagePath();
 
         RoundedImageLabel storyImageLabel = new RoundedImageLabel(imagePath, 75, 75);
         storyImageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Hand cursor for interactivity
         storyPanel.add(storyImageLabel);
 
         // Add the username label below the image
-        javax.swing.JLabel usernameLabel = new javax.swing.JLabel("9999"); // Assuming story has the user's name
+        javax.swing.JLabel usernameLabel = new javax.swing.JLabel(socialNetworkAPI.getUserAccountService().getUserById(story.getAuthorId()).getUsername());
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         usernameLabel.setForeground(Color.black); // Light color for the name
         usernameLabel.setHorizontalAlignment(SwingConstants.CENTER); // Center-align the name
@@ -423,7 +393,7 @@ public class NewsFeedView extends View {
         storyImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile on click
-                new StoryView(story);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToStoryView(story);
             }
         });
 
@@ -477,17 +447,14 @@ public class NewsFeedView extends View {
     repaint();
 }
 
-
-
-    private void addButtons()
-    {
+    private void addButtons() {
         com.socialnetwork.connecthub.frontend.swing.components.JButton createButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Post", 5, 12);
         createButton.setBounds(310, 120, 150, 30); // Adjust to fit within the panel
         createButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the create post view
-                new ContentCreationAreaView(socialNetworkAPI, user);
-                dispose();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, true);
+//                dispose();
             }
         });
         panel.add(createButton);
@@ -497,7 +464,7 @@ public class NewsFeedView extends View {
         refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Refresh the news feed
-                new NewsFeedView(socialNetworkAPI, user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
                 dispose();
             }
         });
@@ -508,7 +475,8 @@ public class NewsFeedView extends View {
         logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Logout the user
-                new LoginView(socialNetworkAPI);
+                socialNetworkAPI.getUserAccountService().logout(user.getUserId());
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
                 dispose();
             }
         });
@@ -521,7 +489,7 @@ public class NewsFeedView extends View {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the create story view
 
-                new StoryCreationAreaView(socialNetworkAPI, user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, false);
 
             }
         });
@@ -529,92 +497,80 @@ public class NewsFeedView extends View {
 
     }
 
+    private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
+        // Create the suggestion panel with a null layout for custom positioning
+        JPanel suggestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        RoundedImageLabel imageLabel;
+        suggestionPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
+        suggestionPanel.setMaximumSize(new Dimension(300, 60));
+        suggestionPanel.setBackground(Color.WHITE);
 
-
-
-private JPanel createFriendSuggestionLabel(UserDTO suggestion) {
-    // Create the suggestion panel with a null layout for custom positioning
-    JPanel suggestionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-    RoundedImageLabel imageLabel;
-    suggestionPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
-    suggestionPanel.setMaximumSize(new Dimension(300, 60));
-    suggestionPanel.setBackground(Color.WHITE);
-
-    // Add rounded image for the suggestion
-    if (suggestion.getProfilePhotoPath() == null || suggestion.getProfilePhotoPath().isEmpty()) {
-        imageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
-        imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
-        suggestionPanel.add(imageLabel);
-    } else {
+        // Add rounded image for the suggestion
         imageLabel = new RoundedImageLabel(suggestion.getProfilePhotoPath(), 50, 50);
         imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
         suggestionPanel.add(imageLabel);
-    }
 
-    // Add username text
-    javax.swing.JLabel textLabel = new javax.swing.JLabel(suggestion.getUsername());
-    textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-    textLabel.setFont(new Font("Arial", Font.BOLD, 13));
-    textLabel.setForeground(Color.GRAY); // Ensure visible text color
-    textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
-    textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-    suggestionPanel.add(textLabel);
+        // Add username text
+        javax.swing.JLabel textLabel = new javax.swing.JLabel(suggestion.getUsername());
+        textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        textLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        textLabel.setForeground(Color.GRAY); // Ensure visible text color
+        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
+        textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        suggestionPanel.add(textLabel);
 
-    // Add "Friend Request" button
-    com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Send Friend Request ", 5, 12);
-    friendRequestButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
-    friendRequestButton.setBackground(Color.BLUE);
-    friendRequestButton.setForeground(Color.WHITE);
+        // Add "Friend Request" button
+        com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Send Friend Request ", 5, 12);
+        friendRequestButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
+        friendRequestButton.setBackground(Color.BLUE);
+        friendRequestButton.setForeground(Color.WHITE);
 
-    friendRequestButton.addMouseListener(new java.awt.event.MouseAdapter() {
-        private boolean requestSent = false;
+        friendRequestButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            private boolean requestSent = false;
 
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            if (requestSent) {
-                // Cancel friend request
-                socialNetworkAPI.getFriendService().declineFriendRequest(user.getUserId(), suggestion.getUserId());
-                friendRequestButton.setText(" Sent Friend Request ");
-                friendRequestButton.setBackground(Color.BLUE);
-                requestSent = false;
-                System.out.println("Friend request canceled for " + suggestion.getUsername());
-            } else {
-                // Send friend request
-                socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), suggestion.getUserId());
-                friendRequestButton.setText(" Cancel ");
-                requestSent = true;
-                System.out.println("Friend request sent to " + suggestion.getUsername());
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (requestSent) {
+                    // Cancel friend request
+                    socialNetworkAPI.getFriendService().declineFriendRequest(user.getUserId(), suggestion.getUserId());
+                    friendRequestButton.setText(" Sent Friend Request ");
+                    requestSent = false;
+                } else {
+                    // Send friend request
+                    socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), suggestion.getUserId());
+                    friendRequestButton.setText(" Cancel request ");
+                    requestSent = true;
+                }
             }
-        }
-    });
+        });
 
-    suggestionPanel.add(friendRequestButton);
+        suggestionPanel.add(friendRequestButton);
 
-    // Add a border for better visuals
-    suggestionPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-    textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            // Open the suggestion's profile
-            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion);
-            dispose();
-        }
-    });
-    imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            // Open the suggestion's profile
-            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion);
-            dispose();
-        }
-    });
-    suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            // Open the suggestion's profile
-            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion);
-            dispose();
-        }
-    });
+        // Add a border for better visuals
+        suggestionPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+        textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the suggestion's profile
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion, user);
+                dispose();
+            }
+        });
+        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the suggestion's profile
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion, user);
+                dispose();
+            }
+        });
+        suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open the suggestion's profile
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(suggestion, user);
+                dispose();
+            }
+        });
 
-    return suggestionPanel;
-}
+        return suggestionPanel;
+    }
 
 
 

@@ -1,8 +1,15 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
+import com.socialnetwork.connecthub.backend.model.Block;
+import com.socialnetwork.connecthub.backend.model.FriendRequest;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonBlockRepository;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonFriendRequestRepository;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
+import com.socialnetwork.connecthub.backend.service.java.JavaFriendService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
@@ -16,22 +23,23 @@ public class ProfileView extends View {
     RoundedImageLabel profilePhoto;
     JLabel nameLabel;
     JLabel bioLabel;
-    UserDTO user;
+    UserDTO friend;
     SocialNetworkAPI socialNetworkAPI;
+    private String navigationHandlerType = "final";
 
-    public ProfileView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
-        this.user = user;
+    public ProfileView(SocialNetworkAPI socialNetworkAPI, UserDTO friend, UserDTO user) {
+        this.friend = friend;
         this.socialNetworkAPI = socialNetworkAPI;
         profilePanel = new JPanel(null);
         profilePanel.setBackground(new Color(215, 215, 215));
         profilePanel.setLayout(null); // Use null layout for precise positioning
         profilePanel.setBounds(0, 0, getWidth(), getHeight());
 
-        if (user.getCoverPhotoPath() == null || user.getCoverPhotoPath().isEmpty()) {
-            user.setCoverPhotoPath("src/test/Screenshot 2024-12-03 011157.png");
+        if (friend.getCoverPhotoPath() == null || friend.getCoverPhotoPath().isEmpty()) {
+            friend.setCoverPhotoPath("src/test/Screenshot 2024-12-03 011157.png");
         }
-        if (user.getProfilePhotoPath() == null || user.getProfilePhotoPath().isEmpty()) {
-            user.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
+        if (friend.getProfilePhotoPath() == null || friend.getProfilePhotoPath().isEmpty()) {
+            friend.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
         }
 
         // Set up background panel for the cover photo
@@ -39,60 +47,124 @@ public class ProfileView extends View {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(new ImageIcon(user.getCoverPhotoPath()).getImage(), 0, 0, getWidth(), getHeight(), null);
+                g.drawImage(new ImageIcon(friend.getCoverPhotoPath()).getImage(), 0, 0, getWidth(), getHeight(), null);
             }
         };
         backgroundPanel.setBounds(0, 0, getWidth(), 200); // Fixed height for cover photo
         profilePanel.add(backgroundPanel); // Add background panel first
 
-        // Set up left panel for profile photo, username, and bio
+        // Set up left panel for profile photo, friendname, and bio
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(null);  // Using null layout for positioning
         leftPanel.setBackground(Color.WHITE);  // White background for the left side
         leftPanel.setBounds(0, 200, 300, getHeight());  // Fixed width of 300px and height as full frame
 
         // Set up profile photo on left panel
-        profilePhoto = new RoundedImageLabel(user.getProfilePhotoPath(), 120, 120);
+        profilePhoto = new RoundedImageLabel(friend.getProfilePhotoPath(), 120, 120);
         profilePhoto.setBounds(90, 10, 120, 120); // Positioned within the left panel
         leftPanel.add(profilePhoto); // Add profile photo to left panel
 
-        // Set up user name label under the profile photo
-        nameLabel = new JLabel(user.getUsername(), 24, Color.BLACK, Font.BOLD);
+        // Set up friendname label under the profile photo
+        nameLabel = new JLabel(friend.getUsername(), 24, Color.BLACK, Font.BOLD);
         nameLabel.setBounds(90, 140, 200, 20);  // Positioned below profile photo
         leftPanel.add(nameLabel);
 
-        // Set up bio label under the username
-        bioLabel = new JLabel(user.getBio(), 18, Color.BLACK, Font.ITALIC);
-        bioLabel.setBounds(50, 175, 200, 20);  // Positioned below username
+        // Set up bio label under the friendname
+        bioLabel = new JLabel(friend.getBio(), 18, Color.BLACK, Font.ITALIC);
+        bioLabel.setBounds(50, 175, 200, 20);  // Positioned below friendname
         leftPanel.add(bioLabel);
 
         // Add buttons
-        com.socialnetwork.connecthub.frontend.swing.components.JButton editProfileButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Edit Profile", 16, 12);
-        com.socialnetwork.connecthub.frontend.swing.components.JButton friendManagerButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Friend Manager", 16, 12);
-        com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
+        String friendButtonString = "";
+        boolean requestSent = false;
+        List<UserDTO> friends = socialNetworkAPI.getFriendService().getFriends(user.getUserId());
+        boolean isFriends = false;
+        for (UserDTO userDTO : friends) {
+            if (userDTO.getUserId().equals(friend.getUserId())) {
+                isFriends = true;
+                break;
+            }
+        }
+        if (!isFriends) {
+                List<FriendRequest> requests = JsonFriendRequestRepository.getInstance().findRequestsBySender(user.getUserId());
+                for (FriendRequest friendRequest : requests) {
+                    if (friendRequest.getReceiverId().equals(friend.getUserId())) {
+                        friendButtonString = " Cancel request ";
+                        requestSent = true;
+                        break;
+                    }
+                }
+
+                if (!requestSent) {
+                    friendButtonString = " Send friend request ";
+                }
+        }
 
 
+         com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 16, 12);
+         com.socialnetwork.connecthub.frontend.swing.components.JButton blockButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Block", 16, 12);
+         com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
+
+
+        friendRequestButton.setBounds(75, 300, 150, 50);
+        blockButton.setBounds(75, 370, 150, 50);
         homeButton.setBounds(75, 440, 150, 50);
 
+        List<FriendRequest> requests = socialNetworkAPI.getFriendService().getFriendRequests(user.getUserId());
+        for (FriendRequest friendRequest : requests) {
+            if (friendRequest.getSenderId().equals(friend.getUserId())) {
+                isFriends = true;
+                break;
+            }
+        }
+        if (!isFriends) {
+            leftPanel.add(friendRequestButton);
+        }
         leftPanel.add(homeButton);
-        editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        //open edit profile view
-            }
-        });
+        leftPanel.add(blockButton);
 
-        friendManagerButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open friend manager view
-
-            }
+        final boolean[] finalRequestSent = {requestSent};
+        friendRequestButton.addActionListener(e -> {
+                if (finalRequestSent[0]) {
+                    // Cancel friend request
+                    Thread declineRequestThread = new Thread(() -> {
+                        socialNetworkAPI.getFriendService().declineFriendRequest(user.getUserId(), friend.getUserId());
+                    });
+                    declineRequestThread.start();
+                    friendRequestButton.setText(" Send Friend Request ");
+                    JOptionPane.showMessageDialog(this, "Friend request cancelled!.");
+                    finalRequestSent[0] = false;
+                } else {
+                    // Send friend request
+                    Thread sendRequestThread = new Thread(() -> {
+                        socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), friend.getUserId());
+                    });
+                    sendRequestThread.start();
+                    friendRequestButton.setText(" Cancel request ");
+                    finalRequestSent[0] = true;
+                    JOptionPane.showMessageDialog(this, "Friend request sent!");
+                }
         });
 
         homeButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
+
                 // Open news feed view
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
+                dispose();
 
             }
+        });
+
+        blockButton.addActionListener(e -> {
+
+            Block block = new Block();
+            block.setBlockingUserId(user.getUserId());
+            block.setBlockedUserId(friend.getUserId());
+            socialNetworkAPI.getFriendService().blockUser(user.getUserId(), friend.getUserId());
+            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
+            JOptionPane.showMessageDialog(this, "User has been Blocked.");
+            dispose();
         });
 
         profilePanel.add(leftPanel); // Add left panel
@@ -103,8 +175,8 @@ public class ProfileView extends View {
         timelinePanel.setLayout(new BoxLayout(timelinePanel, BoxLayout.Y_AXIS));
         timelinePanel.setBackground(new Color(215, 215, 215));
 
-        List<ContentDTO> contentList = socialNetworkAPI.getContentService().getUserPosts(user.getUserId());
-        for (ContentDTO content :  socialNetworkAPI.getContentService().getUserPosts(user.getUserId())) {
+        List<ContentDTO> contentList = socialNetworkAPI.getContentService().getUserPosts(friend.getUserId());
+        for (ContentDTO content :  socialNetworkAPI.getContentService().getUserPosts(friend.getUserId())) {
             JPanel contentLabel = createContentLabel(content);
             timelinePanel.add(contentLabel);
             timelinePanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
@@ -112,7 +184,13 @@ public class ProfileView extends View {
 
         // Adjust preferred size based on content
         // Adjust content panel's preferred size dynamically
-        int panelHeight = Math.max(1500, contentList.size() * 1210); // 1210px per content including spacing
+        int panelHeight = 0; //Math.min(1500, contentList.size() * 800); // 1210 px per content including spacing
+        for(ContentDTO content : contentList) {
+            if(content.getImagePath() == null || content.getImagePath().isEmpty())
+                panelHeight += 300;
+            else
+                panelHeight += 800;
+        }
         timelinePanel.setPreferredSize(new Dimension(800, panelHeight));
 
         // Create the scroll pane and set its bounds
@@ -131,32 +209,19 @@ public class ProfileView extends View {
         setVisible(true);
     }
 
-
-
-
-
     private JPanel createContentLabel(ContentDTO content) {
         // Create the content panel with a null layout for custom positioning
         JPanel contentPanel = new JPanel(null);
         contentPanel.setBackground(Color.WHITE);
 
         // Add rounded image for the author
-        if (content.getImagePath() == null || content.getImagePath().isEmpty()) {
-            RoundedImageLabel authorImageLabel = new RoundedImageLabel("src/com/socialnetwork/connecthub/resources/pics/friends.png", 50, 50);
-            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
-            contentPanel.add(authorImageLabel);
-
-        }
-        else {
-            RoundedImageLabel authorImageLabel = new RoundedImageLabel(content.getImagePath(), 50, 50);
-            authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
-            contentPanel.add(authorImageLabel);
-
-        }
+        RoundedImageLabel authorImageLabel = new RoundedImageLabel(friend.getProfilePhotoPath(), 50, 50);
+        authorImageLabel.setBounds(10, 10, 50, 50); // Position the image
+        contentPanel.add(authorImageLabel);
 
 
         // Add author name text
-        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(socialNetworkAPI.getUserAccountService().getUserById(content.getAuthorId()).getUsername());
+        javax.swing.JLabel authorNameLabel = new javax.swing.JLabel(friend.getUsername());
         authorNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         authorNameLabel.setForeground(Color.BLACK);
 
@@ -172,13 +237,16 @@ public class ProfileView extends View {
         contentPanel.add(timestampLabel);
 
         // Add content text
-        javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent() + "</html>");
+        javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");
         contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         contentTextLabel.setForeground(Color.BLACK);
-        contentTextLabel.setBounds(50, 80, 750, content.getContent().length() / 5); // Adjusted position and size
-//        contentTextLabel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
+
+        // Calculate dynamic height based on text length
+        int textHeight = (content.getContent().split("\n").length + 1) * 20; // Approx 20px per line
+        contentTextLabel.setBounds(50, 80, 750, textHeight);
         contentPanel.add(contentTextLabel);
 
+        // Add content image if image path is valid
         JPanel contentImagePanel = null;
         if (content.getImagePath() != null && !content.getImagePath().isEmpty()) {
             contentImagePanel = new JPanel() {
@@ -192,25 +260,24 @@ public class ProfileView extends View {
                 }
             };
 
-            contentImagePanel.setBounds(70, contentTextLabel.getHeight() + 100, 700, 400); // Position the image panel
+            // Position the image panel below the text
+            contentImagePanel.setBounds(70, textHeight + 100, 700, 400);
             contentPanel.add(contentImagePanel);
         }
 
-        // Add spacing at the bottom to maintain consistent height
-
-
         // Add a border for better visuals
         contentPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 5));
-//        contentPanel.setPreferredSize(new Dimension(800, contentPanel.getY()+400)); // Set fixed size
-        if( contentImagePanel != null){
+
+        // Set the size of contentPanel dynamically
+        if (contentImagePanel != null) {
             contentPanel.setSize(1900, contentImagePanel.getY() + 450);
             contentPanel.setMaximumSize(new Dimension(1900, contentImagePanel.getY() + 450));
+        } else {
+            contentPanel.setSize(1900, textHeight + 150);
+            contentPanel.setMaximumSize(new Dimension(1900, textHeight + 150));
         }
-        else
-        {
-            contentPanel.setSize(1900, 450);
-            contentPanel.setMaximumSize(new Dimension(1900, 450));
-        }
+
+        // Repaint and revalidate to reflect changes
         contentPanel.repaint();
         contentPanel.revalidate();
 

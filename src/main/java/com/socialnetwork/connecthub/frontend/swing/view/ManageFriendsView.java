@@ -16,16 +16,16 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ManageFriendsView extends JFrame {
-    private FriendService friendService;
     private JTabbedPane tabbedPane;
-    private String currentUserId;
-    private UserAccountService userAccountService;
+    private UserDTO userDTO;
     private String navigationHandlerType = "final";
+    SocialNetworkAPI socialNetworkAPI;
+    JFrame myProfile;
 
-    public ManageFriendsView(SocialNetworkAPI socialNetworkAPI, UserDTO userDTO) {
-        this.userAccountService = userAccountService;
-        this.friendService = friendService;
-        this.currentUserId = currentUserId;
+    public ManageFriendsView(SocialNetworkAPI socialNetworkAPI, UserDTO userDTO, JFrame myProfile) {
+        this.socialNetworkAPI = socialNetworkAPI;
+        this.userDTO = userDTO;
+        this.myProfile = myProfile;
         setupUI();
     }
 
@@ -34,6 +34,8 @@ public class ManageFriendsView extends JFrame {
         setTitle("Friend Management");
         setSize(1000, 800);
         setLocationRelativeTo(null);
+        setVisible(true);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // Initialize the tabbedPane
         tabbedPane = new JTabbedPane();
@@ -41,13 +43,13 @@ public class ManageFriendsView extends JFrame {
         // Clear the tabbedPane to prevent duplicate tabs
         tabbedPane.removeAll();
 
-        // Setup the Friend Requests Panel
+        // Set up the Friend Requests Panel
         setupFriendRequestsPanel();
 
-        // Setup the Friends Panel
+        // Set up the Friends Panel
         setupFriendsPanel();
 
-        // Setup the Blocked Users Panel
+        // Set up the Blocked Users Panel
         setupBlockedUsersPanel();
 
         // Add the tabbedPane to the frame's content pane
@@ -60,7 +62,7 @@ public class ManageFriendsView extends JFrame {
         friendRequestsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Friend Requests"));
 
         // Get friend requests list (replace with your actual data)
-        List<FriendRequest> friendRequests = friendService.getFriendRequests(currentUserId);
+        List<FriendRequest> friendRequests = socialNetworkAPI.getFriendService().getFriendRequests(userDTO.getUserId());
 
         // Loop through friend requests and add them as buttons
         for (FriendRequest friendRequest : friendRequests) {
@@ -77,7 +79,7 @@ public class ManageFriendsView extends JFrame {
             JPanel requestPanel = new JPanel(new FlowLayout());
 
             // Profile photo
-            RoundedImageLabel profilePhotoLabel = new RoundedImageLabel(userAccountService.getUserById(friendRequest.getSenderId()).getProfilePhotoPath(), 100, 100);
+            RoundedImageLabel profilePhotoLabel = new RoundedImageLabel(socialNetworkAPI.getUserAccountService().getUserById(friendRequest.getSenderId()).getProfilePhotoPath(), 100, 100);
             profilePhotoLabel.setPreferredSize(new Dimension(100, 100));  // Set the size of the photo
             profilePhotoLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));  // Set cursor to hand when hovering
 
@@ -85,13 +87,20 @@ public class ManageFriendsView extends JFrame {
             profilePhotoLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(userAccountService.getUserById(friendRequest.getSenderId()));
+                    NavigationHandlerFactory
+                            .getNavigationHandler(navigationHandlerType)
+                            .goToProfileView(
+                                    socialNetworkAPI.getUserAccountService().getUserById(friendRequest.getSenderId()),
+                                    userDTO
+                            );
+                    myProfile.dispose();
+                    dispose();
                 }
             });
 
             // Add the profile photo and buttons to the panel
             requestPanel.add(profilePhotoLabel);
-            requestPanel.add(new JLabel(friendRequest.getSenderId()));  // Or friendRequest.getSenderUsername() if you have a username
+            requestPanel.add(new JLabel(socialNetworkAPI.getUserAccountService().getUserById(friendRequest.getSenderId()).getUsername()));
             requestPanel.add(acceptButton);
             requestPanel.add(declineButton);
             friendRequestsPanel.add(requestPanel);
@@ -99,7 +108,7 @@ public class ManageFriendsView extends JFrame {
             // Add action listeners for buttons
             acceptButton.addActionListener(e -> {
                 // Logic to accept the friend request
-                friendService.acceptFriendRequest(currentUserId, friendRequest.getSenderId());
+                socialNetworkAPI.getFriendService().acceptFriendRequest(userDTO.getUserId(), friendRequest.getSenderId());
                 // Remove the panel containing the profile photo after accepting the request
                 friendRequestsPanel.remove(requestPanel);
                 friendRequestsPanel.revalidate();
@@ -109,7 +118,7 @@ public class ManageFriendsView extends JFrame {
 
             declineButton.addActionListener(e -> {
                 // Logic to decline the friend request
-                friendService.declineFriendRequest(currentUserId, friendRequest.getSenderId());
+                socialNetworkAPI.getFriendService().declineFriendRequest(friendRequest.getSenderId(), userDTO.getUserId());
                 // Remove the panel containing the profile photo after declining the request
                 friendRequestsPanel.remove(requestPanel);
                 friendRequestsPanel.revalidate();
@@ -128,7 +137,7 @@ public class ManageFriendsView extends JFrame {
         friendsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Friends"));
 
         // Get friends list (replace with your actual data)
-        List<UserDTO> friends = friendService.getFriends(currentUserId);
+        List<UserDTO> friends = socialNetworkAPI.getFriendService().getFriends(userDTO.getUserId());
 
         // Loop through the list of friends and add buttons
         for (UserDTO friend : friends) {
@@ -143,7 +152,7 @@ public class ManageFriendsView extends JFrame {
             // Add action listener for removing friends
             removeButton.addActionListener(e -> {
                 // Logic to remove the friend
-                friendService.removeFriend(currentUserId, friend.getUserId());
+                socialNetworkAPI.getFriendService().removeFriend(userDTO.getUserId(), friend.getUserId());
                 // Remove the panel containing the profile photo after removing the friend
                 friendsPanel.remove(friendPanel);
                 friendsPanel.revalidate();
@@ -160,7 +169,9 @@ public class ManageFriendsView extends JFrame {
             profilePhotoLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend);
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, userDTO);
+                    myProfile.dispose();
+                    dispose();
                 }
             });
 
@@ -181,7 +192,7 @@ public class ManageFriendsView extends JFrame {
         blockedUsersPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.GRAY), "Blocked Users"));
 
 
-        List<UserDTO> blockedUsers = friendService.getBlockedUsers(currentUserId);
+        List<UserDTO> blockedUsers = socialNetworkAPI.getFriendService().getBlockedUsers(userDTO.getUserId());
         for (UserDTO blockedUser : blockedUsers) {
             JButton unblockButton = new JButton("Unblock", 12, 12);
 
@@ -193,7 +204,7 @@ public class ManageFriendsView extends JFrame {
             // Add action listener for unblocking users
             unblockButton.addActionListener(e -> {
                 // Logic to unblock the user
-                friendService.unblockUser(currentUserId, blockedUser.getUserId());
+                socialNetworkAPI.getFriendService().unblockUser(userDTO.getUserId(), blockedUser.getUserId());
                 // Remove the panel containing the profile photo after unblocking the user
                 blockedUsersPanel.remove(blockedUserPanel);
                 blockedUsersPanel.revalidate();

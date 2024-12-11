@@ -46,7 +46,7 @@ public class JavaProfileService implements ProfileService {
     @Override
     public void updatePassword(String userId, String newPassword) {
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
-        user.setHashedPassword(newPassword); // In a real application, hash the password before saving
+        user.setHashedPassword(JavaUserAccountService.getInstance().hashPassword(newPassword));
         JsonUserRepository.getInstance().save(user);
     }
 
@@ -56,16 +56,7 @@ public class JavaProfileService implements ProfileService {
         List<UserDTO> friends = new ArrayList<>();
 
         for (String friendId : user.getFriends()) {
-            JsonUserRepository.getInstance().findById(friendId).ifPresent(friend ->
-                    friends.add(new UserDTO(
-                            friend.getUserId(),
-                            friend.getUsername(),
-                            friend.getProfilePhotoPath(),
-                            friend.getCoverPhotoPath(),
-                            friend.getBio(),
-                            friend.isOnlineStatus()
-                    ))
-            );
+            friends.add(new UserDTO(JsonUserRepository.getInstance().findById(friendId).orElseThrow()));
         }
 
         return friends;

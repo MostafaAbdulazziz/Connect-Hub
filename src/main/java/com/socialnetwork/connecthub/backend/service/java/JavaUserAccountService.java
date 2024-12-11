@@ -74,8 +74,8 @@ public class JavaUserAccountService implements UserAccountService {
         newUser.setPosts(new ArrayList<>());
         newUser.setStories(new ArrayList<>());
 
-        newUser.setProfilePhotoPath("src/main/java/com/socialnetwork/connecthub/resources/pics/friends.png");
-        newUser.setProfilePhotoPath("src/main/java/com/socialnetwork/connecthub/resources/pics/friends.png");
+        newUser.setProfilePhotoPath("src/main/java/com/socialnetwork/connecthub/resources/pics/default-profile.jpg");
+        newUser.setBio("");
 
         JsonUserRepository.getInstance().save(newUser);
     }
@@ -110,19 +110,14 @@ public class JavaUserAccountService implements UserAccountService {
         // Update user status to online
         updateUserStatus(user.getUserId(), true);
 
-        return new UserDTO(
-                user.getUserId(),
-                user.getUsername(),
-                user.getProfilePhotoPath(),
-                user.getCoverPhotoPath(),
-                user.getBio(),
-                true); // Update user status to online
+        return new UserDTO(user).setOnlineStatus(true); // Update user status to online using builder
     }
 
     @Override
     public void logout(String userId) {
         // Update user status to offline
         updateUserStatus(userId, false);
+        JsonUserRepository.getInstance().save(JsonUserRepository.getInstance().findById(userId).orElseThrow());
     }
 
     @Override
@@ -141,12 +136,6 @@ public class JavaUserAccountService implements UserAccountService {
     @Override
     public UserDTO getUserById(String userId) {
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
-        return new UserDTO(
-                user.getUserId(),
-                user.getUsername(),
-                user.getProfilePhotoPath(),
-                user.getCoverPhotoPath(),
-                user.getBio(),
-                user.isOnlineStatus());
+        return new UserDTO(user);
     }
 }

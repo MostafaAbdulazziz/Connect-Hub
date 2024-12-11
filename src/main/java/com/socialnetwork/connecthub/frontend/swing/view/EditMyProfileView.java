@@ -3,6 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.backend.interfaces.services.ProfileService;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 
@@ -19,8 +20,8 @@ public class EditMyProfileView extends JFrame {
     private JButton updateProfileButton, updateCoverPhotoButton, updateProfilePhotoButton;
     private RoundedImageLabel profilePhotoLabel;
     private JLabel coverPhotoLabel;
-    private UserDTO userDTO;
     private boolean profilePhotoChanged = false, coverPhotoChanged = false;
+    private String navigationHandlerType = "final";
 
     // Fixed image sizes for profile and cover photos
     private static final int PROFILE_PHOTO_WIDTH = 100;
@@ -28,18 +29,17 @@ public class EditMyProfileView extends JFrame {
     private static final int COVER_PHOTO_WIDTH = 400;
     private static final int COVER_PHOTO_HEIGHT = 150;
     private String newCoverPhotoPath;
-    String newProfilePhotoPath;
-
-    private SocialNetworkAPI socialNetworkAPI; // Injected ProfileService
+    private String newProfilePhotoPath;
 
     // Constructor accepting UserDTO instead of individual parameters
     public EditMyProfileView(SocialNetworkAPI socialNetworkAPI, UserDTO userDTO) {
-        this.userDTO = userDTO;
-        this.socialNetworkAPI = socialNetworkAPI;
 
         setTitle("Edit Profile");
         setSize(600, 700); // Increased window size for better fit
         setLayout(new BorderLayout(10, 10));
+        setVisible(true);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // Top Panel for Profile and Cover Photos
         JPanel topPanel = new JPanel(new BorderLayout(10, 10));
@@ -119,28 +119,40 @@ public class EditMyProfileView extends JFrame {
                 String newBio = bioTextArea.getText();
                 String newPassword = new String(newPasswordField.getPassword());
 
+                boolean profileUpdated = false;
+
                 // Call service to update profile (Integrate it with your backend)
-                if (profilePhotoChanged)
+                if (profilePhotoChanged) {
                     // Update profile photo using ProfileService
                     socialNetworkAPI.getProfileService().updateProfilePhoto(userDTO.getUserId(), newProfilePhotoPath);
+                    profileUpdated = true;
+                }
 
 
-                if (coverPhotoChanged)
+                if (coverPhotoChanged) {
                     // Update cover photo using ProfileService
                     socialNetworkAPI.getProfileService().updateCoverPhoto(userDTO.getUserId(), newCoverPhotoPath);
+                    profileUpdated = true;
+                }
 
-
-                if (!newBio.equals(userDTO.getBio()))
+                if (!newBio.equals(userDTO.getBio())) {
                     // Update bio using ProfileService
                     socialNetworkAPI.getProfileService().updateBio(userDTO.getUserId(), newBio);
+                    profileUpdated = true;
+                }
 
-
-                if (!newPassword.isEmpty())
+                if (!newPassword.isEmpty()) {
                     // Update password using ProfileService
                     socialNetworkAPI.getProfileService().updatePassword(userDTO.getUserId(), newPassword);
+                    profileUpdated = true;
+                }
 
                 // After update, show a message
-                new Alert("Profile updated successfully!", EditMyProfileView.this);
+                if(profileUpdated) {
+                    new Alert("Profile updated successfully!", EditMyProfileView.this);
+                    dispose();
+//                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(userDTO);
+                }
             }
         });
     }
