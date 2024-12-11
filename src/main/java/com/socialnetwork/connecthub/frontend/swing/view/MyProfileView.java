@@ -65,13 +65,16 @@ public class MyProfileView extends View {
         com.socialnetwork.connecthub.frontend.swing.components.JButton editProfileButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Edit Profile", 16, 12);
         com.socialnetwork.connecthub.frontend.swing.components.JButton friendManagerButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Friend Manager", 16, 12);
         com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
+        com.socialnetwork.connecthub.frontend.swing.components.JButton createGroupButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Group", 16, 12);
 
         editProfileButton.setBounds(75, 300, 150, 50);
         friendManagerButton.setBounds(75, 370, 150, 50);
         homeButton.setBounds(75, 440, 150, 50);
+        createGroupButton.setBounds(75, 510, 150, 50);
         leftPanel.add(editProfileButton);
         leftPanel.add(friendManagerButton);
         leftPanel.add(homeButton);
+        leftPanel.add(createGroupButton);
         editProfileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open edit profile view
@@ -92,6 +95,13 @@ public class MyProfileView extends View {
                 // Open news feed view
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
                 dispose();
+            }
+        });
+        createGroupButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // Open group creation view
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupCreationView(user);
+                //dispose();
             }
         });
 

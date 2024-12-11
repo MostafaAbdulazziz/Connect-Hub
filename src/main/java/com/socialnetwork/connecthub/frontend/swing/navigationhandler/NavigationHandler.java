@@ -17,4 +17,6 @@ public interface NavigationHandler {
     ProfileView goToProfileView(UserDTO anotherUserDTO, UserDTO userDTO);
     StoryView goToStoryView(ContentDTO userDTO);
     EditMyProfileView goToEditMyProfileView(UserDTO userDTO);
+
+    GroupCreationView goToGroupCreationView(UserDTO user);
 }
