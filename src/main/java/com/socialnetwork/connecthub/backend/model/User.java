@@ -1,6 +1,8 @@
 package com.socialnetwork.connecthub.backend.model;
 
 import lombok.Data;
+
+import javax.management.Notification;
 import java.util.Date;
 import java.util.List;
 
@@ -19,4 +21,6 @@ public class User {
     private List<String> friends;
     private List<String> posts;
     private List<String> stories;
+    private List<String> groups;
+    private List<com.socialnetwork.connecthub.backend.model.Notification> notifications;
 }

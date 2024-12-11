@@ -12,8 +12,6 @@ public interface UserRepository {
     void save(User user);
     void delete(String userId);
     List<User> findAllFriends(String userId);
-    List<User> findAllBlockedUsers(String userId);
-    List<String> getReceivedFriendRequests(String userId);
     List<String> getPostsByUserId(String userId);
     List<String> getStoriesByUserId(String userId);
 }

@@ -70,7 +70,7 @@ public class ProfileView extends View {
         leftPanel.add(nameLabel);
 
         // Set up bio label under the friendname
-        bioLabel = new JLabel("<html>" + user.getBio().replace("\n", "<br>") + "</html>", 18, Color.BLACK, Font.ITALIC);
+        bioLabel = new JLabel("<html>" + friend.getBio().replace("\n", "<br>") + "</html>", 18, Color.BLACK, Font.ITALIC);
         bioLabel.setBounds(50, 175, 200, 30);  // Positioned below friendname
         leftPanel.add(bioLabel);
 
@@ -86,18 +86,18 @@ public class ProfileView extends View {
             }
         }
         if (!isFriends) {
-                List<FriendRequest> requests = JsonFriendRequestRepository.getInstance().findRequestsBySender(user.getUserId());
-                for (FriendRequest friendRequest : requests) {
-                    if (friendRequest.getReceiverId().equals(friend.getUserId())) {
-                        friendButtonString = " Cancel request ";
-                        requestSent = true;
-                        break;
-                    }
+            List<FriendRequest> requests = JsonFriendRequestRepository.getInstance().findRequestsBySender(user.getUserId());
+            for (FriendRequest friendRequest : requests) {
+                if (friendRequest.getReceiverId().equals(friend.getUserId())) {
+                    friendButtonString = " Cancel request ";
+                    requestSent = true;
+                    break;
                 }
+            }
 
-                if (!requestSent) {
-                    friendButtonString = " Send friend request ";
-                }
+            if (!requestSent) {
+                friendButtonString = " Send friend request ";
+            }
         }
 
 
