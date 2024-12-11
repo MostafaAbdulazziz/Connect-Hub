@@ -10,7 +10,7 @@ public interface ContentService {
     void createStory(String userId, ContentDTO contentDTO) throws ContentCreationException;
     void deleteExpiredStories();
     List<ContentDTO> getUserPosts(String userId);
-    List<ContentDTO> getFriendsPosts(String userId);
+    List<ContentDTO> getNewsFeedPosts(String userId);
     List<ContentDTO> getUserStories(String userId);
     List<ContentDTO> getFriendsStories(String userId);
 }

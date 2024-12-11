@@ -114,7 +114,7 @@ public class JavaContentService implements ContentService {
     }
 
     @Override
-    public List<ContentDTO> getFriendsPosts(String userId) {
+    public List<ContentDTO> getNewsFeedPosts(String userId) {
         List<User> friends = JsonUserRepository.getInstance().findAllFriends(userId);
 
         // Create a list to store all post IDs from friends
@@ -131,6 +131,10 @@ public class JavaContentService implements ContentService {
         for(String postId : allPostIds) {
             contentDTOs.add(new ContentDTO(JsonPostRepository.getInstance().findById(postId).orElseThrow()));
         }
+
+        // Add user own posts
+        contentDTOs.addAll(getUserPosts(userId));
+
         contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
         return contentDTOs;
     }
