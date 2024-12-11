@@ -13,5 +13,6 @@ public class GUIConstants {
 	public static Color textAreaHint = Color.decode("#858585");
 	public static Color hover = Color.decode("#f0f0f0");
 	public static Color post = Color.decode("#606060");
+	public static String loginBackgroundPath = "src/main/resources/loginBG.jpg";
 
 }
