@@ -70,7 +70,7 @@ public class ProfileView extends View {
         leftPanel.add(nameLabel);
 
         // Set up bio label under the friendname
-        bioLabel = new JLabel("<html>" + user.getBio().replace("\n", "<br>") + "</html>", 18, Color.BLACK, Font.ITALIC);
+        bioLabel = new JLabel("<html>" + friend.getBio().replace("\n", "<br>") + "</html>", 18, Color.BLACK, Font.ITALIC);
         bioLabel.setBounds(50, 175, 200, 30);  // Positioned below friendname
         leftPanel.add(bioLabel);
 

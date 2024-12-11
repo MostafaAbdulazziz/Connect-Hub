@@ -2,6 +2,10 @@ package com.socialnetwork.connecthub.frontend.swing.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -58,6 +62,14 @@ public class RoundedImageLabel extends JLabel {
             e.printStackTrace();
             setText("Image not found");
         }
+    }
+
+    public void addActionListener(ActionListener listener) {
+        this.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                listener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null));
+            }
+        });
     }
 }
 

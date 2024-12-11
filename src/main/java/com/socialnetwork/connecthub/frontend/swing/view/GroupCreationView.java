@@ -1,7 +1,6 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
-import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 
 import javax.swing.*;
@@ -150,14 +149,5 @@ public class GroupCreationView extends JFrame {
         // Here, you can process the creation of the group, e.g., save the data to a database or a file.
         JOptionPane.showMessageDialog(this, "Group created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         dispose(); // Close the window after creation
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                //GroupCreationView window = new GroupCreationView();
-            }
-        });
     }
 }
