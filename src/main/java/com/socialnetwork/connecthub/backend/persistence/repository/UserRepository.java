@@ -14,4 +14,5 @@ public interface UserRepository {
     List<User> findAllFriends(String userId);
     List<String> getPostsByUserId(String userId);
     List<String> getStoriesByUserId(String userId);
+    List<User> findByUsername(String username);
 }

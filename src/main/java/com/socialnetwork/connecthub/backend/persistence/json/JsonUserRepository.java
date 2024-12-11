@@ -119,4 +119,20 @@ public class JsonUserRepository implements UserRepository {
         }
         return storyIds;
     }
+
+    @Override
+    public List<User> findByUsername(String username) {
+        // Prepare the result list
+        List<User> matchingUsers = new ArrayList<>();
+
+        // Perform case-insensitive search
+        for (User user : users) {
+            if (user.getUsername() != null &&
+                    user.getUsername().toLowerCase().contains(username.toLowerCase())) {
+                matchingUsers.add(user);
+            }
+        }
+
+        return matchingUsers;
+    }
 }
