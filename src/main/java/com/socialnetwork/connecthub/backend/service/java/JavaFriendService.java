@@ -116,16 +116,7 @@ public class JavaFriendService implements FriendService {
         List<UserDTO> blockedUsersDTOs = new ArrayList<>();
         for (Block block : blocks) {
             User blockedUser = JsonUserRepository.getInstance().findById(block.getBlockedUserId()).orElseThrow();
-            blockedUsersDTOs.add(
-                    new UserDTO(
-                            blockedUser.getUserId(),
-                            blockedUser.getUsername(),
-                            blockedUser.getProfilePhotoPath(),
-                            blockedUser.getCoverPhotoPath(),
-                            blockedUser.getBio(),
-                            blockedUser.isOnlineStatus()
-                    )
-            );
+            blockedUsersDTOs.add(new UserDTO(blockedUser));
         }
 
         return blockedUsersDTOs;

@@ -101,32 +101,6 @@ public class JsonUserRepository implements UserRepository {
     }
 
     @Override
-    public List<User> findAllBlockedUsers(String userId) {
-        List<User> blockedUsers = new ArrayList<>();
-        Optional<User> user = findById(userId);
-        if (user.isPresent()) {
-            List<Block> blocks = JsonBlockRepository.getInstance().findAllByBlockingUserId(userId);
-            for (Block block : blocks) {
-                Optional<User> blockedUser = findById(block.getBlockedUserId());
-                if (blockedUser.isPresent()) {
-                    blockedUsers.add(blockedUser.get());
-                }
-            }
-        }
-        return blockedUsers;
-    }
-
-    @Override
-    public List<String> getReceivedFriendRequests(String userId) {
-        List<FriendRequest> recievedRequests = JsonFriendRequestRepository.getInstance().findRequestsByReceiver(userId);
-        List<String> sendersIds = new ArrayList<>();
-        for (FriendRequest request : recievedRequests) {
-            sendersIds.add(request.getSenderId());
-        }
-        return sendersIds;
-    }
-
-    @Override
     public List<String> getPostsByUserId(String userId) {
         List<String> postIds = new ArrayList<>();
         Optional<User> user = findById(userId);
@@ -144,5 +118,21 @@ public class JsonUserRepository implements UserRepository {
             storyIds = user.get().getStories();
         }
         return storyIds;
+    }
+
+    @Override
+    public List<User> findByUsername(String username) {
+        // Prepare the result list
+        List<User> matchingUsers = new ArrayList<>();
+
+        // Perform case-insensitive search
+        for (User user : users) {
+            if (user.getUsername() != null &&
+                    user.getUsername().toLowerCase().contains(username.toLowerCase())) {
+                matchingUsers.add(user);
+            }
+        }
+
+        return matchingUsers;
     }
 }

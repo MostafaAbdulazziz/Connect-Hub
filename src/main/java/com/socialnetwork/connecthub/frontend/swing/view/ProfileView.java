@@ -86,18 +86,18 @@ public class ProfileView extends View {
             }
         }
         if (!isFriends) {
-                List<FriendRequest> requests = JsonFriendRequestRepository.getInstance().findRequestsBySender(user.getUserId());
-                for (FriendRequest friendRequest : requests) {
-                    if (friendRequest.getReceiverId().equals(friend.getUserId())) {
-                        friendButtonString = " Cancel request ";
-                        requestSent = true;
-                        break;
-                    }
+            List<FriendRequest> requests = JsonFriendRequestRepository.getInstance().findRequestsBySender(user.getUserId());
+            for (FriendRequest friendRequest : requests) {
+                if (friendRequest.getReceiverId().equals(friend.getUserId())) {
+                    friendButtonString = " Cancel request ";
+                    requestSent = true;
+                    break;
                 }
+            }
 
-                if (!requestSent) {
-                    friendButtonString = " Send friend request ";
-                }
+            if (!requestSent) {
+                friendButtonString = " Send friend request ";
+            }
         }
 
 
