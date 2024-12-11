@@ -52,13 +52,13 @@ public class MyProfileView extends View {
         leftPanel.add(profilePhoto); // Add a profile photo to a left panel
 
         // Set up username label under the profile photo
-        nameLabel = new JLabel(user.getUsername(), 24, Color.BLACK, Font.BOLD);
-        nameLabel.setBounds(90, 140, 200, 20);  // Positioned below a profile photo
+        nameLabel = new JLabel(user.getUsername(), 18, Color.BLACK, Font.BOLD);
+        nameLabel.setBounds(90, 140, 200, 40);  // Positioned below a profile photo
         leftPanel.add(nameLabel);
 
         // Set up bio label under the username
         bioLabel = new JLabel("<html>" + user.getBio().replace("\n", "<br>") + "</html>", 18, Color.BLACK, Font.ITALIC);
-        bioLabel.setBounds(50, 175, 200, 20);  // Positioned below username
+        bioLabel.setBounds(50, 175, 200, 30);  // Positioned below username
         leftPanel.add(bioLabel);
 
         // Add buttons

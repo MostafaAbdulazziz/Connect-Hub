@@ -156,7 +156,7 @@ public class NewsFeedView extends View {
         contentPanel.setBackground(new Color(215, 215, 215));
 
         // Add content labels to the panel
-        List<ContentDTO> contentList = socialNetworkAPI.getContentService().getFriendsPosts(user.getUserId());
+        List<ContentDTO> contentList = socialNetworkAPI.getContentService().getNewsFeedPosts(user.getUserId());
         for (ContentDTO content : contentList) {
             JPanel contentLabel = createContentLabel(content);
             contentPanel.add(contentLabel);
@@ -199,7 +199,10 @@ public class NewsFeedView extends View {
         contentPanel.add(authorImageLabel);
         authorImageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(author, user);
+                if(author.getUserId().equals(user.getUserId()))
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
+                else
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(author, user);
                 dispose();
             }
         });
@@ -211,7 +214,10 @@ public class NewsFeedView extends View {
         authorNameLabel.setForeground(author.isOnlineStatus()? Color.GREEN : Color.BLACK);
         authorNameLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(author, user);
+                if(author.getUserId().equals(user.getUserId()))
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
+                else
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(author, user);
                 dispose();
             }
         });
