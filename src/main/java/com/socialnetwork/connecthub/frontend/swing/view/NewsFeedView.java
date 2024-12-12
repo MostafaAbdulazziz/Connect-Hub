@@ -23,7 +23,7 @@ public class NewsFeedView extends View {
     JScrollPane scrollPane;
     UserDTO user;
     private SocialNetworkAPI socialNetworkAPI;
-    private final String navigationHandlerType = "final";
+    private String navigationHandlerType = "final";
 
     public NewsFeedView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default behavior
