@@ -4,6 +4,7 @@ import com.socialnetwork.connecthub.backend.api.JavaSocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.service.java.JavaUserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.view.*;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
+import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 import javax.swing.*;
@@ -58,4 +59,13 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     public EditMyProfileView goToEditMyProfileView(UserDTO userDTO) {
         return new EditMyProfileView(JavaSocialNetworkAPI.getInstance(), JavaUserAccountService.getInstance().getUserById(userDTO.getUserId()));
     }
+    @Override
+    public MyGroupsView goToMyGroupsView(UserDTO userDTO) {
+        return new MyGroupsView(JavaSocialNetworkAPI.getInstance(), JavaUserAccountService.getInstance().getUserById(userDTO.getUserId()));
+    }
+    @Override
+    public GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO) {
+        return new GroupView(JavaSocialNetworkAPI.getInstance(),groupDTO, JavaUserAccountService.getInstance().getUserById(userDTO.getUserId()));
+    }
+
 }

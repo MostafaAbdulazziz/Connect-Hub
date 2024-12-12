@@ -3,6 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.navigationhandler;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.view.*;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
+import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 import javax.swing.*;
@@ -17,4 +18,6 @@ public interface NavigationHandler {
     ProfileView goToProfileView(UserDTO anotherUserDTO, UserDTO userDTO);
     StoryView goToStoryView(ContentDTO userDTO);
     EditMyProfileView goToEditMyProfileView(UserDTO userDTO);
+    MyGroupsView goToMyGroupsView(UserDTO userDTO);
+    GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO);
 }
