@@ -9,11 +9,9 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-//        NavigationHandlerFactory.getNavigationHandler("final").goToLoginView();
-        List<User> user = JsonUserRepository.getInstance().findAll();
-        for (int i = 0; i < 2; i++) {
-            NavigationHandlerFactory.getNavigationHandler("final").goToNewsFeedView(new UserDTO(user.get(i)));
-        }
+        NavigationHandlerFactory.getNavigationHandler("final").goToLoginView();
+
+
     }
 }
 
