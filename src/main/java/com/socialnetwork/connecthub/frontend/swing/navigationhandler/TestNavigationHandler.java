@@ -69,6 +69,10 @@ public class TestNavigationHandler implements NavigationHandler {
         return null;
     }
 
+
+
+
+
     @Override
     public MyGroupsView goToMyGroupsView(UserDTO userDTO) {
         return null;
