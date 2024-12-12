@@ -46,6 +46,6 @@ public class JavaSocialNetworkAPI implements SocialNetworkAPI {
 
     @Override
     public GroupService getGroupService() {
-        return null;
+        return JavaGroupService.getInstance();
     }
 }
