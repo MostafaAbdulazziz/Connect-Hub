@@ -9,6 +9,7 @@ import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
 import com.socialnetwork.connecthub.backend.service.java.JavaFriendService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandler;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
@@ -75,75 +76,88 @@ public class ProfileView extends View {
         leftPanel.add(bioLabel);
 
         // Add buttons
-        String friendButtonString = "";
-        boolean requestSent = false;
-        List<UserDTO> friends = socialNetworkAPI.getFriendService().getFriends(user.getUserId());
-        boolean isFriends = false;
-        for (UserDTO userDTO : friends) {
-            if (userDTO.getUserId().equals(friend.getUserId())) {
-                isFriends = true;
-                break;
-            }
-        }
-        if (!isFriends) {
-            List<FriendRequest> requests = JsonFriendRequestRepository.getInstance().findRequestsBySender(user.getUserId());
-            for (FriendRequest friendRequest : requests) {
-                if (friendRequest.getReceiverId().equals(friend.getUserId())) {
-                    friendButtonString = " Cancel request ";
-                    requestSent = true;
-                    break;
-                }
-            }
+        JavaFriendService.FriendStatus friendStatus = JavaFriendService.getInstance().getFriendStatus(user.getUserId(), friend.getUserId());
 
-            if (!requestSent) {
-                friendButtonString = " Send friend request ";
-            }
+        String friendButtonString = "";
+        String decline = " Decline ";
+
+        switch (friendStatus) {
+            case FRIENDS: friendButtonString = " Remove Friend "; break;
+            case FRIEND_REQUEST_SENT: friendButtonString = " Cancel request "; break;
+            case FRIEND_REQUEST_RECEIVED: friendButtonString = " Accept "; break;
+            case NOT_FRIENDS: friendButtonString = " Send Friend Request "; break;
         }
 
 
          com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 16, 12);
+         com.socialnetwork.connecthub.frontend.swing.components.JButton declineRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(decline, 16, 12);
          com.socialnetwork.connecthub.frontend.swing.components.JButton blockButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Block", 16, 12);
          com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
 
 
-        friendRequestButton.setBounds(75, 300, 150, 50);
+        if(friendStatus == JavaFriendService.FriendStatus.FRIEND_REQUEST_RECEIVED)
+            friendRequestButton.setBounds(50, 300, 90, 50);
+        else
+            friendRequestButton.setBounds(75, 300, 150, 50);
+        declineRequestButton.setBounds(160, 300, 90, 50);
         blockButton.setBounds(75, 370, 150, 50);
         homeButton.setBounds(75, 440, 150, 50);
 
-        List<FriendRequest> requests = socialNetworkAPI.getFriendService().getFriendRequests(user.getUserId());
-        for (FriendRequest friendRequest : requests) {
-            if (friendRequest.getSenderId().equals(friend.getUserId())) {
-                isFriends = true;
-                break;
-            }
+        if (friendStatus == JavaFriendService.FriendStatus.FRIEND_REQUEST_RECEIVED) {
+            leftPanel.add(declineRequestButton);
         }
-        if (!isFriends) {
-            leftPanel.add(friendRequestButton);
-        }
+        leftPanel.add(friendRequestButton);
         leftPanel.add(homeButton);
         leftPanel.add(blockButton);
 
-        final boolean[] finalRequestSent = {requestSent};
         friendRequestButton.addActionListener(e -> {
-                if (finalRequestSent[0]) {
+            switch (friendStatus) {
+                case FRIENDS:
+                    socialNetworkAPI.getFriendService().removeFriend(user.getUserId(), friend.getUserId());
+                    friendRequestButton.setText(" Send Friend Request ");
+                    dispose();
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
+                    JOptionPane.showMessageDialog(this, "Friend request sent!.");
+                    break;
+                case FRIEND_REQUEST_SENT:
                     // Cancel friend request
                     Thread declineRequestThread = new Thread(() -> {
                         socialNetworkAPI.getFriendService().declineFriendRequest(user.getUserId(), friend.getUserId());
                     });
                     declineRequestThread.start();
                     friendRequestButton.setText(" Send Friend Request ");
+                    dispose();
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
                     JOptionPane.showMessageDialog(this, "Friend request cancelled!.");
-                    finalRequestSent[0] = false;
-                } else {
+                    break;
+                case FRIEND_REQUEST_RECEIVED:
+                    // Accept friend request
+                    socialNetworkAPI.getFriendService().acceptFriendRequest(user.getUserId(), friend.getUserId());
+                    dispose();
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
+                    JOptionPane.showMessageDialog(this, "Friend request accepted!.");
+                    break;
+                case NOT_FRIENDS:
                     // Send friend request
                     Thread sendRequestThread = new Thread(() -> {
                         socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), friend.getUserId());
                     });
                     sendRequestThread.start();
                     friendRequestButton.setText(" Cancel request ");
-                    finalRequestSent[0] = true;
+                    dispose();
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
                     JOptionPane.showMessageDialog(this, "Friend request sent!");
-                }
+                    break;
+            }
+        });
+
+        declineRequestButton.addActionListener(e -> {
+            // Decline request
+            socialNetworkAPI.getFriendService().declineFriendRequest(friend.getUserId(), user.getUserId());
+            friendRequestButton.setText(" Send Friend Request ");
+            dispose();
+            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
+            JOptionPane.showMessageDialog(this, "Friend request declined!.");
         });
 
         homeButton.addMouseListener(new java.awt.event.MouseAdapter() {
