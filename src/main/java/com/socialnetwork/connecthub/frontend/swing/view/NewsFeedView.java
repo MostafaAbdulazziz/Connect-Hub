@@ -54,7 +54,14 @@ public class NewsFeedView extends View {
             return;
         }
 
-        panel = new JPanel(null);
+        panel = new JPanel(null){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(new ImageIcon("src/main/java/com/socialnetwork/connecthub/resources/pics/BG1.jpg").getImage(), 0, 0, null)
+                ;
+            }
+        };
         panel.setLayout(null);
         panel.setBounds(0, 0, 1800, 800);
         panel.setBackground(new Color(215, 215, 215));
