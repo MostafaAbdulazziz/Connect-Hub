@@ -11,7 +11,7 @@ import com.socialnetwork.connecthub.shared.exceptions.InvalidSignupException;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public class JavaUserAccountService implements UserAccountService {
@@ -137,5 +137,17 @@ public class JavaUserAccountService implements UserAccountService {
     public UserDTO getUserById(String userId) {
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
         return new UserDTO(user);
+    }
+
+    @Override
+    public List<UserDTO> getUsersByUsername(String userId, String username) {
+        List<User> users = JsonUserRepository.getInstance().findByUsername(username);
+        List<UserDTO> userDTOs = new ArrayList<>();
+        for (User user : users) {
+            if (!user.getUserId().equals(userId))
+                userDTOs.add(new UserDTO(user));
+        }
+
+        return userDTOs;
     }
 }

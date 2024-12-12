@@ -43,4 +43,9 @@ public class JavaSocialNetworkAPI implements SocialNetworkAPI {
     public UserAccountService getUserAccountService() {
         return JavaUserAccountService.getInstance();
     }
+
+    @Override
+    public GroupService getGroupService() {
+        return JavaGroupService.getInstance();
+    }
 }

@@ -4,6 +4,8 @@ import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.shared.dto.*;
 import com.socialnetwork.connecthub.shared.exceptions.*;
 
+import java.util.List;
+
 public interface UserAccountService {
     void signup(SignUpDTO signUpDTO) throws InvalidSignupException;
     UserDTO login(LoginDTO loginDTO) throws InvalidLoginException ;
@@ -11,4 +13,5 @@ public interface UserAccountService {
     String hashPassword(String password);
     void updateUserStatus(String userId, boolean onlineStatus);
     UserDTO getUserById(String userId);
+    List<UserDTO> getUsersByUsername(String userId, String username);
 }

@@ -116,16 +116,7 @@ public class JavaFriendService implements FriendService {
         List<UserDTO> blockedUsersDTOs = new ArrayList<>();
         for (Block block : blocks) {
             User blockedUser = JsonUserRepository.getInstance().findById(block.getBlockedUserId()).orElseThrow();
-            blockedUsersDTOs.add(
-                    new UserDTO(
-                            blockedUser.getUserId(),
-                            blockedUser.getUsername(),
-                            blockedUser.getProfilePhotoPath(),
-                            blockedUser.getCoverPhotoPath(),
-                            blockedUser.getBio(),
-                            blockedUser.isOnlineStatus()
-                    )
-            );
+            blockedUsersDTOs.add(new UserDTO(blockedUser));
         }
 
         return blockedUsersDTOs;
@@ -145,6 +136,37 @@ public class JavaFriendService implements FriendService {
         }
 
         return friends;
+    }
+
+    public enum FriendStatus {
+        FRIEND_REQUEST_SENT,
+        FRIEND_REQUEST_RECEIVED,
+        NOT_FRIENDS,
+        FRIENDS;
+    }
+
+    public FriendStatus getFriendStatus(String userId, String friendId) {
+        User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+
+        if (user.getFriends().contains(friendId)) {
+            return FriendStatus.FRIENDS; // Can remove from friends
+        }
+
+        List<FriendRequest> friendReceivedFriendRequests = getFriendRequests(friendId);
+        for (FriendRequest friendRequest : friendReceivedFriendRequests) {
+            if (friendRequest.getSenderId().equals(userId)) {
+                return FriendStatus.FRIEND_REQUEST_SENT; // Can cancel request
+            }
+        }
+
+        List<FriendRequest> userReceivedFriendRequests = getFriendRequests(userId);
+        for (FriendRequest friendRequest : userReceivedFriendRequests) {
+            if (friendRequest.getSenderId().equals(friendId)) {
+                return FriendStatus.FRIEND_REQUEST_RECEIVED; // Can Approve or decline
+            }
+        }
+
+        return FriendStatus.NOT_FRIENDS; // Can send Request
     }
 
 }
