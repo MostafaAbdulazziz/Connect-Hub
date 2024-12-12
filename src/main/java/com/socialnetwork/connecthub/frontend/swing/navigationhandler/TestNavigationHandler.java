@@ -71,8 +71,6 @@ public class TestNavigationHandler implements NavigationHandler {
 
 
 
-
-
     @Override
     public MyGroupsView goToMyGroupsView(UserDTO userDTO) {
         return null;
@@ -80,6 +78,12 @@ public class TestNavigationHandler implements NavigationHandler {
 
     @Override
     public GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO) {
+        return null;
+    }
+
+    @Override
+    public GroupCreationView goToGroupCreationView(UserDTO user) {
+        System.out.println("new GroupCreationView()");
         return null;
     }
 

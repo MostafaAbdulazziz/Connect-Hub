@@ -1,6 +1,6 @@
 package com.socialnetwork.connecthub.shared.dto;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 
 @Getter

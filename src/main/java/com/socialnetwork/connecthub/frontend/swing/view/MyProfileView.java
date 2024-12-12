@@ -66,6 +66,7 @@ public class MyProfileView extends View {
         com.socialnetwork.connecthub.frontend.swing.components.JButton friendManagerButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Friend Manager", 16, 12);
         com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
 
+
         editProfileButton.setBounds(75, 300, 150, 50);
         friendManagerButton.setBounds(75, 370, 150, 50);
         homeButton.setBounds(75, 440, 150, 50);
@@ -105,7 +106,7 @@ public class MyProfileView extends View {
         timelinePanel.setBackground(new Color(215, 215, 215));
 
         List<ContentDTO> contentList = socialNetworkAPI.getContentService().getUserPosts(user.getUserId());
-        for (ContentDTO content :  socialNetworkAPI.getContentService().getUserPosts(user.getUserId())) {
+        for (ContentDTO content : socialNetworkAPI.getContentService().getUserPosts(user.getUserId())) {
             JPanel contentLabel = createContentLabel(content);
             timelinePanel.add(contentLabel);
             timelinePanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
@@ -114,8 +115,8 @@ public class MyProfileView extends View {
         // Adjust preferred size based on content
         // Adjust content panel's preferred size dynamically
         int panelHeight = 0; //Math.min(1500, contentList.size() * 800); // 1210 px per content including spacing
-        for(ContentDTO content : contentList) {
-            if(content.getImagePath() == null || content.getImagePath().isEmpty())
+        for (ContentDTO content : contentList) {
+            if (content.getImagePath() == null || content.getImagePath().isEmpty())
                 panelHeight += 300;
             else
                 panelHeight += 800;
@@ -137,9 +138,6 @@ public class MyProfileView extends View {
         revalidate();
         setVisible(true);
     }
-
-
-
 
 
     private JPanel createContentLabel(ContentDTO content) {
