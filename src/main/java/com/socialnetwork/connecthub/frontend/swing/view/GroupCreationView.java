@@ -2,7 +2,6 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,8 +10,10 @@ import java.io.File;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JTextField;
+import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
-
+import com.socialnetwork.connecthub.shared.exceptions.GroupCreationException;
+import com.socialnetwork.connecthub.backend.interfaces.services.GroupService;
 public class GroupCreationView extends JFrame {
 
     private JTextField groupNameField;
@@ -23,7 +24,6 @@ public class GroupCreationView extends JFrame {
     private File selectedImage;
     private UserDTO user;
     private SocialNetworkAPI socialNetworkAPI;
-    private String navigationHandlerType = "final";
 
     public GroupCreationView(SocialNetworkAPI socialNetworkAPI, UserDTO user) {
         this.socialNetworkAPI = socialNetworkAPI;
@@ -67,8 +67,6 @@ public class GroupCreationView extends JFrame {
         groupImageLabel.setBackground(GUIConstants.blue);
         groupImageLabel.setOpaque(true);
         groupImageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        //groupImageLabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-
         // Upload Button for Photo
         uploadButton = new JButton("Upload Photo", 20, 14);
         uploadButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -131,23 +129,25 @@ public class GroupCreationView extends JFrame {
         }
     }
 
-    // Method to handle group creation
+    // Method to create the group by interacting with the GroupService
     private void createGroup() {
-        String groupName = groupNameField.getText();
-        String description = descriptionField.getText();
+        String groupName = groupNameField.getText().trim();
+        String description = descriptionField.getText().trim();
 
-        if (groupName.isEmpty() || description.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+        // Create a GroupDTO with the provided data
+        GroupDTO groupDTO = new GroupDTO(groupName, description, selectedImage != null ? selectedImage.getPath() : null, user.getUserId());
+
+        try {
+            // Try to create the group using the GroupService
+            socialNetworkAPI.getGroupService().createGroup(user, groupDTO); // Assuming the service method does not return a boolean
+            JOptionPane.showMessageDialog(this, "Group created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            dispose(); // Close the window after successful creation
+        } catch (GroupCreationException ex) {
+            // Catch the GroupCreationException and display an error message
+            JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage(), "Group Creation Failed", JOptionPane.ERROR_MESSAGE);
         }
-
-        if (selectedImage == null) {
-            JOptionPane.showMessageDialog(this, "Please upload a group photo.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Here, you can process the creation of the group, e.g., save the data to a database or a file.
-        JOptionPane.showMessageDialog(this, "Group created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        dispose(); // Close the window after creation
     }
 }
+
+
+
