@@ -8,8 +8,8 @@ import lombok.Getter;
 import java.util.Date;
 
 @Getter
-@AllArgsConstructor
 public class ContentDTO {
+    private String contentId;
     private String authorId;
     private String content;
     private String imagePath;
@@ -20,6 +20,13 @@ public class ContentDTO {
         this.content = content.getContent();
         this.imagePath = content.getImagePath();
         this.timestamp = content.getTimestamp();
+    }
+
+    public ContentDTO(String authorId, String content, String imagePath, Date timestamp) {
+        this.authorId = authorId;
+        this.content = content;
+        this.imagePath = imagePath;
+        this.timestamp = timestamp;
     }
 
     public ContentDTO setContent(String content) {

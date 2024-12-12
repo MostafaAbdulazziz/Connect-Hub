@@ -8,4 +8,5 @@ public interface SocialNetworkAPI {
     NewsFeedService getNewsFeedService();
     ProfileService getProfileService();
     UserAccountService getUserAccountService();
+    GroupService getGroupService();
 }
