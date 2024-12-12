@@ -15,4 +15,4 @@ public class Main {
             NavigationHandlerFactory.getNavigationHandler("final").goToNewsFeedView(new UserDTO(user.get(i)));
         }
     }
- }
+}
