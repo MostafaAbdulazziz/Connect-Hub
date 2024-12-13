@@ -37,8 +37,12 @@ public class JavaGroupService implements GroupService {
     // Primary Admin Role
     @Override
     public void createGroup(UserDTO creator, GroupDTO groupDTO) throws GroupCreationException {
-        if (creator == null || groupDTO == null) {
-            throw new GroupCreationException("Creator or group details cannot be null.");
+        if (groupDTO.getName() == null || groupDTO.getName().isEmpty()) {
+            throw new GroupCreationException("Group name cannot be empty.");
+        } else if (groupDTO.getDescription() == null || groupDTO.getDescription().isEmpty()) {
+            throw new GroupCreationException("Group description cannot be empty.");
+        } else if (groupDTO.getIconPhotoPath() == null || groupDTO.getIconPhotoPath().isEmpty()) {
+            throw new GroupCreationException("Please upload an icon for the group.");
         }
 
         Group group = new Group();
@@ -210,12 +214,8 @@ public class JavaGroupService implements GroupService {
     // General Groups Methods
     @Override
     public GroupDTO getGroupById(String groupId) {
-        Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(groupId);
-        if (groupOpt.isPresent()) {
-            Group group = groupOpt.get();
-            return new GroupDTO(group.getName(), group.getDescription(), group.getIconPhotoPath(), group.getPrimaryAdmin());
-        }
-        return null;
+        Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
+        return new GroupDTO(group);
     }
 
     @Override
@@ -226,7 +226,7 @@ public class JavaGroupService implements GroupService {
             Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(userGroup);
             if (groupOpt.isPresent()) {
                 Group group = groupOpt.get();
-                groups.add(new GroupDTO(group.getName(), group.getDescription(), group.getIconPhotoPath(), group.getPrimaryAdmin()));
+                groups.add(new GroupDTO(group));
             }
         }
         return groups;
@@ -238,7 +238,7 @@ public class JavaGroupService implements GroupService {
         List<GroupDTO> matchingGroups = new ArrayList<>();
 
         for (Group group : groups) {
-            matchingGroups.add(new GroupDTO(group.getName(), group.getDescription(), group.getIconPhotoPath(), group.getPrimaryAdmin()));
+            matchingGroups.add(new GroupDTO(group));
         }
 
         return matchingGroups;
@@ -321,7 +321,7 @@ public class JavaGroupService implements GroupService {
         NOT_MEMBER;
     }
     @Override
-    public MembershipType getMembershipType(String memberId, String groupId) {
+    public MembershipType getMembershipType(String groupId, String memberId) {
         Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
         if (group.getPrimaryAdmin().equals(memberId)) {
             return MembershipType.PRIMARY_ADMIN;
