@@ -62,7 +62,7 @@ public class JavaContentService implements ContentService {
         String content = contentDTO.getContent();
         String imagePath = contentDTO.getImagePath();
         if ((content == null || content.isEmpty()) && (imagePath == null || imagePath.isEmpty()) ) {
-            throw new ContentCreationException("Content is empty");
+            throw new ContentCreationException("Content cannot be empty");
         }
 
         // Create new Story object
