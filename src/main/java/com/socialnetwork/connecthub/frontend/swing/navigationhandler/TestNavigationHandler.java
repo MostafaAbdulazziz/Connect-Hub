@@ -2,6 +2,7 @@ package com.socialnetwork.connecthub.frontend.swing.navigationhandler;
 
 import com.socialnetwork.connecthub.frontend.swing.view.*;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
+import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 import javax.swing.*;
@@ -65,6 +66,18 @@ public class TestNavigationHandler implements NavigationHandler {
     @Override
     public EditMyProfileView goToEditMyProfileView(UserDTO userDTO) {
         System.out.println("new EditMyProfileView()");
+        return null;
+    }
+
+
+
+    @Override
+    public MyGroupsView goToMyGroupsView(UserDTO userDTO) {
+        return null;
+    }
+
+    @Override
+    public GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO) {
         return null;
     }
 
