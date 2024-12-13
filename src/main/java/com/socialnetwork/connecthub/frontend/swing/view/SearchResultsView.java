@@ -202,7 +202,7 @@ public class SearchResultsView extends JFrame {
 
         // Add group image (rounded)
         RoundedImageLabel imageLabel = new RoundedImageLabel(group.getIconPhotoPath(), 50, 50);
-        imageLabel.addActionListener(e -> openGroupDetails(group.getGroupId()));  // Open group details on image click
+        imageLabel.addActionListener(e -> NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user));
         groupPanel.add(imageLabel);
 
         // Add group name text with action listener to open group details
@@ -211,7 +211,7 @@ public class SearchResultsView extends JFrame {
         textLabel.setForeground(Color.GRAY);
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openGroupDetails(group.getGroupId()); // Open group details on name click
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);
             }
         });
         groupPanel.add(textLabel);
@@ -238,10 +238,5 @@ public class SearchResultsView extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error joining group: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-
-    private void openGroupDetails(String groupId) {
-        // Code to open group details (e.g., new GroupDetailsView(groupId))
     }
 }
