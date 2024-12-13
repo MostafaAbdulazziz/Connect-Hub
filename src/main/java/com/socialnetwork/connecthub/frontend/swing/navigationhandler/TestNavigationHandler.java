@@ -30,6 +30,11 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
+    public ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, GroupDTO groupDTO, boolean isPost, boolean isGroup) {
+        return null;
+    }
+
+    @Override
     public ManageFriendsView goToManageFriendsView(UserDTO userDTO, JFrame parentFrame) {
         System.out.println("new ManageFriendsView()");
         return null;

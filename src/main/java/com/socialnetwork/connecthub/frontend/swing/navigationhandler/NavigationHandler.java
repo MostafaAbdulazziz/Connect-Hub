@@ -12,6 +12,7 @@ public interface NavigationHandler {
     LoginView goToLoginView();
     SignUpView goToSignUpView();
     ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, boolean isPost);
+    ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO,GroupDTO groupDTO, boolean isPost,boolean isGroup);
     ManageFriendsView goToManageFriendsView(UserDTO userDTO, JFrame parentFrame);
     MyProfileView goToMyProfileView(UserDTO userDTO);
     NewsFeedView goToNewsFeedView(UserDTO userDTO);
@@ -22,4 +23,8 @@ public interface NavigationHandler {
     MyGroupsView goToMyGroupsView(UserDTO userDTO);
     GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO);
     SearchResultsView goToSearchResultsView(UserDTO user, String query);
+
+    ManageJoinRequestsView goToJoinRequestsView( GroupDTO group);
+
+    ManageAdminsView goToManageAdminsView(GroupDTO group);
 }
