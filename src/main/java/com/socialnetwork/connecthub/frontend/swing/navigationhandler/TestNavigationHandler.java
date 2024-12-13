@@ -30,7 +30,8 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
-    public ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, GroupDTO groupDTO, boolean isPost, boolean isGroup) {
+    public ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, GroupDTO groupDTO) {
+        System.out.println("new ContentCreationAreaView()");
         return null;
     }
 

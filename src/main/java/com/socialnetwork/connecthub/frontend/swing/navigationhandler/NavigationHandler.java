@@ -12,7 +12,7 @@ public interface NavigationHandler {
     LoginView goToLoginView();
     SignUpView goToSignUpView();
     ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, boolean isPost);
-    ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO,GroupDTO groupDTO, boolean isPost,boolean isGroup);
+    ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO,GroupDTO groupDTO);
     ManageFriendsView goToManageFriendsView(UserDTO userDTO, JFrame parentFrame);
     MyProfileView goToMyProfileView(UserDTO userDTO);
     NewsFeedView goToNewsFeedView(UserDTO userDTO);

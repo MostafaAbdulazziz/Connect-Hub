@@ -36,22 +36,17 @@ public class ContentCreationAreaView extends JFrame {
 
     public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
        init(socialNetworkAPI, currentUser, isPost);
-    } public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost,boolean isGroupPost,GroupDTO group) {
-        groupPostInit(socialNetworkAPI, currentUser, isPost,isGroupPost,group);
+    }
+
+    public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, GroupDTO group) {
+        groupPostInit(socialNetworkAPI, currentUser, group);
 
     }
 
-
-
-
-
-
-    private void groupPostInit(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost,boolean isGroupPost,GroupDTO group) {
+    private void groupPostInit(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser,GroupDTO group) {
         this.group = group;
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
-        this.isPost = isPost;
-        this.isGroupPost = isGroupPost;
         this.type = (isPost? "Post" : "Story");
         // Set up the frame
         setTitle("Create a New " + type);

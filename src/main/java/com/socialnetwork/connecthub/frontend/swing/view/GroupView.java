@@ -149,7 +149,7 @@ public class GroupView extends View {
             editButton.setForeground(Color.WHITE);
             editButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group, true, false);
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
                     dispose();
                 }
             });
@@ -337,7 +337,7 @@ public class GroupView extends View {
         createPostButton.setBounds(1250,0, 200, 50);
         createPostButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group, true, true);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
             }
         });
         panel.add(createPostButton);
