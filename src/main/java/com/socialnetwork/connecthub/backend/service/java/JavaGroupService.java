@@ -314,13 +314,13 @@ public class JavaGroupService implements GroupService {
         return suggestions.subList(0, Math.min(suggestions.size(), 20));
     }
 
-    public enum MembershipType {
+    public static enum MembershipType {
         PRIMARY_ADMIN,
         ADMIN,
         MEMBER,
         NOT_MEMBER;
     }
-
+    @Override
     public MembershipType getMembershipType(String memberId, String groupId) {
         Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
         if (group.getPrimaryAdmin().equals(memberId)) {

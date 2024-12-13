@@ -28,6 +28,11 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     }
 
     @Override
+    public ContentCreationAreaView goToContentCreationAreaView(UserDTO userDTO, GroupDTO groupDTO, boolean isPost, boolean isGroup) {
+        return new ContentCreationAreaView(JavaSocialNetworkAPI.getInstance(), JavaUserAccountService.getInstance().getUserById(userDTO.getUserId()), isPost,isGroup,groupDTO);
+    }
+
+    @Override
     public ManageFriendsView goToManageFriendsView(UserDTO userDTO, JFrame parentFrame) {
         return new ManageFriendsView(JavaSocialNetworkAPI.getInstance(), JavaUserAccountService.getInstance().getUserById(userDTO.getUserId()), parentFrame);
 
