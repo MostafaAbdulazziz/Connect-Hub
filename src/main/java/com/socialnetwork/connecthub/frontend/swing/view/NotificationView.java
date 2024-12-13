@@ -1,8 +1,11 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
+import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.model.*;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
+import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandler;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
+import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
@@ -16,15 +19,19 @@ public class NotificationView extends JFrame {
 
     private List<Notification> notifications;
     private UserDTO user;
+    private SocialNetworkAPI socialNetworkAPI;
+    private String navigationHandlerType = "final";
 
-    public NotificationView(List<Notification> notifications, UserDTO user) {
+    public NotificationView(SocialNetworkAPI socialNetworkAPI, List<Notification> notifications, UserDTO user) {
         this.notifications = notifications;
         this.user = user;
+        this.socialNetworkAPI = socialNetworkAPI;
 
         setTitle("Notifications");
         setSize(700, 700);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+        setResizable(false);
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -90,7 +97,7 @@ public class NotificationView extends JFrame {
             messageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     if (((GroupNotification) notification).getContentDTO() != null)
-                        navigateToPost();  // Navigate to post when message is clicked
+                        navigateToPost(((GroupNotification) notification).getContentDTO());  // Navigate to post when message is clicked
                     else
                         navigateToGroupWindow(((GroupNotification) notification).getGroup(), user);  // Navigate to group window when message is clicked
                 }
@@ -105,7 +112,7 @@ public class NotificationView extends JFrame {
             messageLabel.setPreferredSize(new Dimension(500, 30)); // Increase width here for larger message label
             messageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    navigateToPost();  // Navigate to post when message is clicked
+                    navigateToPost(((NewPostNotification) notification).getContentDTO());  // Navigate to post when message is clicked
                 }
             });
             messagePanel.add(messageLabel);
@@ -121,17 +128,17 @@ public class NotificationView extends JFrame {
     // Helper methods for navigation
     private void navigateToUserProfile(UserDTO sender, UserDTO user) {
         // Code to navigate to the user's profile
-        NavigationHandlerFactory.getNavigationHandler("final").goToProfileView(sender, user);
+        NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(sender, user);
         // Replace with actual navigation logic
     }
 
     private void navigateToGroupWindow(GroupDTO group, UserDTO user) {
         // Code to navigate to the group's page/window
-        NavigationHandlerFactory.getNavigationHandler("final").goToGroupView(group, user);
-        // Replace with actual navigation logic
+        NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);
     }
 
-    private void navigateToPost() {
+    private void navigateToPost(ContentDTO contentDTO) {
         // Code to navigate to the post
+        NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToPostView(contentDTO);
     }
 }

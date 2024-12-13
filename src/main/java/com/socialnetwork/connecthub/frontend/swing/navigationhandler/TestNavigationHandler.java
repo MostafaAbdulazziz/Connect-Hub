@@ -104,6 +104,18 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
+    public NotificationView goToNotificationView(UserDTO userDTO) {
+        System.out.println("new NotificationView()");
+        return null;
+    }
+
+    @Override
+    public PostView goToPostView(ContentDTO contentDTO) {
+        System.out.println("new PostView()");
+        return null;
+    }
+
+    @Override
     public GroupCreationView goToGroupCreationView(UserDTO user) {
         System.out.println("new GroupCreationView()");
         return null;

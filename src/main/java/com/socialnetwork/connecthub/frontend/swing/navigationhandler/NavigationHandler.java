@@ -25,4 +25,6 @@ public interface NavigationHandler {
     SearchResultsView goToSearchResultsView(UserDTO user, String query, JFrame parentFrame);
     ManageJoinRequestsView goToJoinRequestsView( GroupDTO group);
     ManageAdminsView goToManageAdminsView(GroupDTO group);
+    NotificationView goToNotificationView(UserDTO userDTO);
+    PostView goToPostView(ContentDTO contentDTO);
 }
