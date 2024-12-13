@@ -3,6 +3,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.service.java.JavaUserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
@@ -232,11 +233,6 @@ public class NewsFeedView extends View {
         timestampLabel.setForeground(Color.GRAY);
         timestampLabel.setBounds(650, 20, 170, 30); // Adjusted position
         contentPanel.add(timestampLabel);
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton likeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Like", 5, 12);
-//        likeButton.setBounds(400,20,100,30);
-//        likeButton.setBackground(Color.BLUE);
-//        likeButton.setForeground(Color.WHITE);
-//        contentPanel.add(likeButton);
 
         // Add content text
         javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");
@@ -459,20 +455,16 @@ public class NewsFeedView extends View {
 }
 
     private void addButtons() {
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton createButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Post", 5, 12);
-
         RoundedImageLabel createPostIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/create_post.png", 30, 30);
         createPostIcon.setBounds(320, 120, 30, 30); // Adjust to fit within the panel
         createPostIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open create-post view
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, true);
-//                dispose();
             }
         });
         panel.add(createPostIcon);
 
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton refreshButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Refresh", 5, 12);
         RoundedImageLabel refreshIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/refresh.png", 30, 30);
         refreshIcon.setBounds(360, 120, 30, 30); // Adjust to fit within the panel
         refreshIcon.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -484,7 +476,6 @@ public class NewsFeedView extends View {
         });
         panel.add(refreshIcon);
 
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton groupsButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Groups", 5, 12);
         RoundedImageLabel groupsIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/groups.png", 30, 30);
         groupsIcon.setBounds(400, 120, 30, 30); // Adjust to fit within the panel
         groupsIcon.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -495,7 +486,6 @@ public class NewsFeedView extends View {
         });
         panel.add(groupsIcon);
 
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton logoutButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Logout", 5, 12);
         RoundedImageLabel logoutIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/logout.png", 30, 30);
         logoutIcon.setBounds(440, 120, 30, 30); // Adjust to fit within the panel
         logoutIcon.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -522,7 +512,6 @@ public class NewsFeedView extends View {
         searchBar.setBounds(880, 120, 250, 30); // Adjust to fit within the panel
         panel.add(searchBar);
 
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton searchButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Search", 5, 12);
         RoundedImageLabel searchIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/search.png", 30, 30);
         searchIcon.setBounds(1150, 120, 30, 30); // Adjust to fit within the panel
         searchIcon.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -538,7 +527,6 @@ public class NewsFeedView extends View {
         });
         panel.add(searchIcon);
 
-//        com.socialnetwork.connecthub.frontend.swing.components.JButton createStoryButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Story", 5, 12);
         RoundedImageLabel createStoryIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/add-icon.png", 80, 80);
         createStoryIcon.setBounds(1330, 20, 80, 80); // Adjust to fit within the panel
         createStoryIcon.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -576,7 +564,7 @@ public class NewsFeedView extends View {
         suggestionPanel.add(textLabel);
 
         // Add "Friend Request" button
-        com.socialnetwork.connecthub.frontend.swing.components.JButton friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Send Friend Request ", 5, 12);
+        JButton friendRequestButton = new JButton(" Send Friend Request ", 5, 12);
         friendRequestButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
         friendRequestButton.setBackground(Color.BLUE);
         friendRequestButton.setForeground(Color.WHITE);

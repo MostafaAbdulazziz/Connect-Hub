@@ -2,14 +2,10 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.model.Block;
-import com.socialnetwork.connecthub.backend.model.FriendRequest;
-import com.socialnetwork.connecthub.backend.persistence.json.JsonBlockRepository;
-import com.socialnetwork.connecthub.backend.persistence.json.JsonFriendRequestRepository;
-import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
 import com.socialnetwork.connecthub.backend.service.java.JavaFriendService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
-import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandler;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
@@ -87,11 +83,10 @@ public class ProfileView extends View {
         };
 
         // Add buttons
-         com.socialnetwork.connecthub.frontend.swing.components.JButton
-                 friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 16, 12),
-                 declineRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Decline ", 16, 12),
-                 blockButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Block", 16, 12),
-                 homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
+         JButton friendRequestButton = new JButton(friendButtonString, 16, 12);
+         JButton declineRequestButton = new JButton(" Decline ", 16, 12);
+         JButton blockButton = new JButton("Block", 16, 12);
+         JButton  homeButton = new JButton("Home", 16, 12);
 
 
         if(friendStatus == JavaFriendService.FriendStatus.FRIEND_REQUEST_RECEIVED)

@@ -2,6 +2,7 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
@@ -62,9 +63,9 @@ public class MyProfileView extends View {
         leftPanel.add(bioLabel);
 
         // Add buttons
-        com.socialnetwork.connecthub.frontend.swing.components.JButton editProfileButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Edit Profile", 16, 12);
-        com.socialnetwork.connecthub.frontend.swing.components.JButton friendManagerButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Friend Manager", 16, 12);
-        com.socialnetwork.connecthub.frontend.swing.components.JButton homeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Home", 16, 12);
+        JButton editProfileButton = new JButton("Edit Profile", 16, 12);
+        JButton friendManagerButton = new JButton("Friend Manager", 16, 12);
+        JButton homeButton = new JButton("Home", 16, 12);
 
 
         editProfileButton.setBounds(75, 300, 150, 50);

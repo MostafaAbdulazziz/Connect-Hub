@@ -131,9 +131,8 @@ public class SearchResultsView extends JFrame {
         };
 
         // Add buttons
-        com.socialnetwork.connecthub.frontend.swing.components.JButton
-                friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 10, 12),
-                declineRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Decline ", 10, 12);
+        JButton friendRequestButton = new JButton(friendButtonString, 10, 12);
+        JButton declineRequestButton = new JButton(" Decline ", 10, 12);
 
 
         friendPanel.add(friendRequestButton);
