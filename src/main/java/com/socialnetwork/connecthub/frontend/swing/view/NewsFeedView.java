@@ -232,6 +232,11 @@ public class NewsFeedView extends View {
         timestampLabel.setForeground(Color.GRAY);
         timestampLabel.setBounds(650, 20, 170, 30); // Adjusted position
         contentPanel.add(timestampLabel);
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton likeButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Like", 5, 12);
+//        likeButton.setBounds(400,20,100,30);
+//        likeButton.setBackground(Color.BLUE);
+//        likeButton.setForeground(Color.WHITE);
+//        contentPanel.add(likeButton);
 
         // Add content text
         javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");

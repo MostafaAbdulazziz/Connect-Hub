@@ -1,5 +1,6 @@
 package com.socialnetwork.connecthub.backend.interfaces.services;
 
+import com.socialnetwork.connecthub.backend.service.java.JavaGroupService;
 import com.socialnetwork.connecthub.shared.dto.ContentDTO;
 import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
@@ -38,4 +39,5 @@ public interface GroupService {
     List<ContentDTO> getGroupPosts(String groupId);
     List<ContentDTO> getUserGroupsPosts(String userId);
     List<GroupDTO> getGroupsSuggestions(String userId);
+    JavaGroupService.MembershipType getMembershipType(String groupId, String userId);
 }
