@@ -32,7 +32,7 @@ public class Main {
 //                new ArrayList<>()
 //        );
 
-//        NavigationHandlerFactory.getNavigationHandler("final").goToMyGroupsView(new UserDTO(users.get(0)));
+//        NavigationHandlerFactory.getNavigationHandler("final").goToMyGroupsView(new UserDTO(users.get(1)));
     }
 
 }

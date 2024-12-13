@@ -92,13 +92,14 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
-    public ManageJoinRequestsView goToJoinRequestsView(GroupDTO group) {
+    public ManageJoinRequestsView goToJoinRequestsView(GroupDTO group, UserDTO userDTO) {
         System.out.println("new JoinRequestsView()");
         return null;
     }
 
     @Override
-    public ManageAdminsView goToManageAdminsView(GroupDTO group) {
+    public ManageAdminsView goToManageAdminsView(GroupDTO group, UserDTO userDTO) {
+
         System.out.println("new ManageAdminsView()");
         return null;
     }

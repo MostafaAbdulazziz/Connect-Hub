@@ -23,8 +23,8 @@ public interface NavigationHandler {
     MyGroupsView goToMyGroupsView(UserDTO userDTO);
     GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO);
     SearchResultsView goToSearchResultsView(UserDTO user, String query, JFrame parentFrame);
-    ManageJoinRequestsView goToJoinRequestsView( GroupDTO group);
-    ManageAdminsView goToManageAdminsView(GroupDTO group);
+    ManageJoinRequestsView goToJoinRequestsView( GroupDTO group, UserDTO user);
+    ManageAdminsView goToManageAdminsView(GroupDTO group, UserDTO user);
     NotificationView goToNotificationView(UserDTO userDTO, JFrame parentFrame);
     PostView goToPostView(ContentDTO contentDTO);
 }
