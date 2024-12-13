@@ -80,12 +80,13 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     }
 
     @Override
-    public SearchResultsView goToSearchResultsView(UserDTO user, String query) {
+    public SearchResultsView goToSearchResultsView(UserDTO user, String query, JFrame parentFrame) {
         return new SearchResultsView(
                 JavaSocialNetworkAPI.getInstance(),
                 user,
                 JavaUserAccountService.getInstance().getUsersByUsername(user.getUserId(), query),
-                JavaGroupService.getInstance().searchGroupsByName(query)
+                JavaGroupService.getInstance().searchGroupsByName(query),
+                parentFrame
         );
     }
 

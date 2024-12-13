@@ -82,7 +82,7 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
-    public SearchResultsView goToSearchResultsView(UserDTO user, String query) {
+    public SearchResultsView goToSearchResultsView(UserDTO user, String query, JFrame parentFrame) {
         System.out.println("new SearchResultsView()");
         return null;
     }

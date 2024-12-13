@@ -525,7 +525,7 @@ public class NewsFeedView extends View {
                 // Perform search operation
                 String query = searchBar.getText();
                 if (!query.isEmpty()) {
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToSearchResultsView(user, query);
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToSearchResultsView(user, query, NewsFeedView.this);
                 } else {
                     new Alert("Search keyword should not by empty", NewsFeedView.this);
                 }

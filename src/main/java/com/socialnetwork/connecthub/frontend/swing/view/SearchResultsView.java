@@ -22,14 +22,16 @@ public class SearchResultsView extends JFrame {
     private List<GroupDTO> groups;
     private SocialNetworkAPI socialNetworkAPI;
     private String navigationHandlerType = "final";
-    UserDTO user;
+    private UserDTO user;
+    private JFrame parentFrame;
 
 
-    public SearchResultsView(SocialNetworkAPI socialNetworkAPI, UserDTO user, List<UserDTO> friends, List<GroupDTO> groups) {
+    public SearchResultsView(SocialNetworkAPI socialNetworkAPI, UserDTO user, List<UserDTO> friends, List<GroupDTO> groups, JFrame parentFrame) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.friends = friends;
         this.groups = groups;
         this.user = user;
+        this.parentFrame = parentFrame;
 
         setTitle("Search Results");
         setSize(800, 600);
@@ -98,7 +100,11 @@ public class SearchResultsView extends JFrame {
 
         // Add profile photo (rounded)
         RoundedImageLabel imageLabel = new RoundedImageLabel(friend.getProfilePhotoPath(), 50, 50);
-        imageLabel.addActionListener(e -> NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend,user));  // Open user profile on photo click
+        imageLabel.addActionListener(e -> {
+            NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend, user);
+            dispose();
+            parentFrame.dispose();
+        });  // Open user profile on photo click
         friendPanel.add(imageLabel);
 
         // Add username text with action listener to open profile
@@ -108,6 +114,8 @@ public class SearchResultsView extends JFrame {
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend,user); // Open user profile on name click
+                dispose();
+                parentFrame.dispose();
             }
         });
         friendPanel.add(textLabel);
@@ -155,7 +163,7 @@ public class SearchResultsView extends JFrame {
         // Remove from friends
         socialNetworkAPI.getFriendService().removeFriend(user.getUserId(), friend.getUserId());
         dispose();
-        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        new SearchResultsView(socialNetworkAPI, user, friends, groups, parentFrame);
         JOptionPane.showMessageDialog(this, "Removed from friend list!.");
     }
 
@@ -165,14 +173,14 @@ public class SearchResultsView extends JFrame {
         });
         declineRequestThread.start();
         dispose();
-        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        new SearchResultsView(socialNetworkAPI, user, friends, groups, parentFrame);
         JOptionPane.showMessageDialog(this, "Friend request cancelled!.");
     }
 
     private void acceptFriendRequest(UserDTO friend) {
         socialNetworkAPI.getFriendService().acceptFriendRequest(user.getUserId(), friend.getUserId());
         dispose();
-        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        new SearchResultsView(socialNetworkAPI, user, friends, groups, parentFrame);
         JOptionPane.showMessageDialog(this, "Friend request accepted!.");
     }
 
@@ -182,14 +190,14 @@ public class SearchResultsView extends JFrame {
         });
         sendRequestThread.start();
         dispose();
-        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        new SearchResultsView(socialNetworkAPI, user, friends, groups, parentFrame);
         JOptionPane.showMessageDialog(this, "Friend request sent!");
     }
 
     private void declineFriendRequest(UserDTO friend) {
         socialNetworkAPI.getFriendService().declineFriendRequest(friend.getUserId(), user.getUserId());
         dispose();
-        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        new SearchResultsView(socialNetworkAPI, user, friends, groups, parentFrame);
         JOptionPane.showMessageDialog(this, "Friend request declined!.");
     }
 
