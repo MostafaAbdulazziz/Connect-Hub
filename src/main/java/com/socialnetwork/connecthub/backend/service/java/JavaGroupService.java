@@ -2,6 +2,7 @@ package com.socialnetwork.connecthub.backend.service.java;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.GroupService;
 import com.socialnetwork.connecthub.backend.model.Group;
+import com.socialnetwork.connecthub.backend.model.NewPostNotification;
 import com.socialnetwork.connecthub.backend.model.Post;
 import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonGroupRepository;
@@ -208,6 +209,13 @@ public class JavaGroupService implements GroupService {
                 group.getPosts().add(post.getContentId());
                 JsonGroupRepository.getInstance().save(group);
             }
+        }
+
+        // send notification for friends
+        List<User> members = groupOpt.orElseThrow().getMembers().stream().map(memberId -> JsonUserRepository.getInstance().findById(memberId).orElseThrow()).toList();
+        for (User member : members) {
+            member.getNotifications().add(new NewPostNotification(content));
+            JsonUserRepository.getInstance().save(member);
         }
     }
 
