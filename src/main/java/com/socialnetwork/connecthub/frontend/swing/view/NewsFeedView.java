@@ -503,6 +503,15 @@ public class NewsFeedView extends View {
         });
         panel.add(logoutIcon);
 
+        RoundedImageLabel notificationsIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/notifications.png", 30, 30);
+        notificationsIcon.setBounds(480, 120, 30, 30); // Adjust to fit within the panel
+        notificationsIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // open notification view
+            }
+        });
+        panel.add(notificationsIcon);
+
         // Add search bar
         javax.swing.JTextField searchBar = new javax.swing.JTextField();
         searchBar.setBounds(880, 120, 250, 30); // Adjust to fit within the panel
