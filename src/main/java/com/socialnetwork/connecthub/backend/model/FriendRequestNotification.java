@@ -11,7 +11,7 @@ public class FriendRequestNotification extends Notification {
 
     public FriendRequestNotification(UserDTO senderDTO) {
         this.senderDTO = senderDTO;
-        this.message = "New Friend Request From " + senderDTO.getUsername();
+        this.message = senderDTO.getUsername() + " sent you a friend request.";
         this.read = false;
         this.timestamp = new Date();
     }

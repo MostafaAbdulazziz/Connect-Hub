@@ -2,9 +2,11 @@ package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.model.Group;
+import com.socialnetwork.connecthub.backend.model.GroupNotification;
 import com.socialnetwork.connecthub.backend.service.java.JavaGroupService;
 import com.socialnetwork.connecthub.backend.service.java.JavaUserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
@@ -23,9 +25,10 @@ public class GroupView extends View {
     GroupDTO group;
     UserDTO user;
     JPanel panel;
-    JPanel backgroundPanel;
+//    JPanel backgroundPanel;
     com.socialnetwork.connecthub.frontend.swing.components.JScrollPane scrollPane;
     private final String navigationHandlerType = "final";
+
     public GroupView(SocialNetworkAPI socialNetworkAPI, GroupDTO groupDTO, UserDTO userDTO) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.group = groupDTO;
@@ -36,27 +39,26 @@ public class GroupView extends View {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                JavaUserAccountService.getInstance().logout(user.getUserId());
                 dispose();
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(userDTO);
             }
         });
         panel = new JPanel(null);
         panel.setLayout(null);
-        panel.setBounds(0, 0, getHeight(), getHeight());
+        panel.setBounds(0, 0, getWidth(), getHeight());
         panel.setBackground(new Color(215, 215, 215));
         add(panel);
 
 
-        backgroundPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(new ImageIcon(group.getIconPhotoPath()).getImage(), 0, 0, getWidth(), getHeight(), null);
-            }
-        };
-        backgroundPanel.setBounds(0, 0, getWidth(), 200); // Fixed height for cover photo
-        panel.add(backgroundPanel); // Add background panel first
+//        backgroundPanel = new JPanel() {
+//            @Override
+//            protected void paintComponent(Graphics g) {
+//                super.paintComponent(g);
+//                g.drawImage(new ImageIcon(group.getIconPhotoPath()).getImage(), 0, 0, getWidth(), getHeight(), null);
+//            }
+//        };
+//        backgroundPanel.setBounds(0, 0, getWidth(), 200); // Fixed height for cover photo
+//        panel.add(backgroundPanel); // Add background panel first
 
 
         javax.swing.JLabel membersPanel = new javax.swing.JLabel("Members");
@@ -71,7 +73,7 @@ public class GroupView extends View {
         labelPanel.setBackground(new Color(215, 215, 215));
 
         // Add friend labels to the panel
-        List<UserDTO> members = socialNetworkAPI.getGroupService().getGroupMembers(user.getUserId());
+        List<UserDTO> members = socialNetworkAPI.getGroupService().getGroupMembers(groupDTO.getGroupId());
         for (UserDTO member : members) {
             JPanel memberLabel = createGroupMemberLabel(member);
             labelPanel.add(memberLabel);
@@ -92,6 +94,7 @@ public class GroupView extends View {
         panel.add(postLabel);
 
         addTimeline();
+        addButtons();
         repaint();
         revalidate();
 
@@ -223,7 +226,6 @@ public class GroupView extends View {
         return contentPanel;
     }
 
-
     private void addTimeline() {
         // Panel to hold dynamic content labels
         JPanel contentPanel = new JPanel();
@@ -292,26 +294,30 @@ public class GroupView extends View {
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(member, user);
                 dispose();
             }
         });
         imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);                dispose();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(member, user);
+                dispose();
             }
         });
         memberPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);                dispose();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(member, user);
                 dispose();
             }
         });
 
-        if(socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.ADMIN || socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.PRIMARY_ADMIN){
-            com.socialnetwork.connecthub.frontend.swing.components.JButton removeMemberButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" remove ", 5, 12);
+        if(
+                socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.ADMIN
+                || socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.PRIMARY_ADMIN
+        ) {
+            JButton removeMemberButton = new JButton(" remove ", 5, 12);
             removeMemberButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
             removeMemberButton.setBackground(Color.RED);
             removeMemberButton.setForeground(Color.WHITE);

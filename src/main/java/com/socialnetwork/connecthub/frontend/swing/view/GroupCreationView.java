@@ -13,7 +13,7 @@ import com.socialnetwork.connecthub.frontend.swing.components.JTextField;
 import com.socialnetwork.connecthub.shared.dto.GroupDTO;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.shared.exceptions.GroupCreationException;
-import com.socialnetwork.connecthub.backend.interfaces.services.GroupService;
+
 public class GroupCreationView extends JFrame {
 
     private JTextField groupNameField;
@@ -46,18 +46,14 @@ public class GroupCreationView extends JFrame {
         nameLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         groupNameField = new JTextField("Enter group name");
         groupNameField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        groupNameField.setForeground(GUIConstants.black);
         groupNameField.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        groupNameField.setCaretColor(GUIConstants.black);
 
         // Group Description Section
         JLabel descriptionLabel = new JLabel("Description", JLabel.CENTER, GUIConstants.blue, Font.BOLD);
         descriptionLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         descriptionField = new JTextField("Enter group description");
         descriptionField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        descriptionField.setForeground(GUIConstants.black);
         descriptionField.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        descriptionField.setCaretColor(GUIConstants.black);
 
         // Group Photo Section
         JLabel photoLabel = new JLabel("Group Photo", JLabel.CENTER, GUIConstants.blue, Font.BOLD);
@@ -133,6 +129,13 @@ public class GroupCreationView extends JFrame {
     private void createGroup() {
         String groupName = groupNameField.getText().trim();
         String description = descriptionField.getText().trim();
+
+        if (groupName.equals("Enter group name")) {
+            groupName = null;
+        }
+        if (description.equals("Enter group description")) {
+            description = null;
+        }
 
         // Create a GroupDTO with the provided data
         GroupDTO groupDTO = new GroupDTO(groupName, description, selectedImage != null ? selectedImage.getPath() : null, user.getUserId());

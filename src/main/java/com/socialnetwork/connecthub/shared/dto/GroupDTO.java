@@ -20,6 +20,7 @@ public class GroupDTO {
     }
 
     public GroupDTO(Group group) {
+        this.groupId = group.getGroupId();
         this.name = group.getName();
         this.description = group.getDescription();
         this.iconPhotoPath = group.getIconPhotoPath();

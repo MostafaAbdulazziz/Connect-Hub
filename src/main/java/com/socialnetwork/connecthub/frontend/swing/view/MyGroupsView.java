@@ -76,8 +76,8 @@ public class MyGroupsView extends View {
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
         panel.add(scrollPane);
 
-        RoundedImageLabel newGroupIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/add-group.png", 60, 60);
-        newGroupIcon.setBounds(50, 1100, 80, 80); // Adjust to fit within the panel
+        RoundedImageLabel newGroupIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/add-group.png", 90, 90);
+        newGroupIcon.setBounds(50, 650, 90, 90); // Adjust to fit within the panel
         newGroupIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open create-group view
