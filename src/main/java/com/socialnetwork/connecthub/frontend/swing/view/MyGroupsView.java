@@ -48,7 +48,7 @@ public class MyGroupsView extends View {
 
         javax.swing.JLabel myGroupsPanel = new javax.swing.JLabel("My Groups");
         myGroupsPanel.setFont(new Font("Arial", Font.BOLD, 20));
-        myGroupsPanel.setForeground(new Color(27, 140, 0));
+        myGroupsPanel.setForeground(new Color(56, 107, 253));
         myGroupsPanel.setBounds(60, 0, 300, 25);
         myGroupsPanel.setOpaque(false);
         panel.add(myGroupsPanel);

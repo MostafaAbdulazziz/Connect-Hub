@@ -27,7 +27,6 @@ public class ContentCreationAreaView extends JFrame {
     private File selectedImageFile;
     private String placeholderText = "Write your text here...";
     private boolean isPost;
-    private boolean isGroupPost;
     private String type;
     private GroupDTO group;
 
@@ -102,7 +101,7 @@ public class ContentCreationAreaView extends JFrame {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                submitPost();
+                submitPost(true);
             }
         });
 
@@ -193,7 +192,7 @@ public class ContentCreationAreaView extends JFrame {
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                submitPost();
+                submitPost(false);
             }
         });
 
@@ -267,7 +266,7 @@ public class ContentCreationAreaView extends JFrame {
         imagePanel.repaint();
     }
 
-    private void submitPost() {
+    private void submitPost(boolean isGroupPost) {
         String content = postTextArea.getText().trim();
         String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
         ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), content, imagePath, new Date());

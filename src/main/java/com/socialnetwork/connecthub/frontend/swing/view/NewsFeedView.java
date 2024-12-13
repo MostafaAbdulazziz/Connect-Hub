@@ -615,9 +615,4 @@ public class NewsFeedView extends View {
 
         return suggestionPanel;
     }
-
-
-
-
-
 }
