@@ -1,6 +1,7 @@
 package com.socialnetwork.connecthub.frontend.swing.navigationhandler;
 
 import com.socialnetwork.connecthub.backend.api.JavaSocialNetworkAPI;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
 import com.socialnetwork.connecthub.backend.service.java.JavaGroupService;
 import com.socialnetwork.connecthub.backend.service.java.JavaUserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.view.*;
@@ -103,6 +104,21 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     @Override
     public ManageAdminsView goToManageAdminsView(GroupDTO group, UserDTO primaryAdmin) {
         return new ManageAdminsView(JavaSocialNetworkAPI.getInstance(), group,primaryAdmin);
+    }
+
+    @Override
+    public NotificationView goToNotificationView(UserDTO userDTO, JFrame parentFrame) {
+        return new NotificationView(
+                JavaSocialNetworkAPI.getInstance(),
+                JsonUserRepository.getInstance().findById(userDTO.getUserId()).orElseThrow().getNotifications(),
+                userDTO,
+                parentFrame
+        );
+    }
+
+    @Override
+    public PostView goToPostView(ContentDTO contentDTO) {
+        return new PostView(JavaSocialNetworkAPI.getInstance(), contentDTO);
     }
 
 }

@@ -2,6 +2,7 @@ package com.socialnetwork.connecthub.backend.service.java;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.GroupService;
 import com.socialnetwork.connecthub.backend.model.Group;
+import com.socialnetwork.connecthub.backend.model.NewPostNotification;
 import com.socialnetwork.connecthub.backend.model.Post;
 import com.socialnetwork.connecthub.backend.model.User;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonGroupRepository;
@@ -190,15 +191,17 @@ public class JavaGroupService implements GroupService {
     }
 
     @Override
-    public void submitPost(String groupId, String userId, ContentDTO content) throws ContentCreationException {
-        if (content.getContent().isEmpty() && content.getImagePath().isEmpty()) {
+    public void submitPost(String groupId, String userId, ContentDTO contentDTO) throws ContentCreationException {
+        String content = contentDTO.getContent();
+        String imagePath = contentDTO.getImagePath();
+        if ((content == null || content.isEmpty()) && (imagePath == null || imagePath.isEmpty()) ) {
             throw new ContentCreationException("Content cannot be empty");
         }
 
         Post post = new Post();
         post.setAuthorId(userId);
-        post.setContent(content.getContent());
-        post.setImagePath(content.getImagePath());
+        post.setContent(contentDTO.getContent());
+        post.setImagePath(contentDTO.getImagePath());
         JsonPostRepository.getInstance().save(post);
 
         Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(groupId);
@@ -208,6 +211,13 @@ public class JavaGroupService implements GroupService {
                 group.getPosts().add(post.getContentId());
                 JsonGroupRepository.getInstance().save(group);
             }
+        }
+
+        // send notification for friends
+        List<User> members = groupOpt.orElseThrow().getMembers().stream().map(memberId -> JsonUserRepository.getInstance().findById(memberId).orElseThrow()).toList();
+        for (User member : members) {
+            member.getNotifications().add(new NewPostNotification(post.getContentId()));
+            JsonUserRepository.getInstance().save(member);
         }
     }
 

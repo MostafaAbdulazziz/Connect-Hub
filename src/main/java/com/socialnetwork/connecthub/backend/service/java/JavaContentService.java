@@ -48,6 +48,13 @@ public class JavaContentService implements ContentService {
         User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
         user.getPosts().add(post.getContentId());
         JsonUserRepository.getInstance().save(user);
+
+        // send notification for friends
+        List<User> friends = getFriendsHelper(userId);
+        for (User friend : friends) {
+            friend.getNotifications().add(new NewPostNotification(post.getContentId()));
+            JsonUserRepository.getInstance().save(friend);
+        }
     }
 
     @Override
@@ -55,7 +62,7 @@ public class JavaContentService implements ContentService {
         String content = contentDTO.getContent();
         String imagePath = contentDTO.getImagePath();
         if ((content == null || content.isEmpty()) && (imagePath == null || imagePath.isEmpty()) ) {
-            throw new ContentCreationException("Content is empty");
+            throw new ContentCreationException("Content cannot be empty");
         }
 
         // Create new Story object
@@ -178,6 +185,22 @@ public class JavaContentService implements ContentService {
         }
         contentDTOs.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
         return contentDTOs;
+    }
+
+    private List<User> getFriendsHelper(String userId) {
+        // Get the user's friends
+        User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+        List<User> friends = new ArrayList<>();
+
+        // Retrieve friends using a for loop
+        for (String friendId : user.getFriends()) {
+            User friend = JsonUserRepository.getInstance().findById(friendId).orElseThrow();
+            // Don't process blocked users
+            if(JsonBlockRepository.getInstance().findByIds(userId, friendId).isEmpty())
+                friends.add(friend);
+        }
+
+        return friends;
     }
 
 }

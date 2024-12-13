@@ -1,9 +1,7 @@
 package com.socialnetwork.connecthub.backend.service.java;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.FriendService;
-import com.socialnetwork.connecthub.backend.model.Block;
-import com.socialnetwork.connecthub.backend.model.FriendRequest;
-import com.socialnetwork.connecthub.backend.model.User;
+import com.socialnetwork.connecthub.backend.model.*;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonBlockRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonFriendRequestRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
@@ -32,6 +30,11 @@ public class JavaFriendService implements FriendService {
         friendRequest.setSenderId(senderId);
         friendRequest.setReceiverId(recipientId);
         JsonFriendRequestRepository.getInstance().sendRequest(friendRequest);
+
+        // send notification for user
+        User recipient = JsonUserRepository.getInstance().findById(recipientId).orElseThrow();
+        recipient.getNotifications().add(new FriendRequestNotification(senderId));
+        JsonUserRepository.getInstance().save(recipient);
     }
 
     @Override
@@ -45,6 +48,14 @@ public class JavaFriendService implements FriendService {
         sender.getFriends().add(userId);
 
         JsonUserRepository.getInstance().save(user);
+        JsonUserRepository.getInstance().save(sender);
+
+
+        // send notification
+        sender.getNotifications().add(new FriendRequestNotification(senderId)
+                .setSenderId(userId)
+                .setMessage("User " + user.getUsername() + " accepted friend request")
+        );
         JsonUserRepository.getInstance().save(sender);
     }
 
