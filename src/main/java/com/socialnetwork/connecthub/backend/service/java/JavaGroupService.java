@@ -313,4 +313,23 @@ public class JavaGroupService implements GroupService {
 
         return suggestions.subList(0, Math.min(suggestions.size(), 20));
     }
+
+    public enum MembershipType {
+        PRIMARY_ADMIN,
+        ADMIN,
+        MEMBER,
+        NOT_MEMBER;
+    }
+
+    public MembershipType getMembershipType(String memberId, String groupId) {
+        Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
+        if (group.getPrimaryAdmin().equals(memberId)) {
+            return MembershipType.PRIMARY_ADMIN;
+        } else if (group.getAdmins().contains(memberId)) {
+            return MembershipType.ADMIN;
+        } else if (group.getMembers().contains(memberId)) {
+            return MembershipType.MEMBER;
+        }
+        return MembershipType.NOT_MEMBER;
+    }
 }
