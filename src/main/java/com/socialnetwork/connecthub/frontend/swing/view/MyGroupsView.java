@@ -65,8 +65,9 @@ public class MyGroupsView extends View {
         }
 
         // Adjust label panel's preferred size dynamically
-        int panelHeight = Math.max(1000, groups.size() * 100); // 60px per friend
-        labelPanel.setPreferredSize(new Dimension(300, panelHeight));
+        int panelHeight = Math.max(600, groups.size() * 60); // 60px per group
+        labelPanel.setBounds(0, 35, 300, panelHeight);
+//        labelPanel.setPreferredSize(new Dimension(300, panelHeight));
 
         // Add scroll pane
         scrollPane = new com.socialnetwork.connecthub.frontend.swing.components.JScrollPane(labelPanel);
@@ -74,6 +75,17 @@ public class MyGroupsView extends View {
         scrollPane.setBackground(new Color(215, 215, 215));
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
         panel.add(scrollPane);
+
+        RoundedImageLabel newGroupIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/add-group.png", 60, 60);
+        newGroupIcon.setBounds(50, 1100, 80, 80); // Adjust to fit within the panel
+        newGroupIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Open create-group view
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupCreationView(user);
+            }
+        });
+        panel.add(newGroupIcon);
+
         addTimeline();
         addGroupSuggestions();
         repaint();
@@ -83,8 +95,6 @@ public class MyGroupsView extends View {
         
     }
 
-
-
     private JPanel createGroupLabel(GroupDTO group) {
         // Create the friend panel with a null layout for custom positioning
         JPanel groupPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -93,13 +103,13 @@ public class MyGroupsView extends View {
         groupPanel.setMaximumSize(new Dimension(300, 60));
         groupPanel.setBackground(Color.WHITE);
 
-        // Add rounded image for the friend
+        // Add rounded image for the group
         imageLabel = new RoundedImageLabel(group.getIconPhotoPath(), 50, 50);
         imageLabel.setBounds(0, 0, 40, 40); // Padding: (x, y, width, height)
         groupPanel.add(imageLabel);
 
 
-        // Add username text
+        // Add group name text
         javax.swing.JLabel textLabel = new javax.swing.JLabel(group.getName());
         textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         textLabel.setFont(new Font("Arial", Font.BOLD, 13));
@@ -113,21 +123,22 @@ public class MyGroupsView extends View {
         groupPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
+                // Open the group page
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);
                 dispose();
             }
         });
         imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);                dispose();
+                // Open the group page
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);
+                dispose();
             }
         });
         groupPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);                dispose();
+                // Open the group page
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(group, user);
                 dispose();
             }
         });
@@ -168,7 +179,7 @@ public class MyGroupsView extends View {
 
         // Add the scroll pane to the main panel
         panel.add(scrollPane);
-//        addTimeline();
+
         revalidate();
         repaint();
     }
