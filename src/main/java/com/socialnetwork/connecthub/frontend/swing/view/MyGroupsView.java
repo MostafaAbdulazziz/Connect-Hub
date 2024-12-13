@@ -300,7 +300,7 @@ public class MyGroupsView extends View {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (requestSent) {
                     // Cancel friend request
-                    socialNetworkAPI.getGroupService().cancelJoinRequest(user.getUserId(), suggestion.getGroupId());
+                    socialNetworkAPI.getGroupService().declineMember(user.getUserId(), suggestion.getGroupId()); // same implementation for cancel
                     joinButton.setText("Join");
                     requestSent = false;
                 } else {

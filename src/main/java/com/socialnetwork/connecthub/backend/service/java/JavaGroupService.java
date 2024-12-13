@@ -186,16 +186,6 @@ public class JavaGroupService implements GroupService {
     }
 
     @Override
-    public void leaveGroup(String groupId, String userId) {
-        // implementation needed
-    }
-
-    @Override
-    public void cancelJoinRequest(String groupId, String userId) {
-        // implementation needed
-    }
-
-    @Override
     public void submitPost(String groupId, String userId, ContentDTO content) throws ContentCreationException {
         if (content.getContent().isEmpty() && content.getImagePath().isEmpty()) {
             throw new ContentCreationException("Content cannot be empty");
@@ -322,17 +312,5 @@ public class JavaGroupService implements GroupService {
         }
 
         return suggestions.subList(0, Math.min(suggestions.size(), 20));
-    }
-
-    @Override
-    public List<ContentDTO> getUserGroupsPosts(String userId) {
-        // need to implementation
-        return List.of();
-    }
-
-    @Override
-    public List<GroupDTO> getGroupsSuggestions(String userId) {
-        // need to implementation
-        return List.of();
     }
 }
