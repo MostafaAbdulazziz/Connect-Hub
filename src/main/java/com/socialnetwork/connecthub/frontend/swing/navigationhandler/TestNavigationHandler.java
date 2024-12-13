@@ -74,8 +74,6 @@ public class TestNavigationHandler implements NavigationHandler {
         return null;
     }
 
-
-
     @Override
     public MyGroupsView goToMyGroupsView(UserDTO userDTO) {
         return null;
@@ -89,6 +87,18 @@ public class TestNavigationHandler implements NavigationHandler {
     @Override
     public SearchResultsView goToSearchResultsView(UserDTO user, String query, JFrame parentFrame) {
         System.out.println("new SearchResultsView()");
+        return null;
+    }
+
+    @Override
+    public ManageJoinRequestsView goToJoinRequestsView(GroupDTO group) {
+        System.out.println("new JoinRequestsView()");
+        return null;
+    }
+
+    @Override
+    public ManageAdminsView goToManageAdminsView(GroupDTO group) {
+        System.out.println("new ManageAdminsView()");
         return null;
     }
 

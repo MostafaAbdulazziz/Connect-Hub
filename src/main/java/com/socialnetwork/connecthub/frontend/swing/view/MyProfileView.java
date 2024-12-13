@@ -169,7 +169,7 @@ public class MyProfileView extends View {
 
         // Add content text
         javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");
-        contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 18));
         contentTextLabel.setForeground(Color.BLACK);
 
         // Calculate dynamic height based on text length

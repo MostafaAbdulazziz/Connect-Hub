@@ -95,4 +95,14 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
         );
     }
 
+    @Override
+    public ManageJoinRequestsView goToJoinRequestsView(GroupDTO group) {
+        return null;
+    }
+
+    @Override
+    public ManageAdminsView goToManageAdminsView(GroupDTO group) {
+        return null;
+    }
+
 }
