@@ -58,7 +58,7 @@ public class NewsFeedView extends View {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawImage(new ImageIcon("src/main/java/com/socialnetwork/connecthub/resources/pics/BG1.jpg").getImage(), 0, 0, null)
+                g.drawImage(new ImageIcon("src/main/java/com/socialnetwork/connecthub/resources/pics/BG1.png").getImage(), 0, 0, null)
                 ;
             }
         };
@@ -454,47 +454,64 @@ public class NewsFeedView extends View {
 }
 
     private void addButtons() {
-        com.socialnetwork.connecthub.frontend.swing.components.JButton createButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Post", 5, 12);
-        createButton.setBounds(320, 120, 100, 30); // Adjust to fit within the panel
-        createButton.addMouseListener(new java.awt.event.MouseAdapter() {
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton createButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Post", 5, 12);
+
+        RoundedImageLabel createPostIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/create_post.png", 30, 30);
+        createPostIcon.setBounds(320, 120, 30, 30); // Adjust to fit within the panel
+        createPostIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open create-post view
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, true);
 //                dispose();
             }
         });
-        panel.add(createButton);
+        panel.add(createPostIcon);
 
-        com.socialnetwork.connecthub.frontend.swing.components.JButton refreshButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Refresh", 5, 12);
-        refreshButton.setBounds(450, 120, 100, 30); // Adjust to fit within the panel
-        refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton refreshButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Refresh", 5, 12);
+        RoundedImageLabel refreshIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/refresh.png", 30, 30);
+        refreshIcon.setBounds(360, 120, 30, 30); // Adjust to fit within the panel
+        refreshIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Refresh the news feed
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
                 dispose();
             }
         });
-        panel.add(refreshButton);
+        panel.add(refreshIcon);
 
-        com.socialnetwork.connecthub.frontend.swing.components.JButton groupsButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Groups", 5, 12);
-        groupsButton.setBounds(580, 120, 100, 30); // Adjust to fit within the panel
-        groupsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton groupsButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Groups", 5, 12);
+        RoundedImageLabel groupsIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/groups.png", 30, 30);
+        groupsIcon.setBounds(400, 120, 30, 30); // Adjust to fit within the panel
+        groupsIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyGroupsView(user);
                 dispose();
             }
         });
-        panel.add(groupsButton);
+        panel.add(groupsIcon);
 
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton logoutButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Logout", 5, 12);
+        RoundedImageLabel logoutIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/logout.png", 30, 30);
+        logoutIcon.setBounds(440, 120, 30, 30); // Adjust to fit within the panel
+        logoutIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Logout the user
+                socialNetworkAPI.getUserAccountService().logout(user.getUserId());
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
+                dispose();
+            }
+        });
+        panel.add(logoutIcon);
 
         // Add search bar
         javax.swing.JTextField searchBar = new javax.swing.JTextField();
-        searchBar.setBounds(700, 120, 200, 30); // Adjust to fit within the panel
+        searchBar.setBounds(880, 120, 250, 30); // Adjust to fit within the panel
         panel.add(searchBar);
 
-        com.socialnetwork.connecthub.frontend.swing.components.JButton searchButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Search", 5, 12);
-        searchButton.setBounds(920, 120, 100, 30); // Adjust to fit within the panel
-        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton searchButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Search", 5, 12);
+        RoundedImageLabel searchIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/search.png", 30, 30);
+        searchIcon.setBounds(1150, 120, 30, 30); // Adjust to fit within the panel
+        searchIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Perform search operation
                 String query = searchBar.getText();
@@ -505,24 +522,12 @@ public class NewsFeedView extends View {
                 }
             }
         });
-        panel.add(searchButton);
+        panel.add(searchIcon);
 
-        com.socialnetwork.connecthub.frontend.swing.components.JButton logoutButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Logout", 5, 12);
-        logoutButton.setBounds(1080, 120, 100, 30); // Adjust to fit within the panel
-        logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Logout the user
-                socialNetworkAPI.getUserAccountService().logout(user.getUserId());
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToLoginView();
-                dispose();
-            }
-        });
-        panel.add(logoutButton);
-
-
-        com.socialnetwork.connecthub.frontend.swing.components.JButton createStoryButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Story", 5, 12);
-        createStoryButton.setBounds(1330, 80, 150, 30); // Adjust to fit within the panel
-        createStoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+//        com.socialnetwork.connecthub.frontend.swing.components.JButton createStoryButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Story", 5, 12);
+        RoundedImageLabel createStoryIcon = new RoundedImageLabel("src/main/java/com/socialnetwork/connecthub/resources/pics/add-icon.png", 80, 80);
+        createStoryIcon.setBounds(1330, 20, 80, 80); // Adjust to fit within the panel
+        createStoryIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open create-story view
 
@@ -530,7 +535,7 @@ public class NewsFeedView extends View {
 
             }
         });
-        panel.add(createStoryButton);
+        panel.add(createStoryIcon);
 
     }
 
