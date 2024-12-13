@@ -26,20 +26,16 @@ public interface GroupService {
 
     // Normal Member Role
     void requestToJoin(String groupId, String userId);
-    void leaveGroup(String groupId, String userId);
-    void cancelJoinRequest(String groupId, String userId);
     void submitPost(String groupId, String userId, ContentDTO content) throws ContentCreationException;
 
     // General groups methods
     GroupDTO getGroupById(String groupId);
     List<GroupDTO> getGroupsByUserId(String userId);
     List<GroupDTO> searchGroupsByName(String name);
-    String getGroupPrimaryAdmin(String groupId);
-    List<String> getGroupAdmins(String groupId);
-    List<String> getGroupMembers(String groupId);
-    List<String> getGroupPosts(String groupId);
-
-    List<ContentDTO> getUserGroupsPosts(String userId); //for timeline in MyGroupsView
-    // must return mix of posts from groups user is member of
+    UserDTO getGroupPrimaryAdmin(String groupId);
+    List<UserDTO> getGroupAdmins(String groupId);
+    List<UserDTO> getGroupMembers(String groupId);
+    List<ContentDTO> getGroupPosts(String groupId);
+    List<ContentDTO> getUserGroupsPosts(String userId);
     List<GroupDTO> getGroupsSuggestions(String userId);
 }
