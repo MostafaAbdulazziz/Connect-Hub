@@ -96,10 +96,10 @@ public class JavaGroupService implements GroupService {
 
     // Admins Role
     @Override
-    public List<String> getJoinRequests(String groupId) {
+    public List<UserDTO> getJoinRequests(String groupId) {
         Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(groupId);
         if (groupOpt.isPresent()) {
-            return new ArrayList<>(groupOpt.get().getRequests());
+//            return new ArrayList<>(groupOpt.get().getRequests());
         }
         return new ArrayList<>();
     }

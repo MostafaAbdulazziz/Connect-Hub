@@ -17,7 +17,7 @@ public interface GroupService {
     void demoteAdmin(String groupId, String userId);
 
     // Admins Role
-    List<String> getJoinRequests(String groupId);
+    List<UserDTO> getJoinRequests(String groupId);
     void approveMember(String groupId, String userId);
     void declineMember(String groupId, String userId);
     void removeMember(String groupId, String userId);

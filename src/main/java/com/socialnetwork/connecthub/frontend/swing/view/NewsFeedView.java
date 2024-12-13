@@ -234,6 +234,31 @@ public class NewsFeedView extends View {
         timestampLabel.setBounds(650, 20, 170, 30); // Adjusted position
         contentPanel.add(timestampLabel);
 
+        com.socialnetwork.connecthub.frontend.swing.components.JButton editButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("edit", 5, 12);
+        editButton.setBounds(400,20,100,30);
+        editButton.setBackground(Color.BLUE);
+        editButton.setForeground(Color.WHITE);
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
+                dispose();
+            }
+        });
+        contentPanel.add(editButton);
+        com.socialnetwork.connecthub.frontend.swing.components.JButton deleteButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("delete", 5, 12);
+        deleteButton.setBounds(510,20,100,30);
+        deleteButton.setBackground(Color.red);
+        deleteButton.setForeground(Color.WHITE);
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+//                socialNetworkAPI.getGroupService().deletePost(group.getGroupId(), user.getUserId(),content);
+                deleteButton.setText("Deleted");
+                deleteButton.setEnabled(false);
+            }
+        });
+
+        contentPanel.add(deleteButton);
+
         // Add content text
         javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");
         contentTextLabel.setFont(new Font("Arial", Font.PLAIN, 18));

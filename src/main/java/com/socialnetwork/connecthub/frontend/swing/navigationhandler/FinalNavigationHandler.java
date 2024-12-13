@@ -96,13 +96,13 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     }
 
     @Override
-    public ManageJoinRequestsView goToJoinRequestsView(GroupDTO group) {
-        return null;
+    public ManageJoinRequestsView goToJoinRequestsView(GroupDTO group, UserDTO user) {
+        return new ManageJoinRequestsView(JavaSocialNetworkAPI.getInstance(),group,user);
     }
 
     @Override
-    public ManageAdminsView goToManageAdminsView(GroupDTO group) {
-        return null;
+    public ManageAdminsView goToManageAdminsView(GroupDTO group, UserDTO primaryAdmin) {
+        return new ManageAdminsView(JavaSocialNetworkAPI.getInstance(), group,primaryAdmin);
     }
 
 }

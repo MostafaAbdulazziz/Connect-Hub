@@ -86,7 +86,7 @@ public class MyGroupsView extends View {
         });
         panel.add(newGroupIcon);
 
-        addTimeline();
+//        addTimeline();
         addGroupSuggestions();
         repaint();
         revalidate();
@@ -100,7 +100,7 @@ public class MyGroupsView extends View {
         JPanel groupPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         RoundedImageLabel imageLabel;
         groupPanel.setPreferredSize(new Dimension(400, 60)); // Set fixed size
-        groupPanel.setMaximumSize(new Dimension(300, 60));
+        groupPanel.setMaximumSize(new Dimension(400, 60));
         groupPanel.setBackground(Color.WHITE);
 
         // Add rounded image for the group
@@ -154,12 +154,13 @@ public class MyGroupsView extends View {
 
         // Add content labels to the panel
         List<ContentDTO> contentList = socialNetworkAPI.getGroupService().getUserGroupsPosts(user.getUserId());
-        for (ContentDTO content : contentList) {
-            JPanel contentLabel = createContentLabel(content);
-            contentPanel.add(contentLabel);
-            contentPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
+        {
+            for (ContentDTO content : contentList) {
+                JPanel contentLabel = createContentLabel(content);
+                contentPanel.add(contentLabel);
+                contentPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between posts
+            }
         }
-
         // Adjust content panel's preferred size dynamically
         int panelHeight = 0; //Math.min(1500, contentList.size() * 800); // 1210 px per content including spacing
         for(ContentDTO content : contentList) {
