@@ -107,11 +107,13 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
     }
 
     @Override
-    public NotificationView goToNotificationView(UserDTO userDTO) {
+    public NotificationView goToNotificationView(UserDTO userDTO, JFrame parentFrame) {
         return new NotificationView(
                 JavaSocialNetworkAPI.getInstance(),
                 JsonUserRepository.getInstance().findById(userDTO.getUserId()).orElseThrow().getNotifications(),
-                userDTO);
+                userDTO,
+                parentFrame
+        );
     }
 
     @Override

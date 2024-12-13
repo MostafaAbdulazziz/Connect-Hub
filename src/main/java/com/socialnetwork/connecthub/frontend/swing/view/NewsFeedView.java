@@ -502,7 +502,7 @@ public class NewsFeedView extends View {
         notificationsIcon.setBounds(480, 120, 30, 30); // Adjust to fit within the panel
         notificationsIcon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNotificationView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNotificationView(user, NewsFeedView.this);
             }
         });
         panel.add(notificationsIcon);

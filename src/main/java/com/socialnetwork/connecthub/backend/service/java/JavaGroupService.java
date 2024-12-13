@@ -214,7 +214,7 @@ public class JavaGroupService implements GroupService {
         // send notification for friends
         List<User> members = groupOpt.orElseThrow().getMembers().stream().map(memberId -> JsonUserRepository.getInstance().findById(memberId).orElseThrow()).toList();
         for (User member : members) {
-            member.getNotifications().add(new NewPostNotification(content));
+            member.getNotifications().add(new NewPostNotification(content.getContentId()));
             JsonUserRepository.getInstance().save(member);
         }
     }

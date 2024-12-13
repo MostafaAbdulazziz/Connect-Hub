@@ -52,7 +52,7 @@ public class JavaContentService implements ContentService {
         // send notification for friends
         List<User> friends = getFriendsHelper(userId);
         for (User friend : friends) {
-            friend.getNotifications().add(new NewPostNotification(contentDTO));
+            friend.getNotifications().add(new NewPostNotification(post.getContentId()));
             JsonUserRepository.getInstance().save(friend);
         }
     }

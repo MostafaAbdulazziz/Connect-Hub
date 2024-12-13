@@ -104,7 +104,7 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
-    public NotificationView goToNotificationView(UserDTO userDTO) {
+    public NotificationView goToNotificationView(UserDTO userDTO, JFrame parentFrame) {
         System.out.println("new NotificationView()");
         return null;
     }

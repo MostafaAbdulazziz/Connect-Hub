@@ -33,7 +33,7 @@ public class JavaFriendService implements FriendService {
 
         // send notification for user
         User recipient = JsonUserRepository.getInstance().findById(recipientId).orElseThrow();
-        recipient.getNotifications().add(new FriendRequestNotification(JavaUserAccountService.getInstance().getUserById(senderId)));
+        recipient.getNotifications().add(new FriendRequestNotification(senderId));
         JsonUserRepository.getInstance().save(recipient);
     }
 
@@ -52,11 +52,10 @@ public class JavaFriendService implements FriendService {
 
 
         // send notification
-        sender.getNotifications().add(new FriendRequestNotification(
-                JavaUserAccountService
-                        .getInstance()
-                        .getUserById(senderId))
-                .setMessage("User " + user.getUsername() + " accepted friend request"));
+        sender.getNotifications().add(new FriendRequestNotification(senderId)
+                .setSenderId(userId)
+                .setMessage("User " + user.getUsername() + " accepted friend request")
+        );
         JsonUserRepository.getInstance().save(sender);
     }
 
