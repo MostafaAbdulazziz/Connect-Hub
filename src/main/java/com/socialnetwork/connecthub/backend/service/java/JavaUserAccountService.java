@@ -73,6 +73,7 @@ public class JavaUserAccountService implements UserAccountService {
         newUser.setFriends(new ArrayList<>());
         newUser.setPosts(new ArrayList<>());
         newUser.setStories(new ArrayList<>());
+        newUser.setGroups(new ArrayList<>());
 
         newUser.setProfilePhotoPath("src/main/java/com/socialnetwork/connecthub/resources/pics/default-profile.jpg");
         newUser.setBio("");

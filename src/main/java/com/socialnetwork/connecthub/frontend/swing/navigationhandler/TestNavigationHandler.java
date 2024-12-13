@@ -82,6 +82,12 @@ public class TestNavigationHandler implements NavigationHandler {
     }
 
     @Override
+    public SearchResultsView goToSearchResultsView(UserDTO user, String query) {
+        System.out.println("new SearchResultsView()");
+        return null;
+    }
+
+    @Override
     public GroupCreationView goToGroupCreationView(UserDTO user) {
         System.out.println("new GroupCreationView()");
         return null;

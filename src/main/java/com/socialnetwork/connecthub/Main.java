@@ -6,6 +6,7 @@ import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
 import com.socialnetwork.connecthub.backend.service.java.JavaFriendService;
 import com.socialnetwork.connecthub.backend.service.java.JavaUserAccountService;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
+import com.socialnetwork.connecthub.frontend.swing.view.MyGroupsView;
 import com.socialnetwork.connecthub.frontend.swing.view.SearchResultsView;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
@@ -20,12 +21,14 @@ public class Main {
             NavigationHandlerFactory.getNavigationHandler("final").goToNewsFeedView(new UserDTO(users.get(i)));
         }
 
-        new SearchResultsView(
-                JavaSocialNetworkAPI.getInstance(),
-                new UserDTO(users.get(0)),
-                JavaUserAccountService.getInstance().getUsersByUsername(users.get(0).getUserId(), ""),
-                new ArrayList<>()
-        ).setVisible(true);
+//        new SearchResultsView(
+//                JavaSocialNetworkAPI.getInstance(),
+//                new UserDTO(users.get(0)),
+//                JavaUserAccountService.getInstance().getUsersByUsername(users.get(0).getUserId(), ""),
+//                new ArrayList<>()
+//        );
+
+//        new MyGroupsView(JavaSocialNetworkAPI.getInstance(), new UserDTO(users.get(0)));
     }
 }
 

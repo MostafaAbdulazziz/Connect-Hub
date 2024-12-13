@@ -35,7 +35,6 @@ public class SearchResultsView extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
-        setVisible(true);
 
         // Create JTabbedPane
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -57,6 +56,7 @@ public class SearchResultsView extends JFrame {
         tabbedPane.addTab("Groups", groupsPanel);
 
         add(tabbedPane, BorderLayout.CENTER);
+        setVisible(true);
     }
 
     // Panel to hold all user labels (with rounded images and action buttons)
@@ -124,8 +124,8 @@ public class SearchResultsView extends JFrame {
 
         // Add buttons
         com.socialnetwork.connecthub.frontend.swing.components.JButton
-                friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 20, 12),
-                declineRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Decline ", 20, 12);
+                friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 10, 12),
+                declineRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Decline ", 10, 12);
 
 
         friendPanel.add(friendRequestButton);

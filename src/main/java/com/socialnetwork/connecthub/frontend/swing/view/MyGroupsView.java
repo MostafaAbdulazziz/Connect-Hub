@@ -20,6 +20,7 @@ public class MyGroupsView extends View {
     UserDTO user;
     JPanel panel;
     com.socialnetwork.connecthub.frontend.swing.components.JScrollPane scrollPane;
+
     public MyGroupsView(SocialNetworkAPI socialNetworkAPI, UserDTO userDTO) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.user = userDTO;
@@ -28,11 +29,11 @@ public class MyGroupsView extends View {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                 dispose();
-                NavigationHandlerFactory.getNavigationHandler("final").goToMyProfileView(user);
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
             }
         });
         if(user == null){
-            com.socialnetwork.connecthub.frontend.swing.components.JLabel mainLabel = new JLabel("Sorry, There are an error , please try again",25, GUIConstants.blue,5);
+            com.socialnetwork.connecthub.frontend.swing.components.JLabel mainLabel = new JLabel("Sorry, There is an error , please try again",25, GUIConstants.blue,5);
             mainLabel.setBounds(0, 0, getWidth(), getHeight());
             add(mainLabel);
             return;
@@ -167,7 +168,7 @@ public class MyGroupsView extends View {
 
         // Add the scroll pane to the main panel
         panel.add(scrollPane);
-        addTimeline();
+//        addTimeline();
         revalidate();
         repaint();
     }
@@ -343,7 +344,7 @@ public class MyGroupsView extends View {
 
     private void addGroupSuggestions() {
         // Create the label
-        javax.swing.JLabel groupSuggestionsLabel = new javax.swing.JLabel("Friend Suggestions");
+        javax.swing.JLabel groupSuggestionsLabel = new javax.swing.JLabel("Group Suggestions");
         groupSuggestionsLabel.setFont(new Font("Arial", Font.BOLD, 20));
         groupSuggestionsLabel.setForeground(new Color(0, 0, 0, 255));
         groupSuggestionsLabel.setBounds(1240, 0, 300, 25); // Ensure these bounds fit inside the panel

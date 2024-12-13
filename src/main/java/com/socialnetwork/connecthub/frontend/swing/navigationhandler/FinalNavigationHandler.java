@@ -79,4 +79,14 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
         );
     }
 
+    @Override
+    public SearchResultsView goToSearchResultsView(UserDTO user, String query) {
+        return new SearchResultsView(
+                JavaSocialNetworkAPI.getInstance(),
+                user,
+                JavaUserAccountService.getInstance().getUsersByUsername(user.getUserId(), query),
+                JavaGroupService.getInstance().searchGroupsByName(query)
+        );
+    }
+
 }

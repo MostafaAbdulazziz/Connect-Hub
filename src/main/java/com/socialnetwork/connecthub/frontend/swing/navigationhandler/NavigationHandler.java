@@ -19,7 +19,7 @@ public interface NavigationHandler {
     StoryView goToStoryView(ContentDTO userDTO);
     EditMyProfileView goToEditMyProfileView(UserDTO userDTO);
     GroupCreationView goToGroupCreationView(UserDTO user);
-
     MyGroupsView goToMyGroupsView(UserDTO userDTO);
     GroupView goToGroupView(GroupDTO groupDTO, UserDTO userDTO);
+    SearchResultsView goToSearchResultsView(UserDTO user, String query);
 }

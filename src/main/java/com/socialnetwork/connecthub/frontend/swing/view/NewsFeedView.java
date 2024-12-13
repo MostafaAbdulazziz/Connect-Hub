@@ -455,10 +455,10 @@ public class NewsFeedView extends View {
 
     private void addButtons() {
         com.socialnetwork.connecthub.frontend.swing.components.JButton createButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Create Post", 5, 12);
-        createButton.setBounds(310, 120, 150, 30); // Adjust to fit within the panel
+        createButton.setBounds(320, 120, 100, 30); // Adjust to fit within the panel
         createButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the create post view
+                // Open create-post view
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, true);
 //                dispose();
             }
@@ -466,7 +466,7 @@ public class NewsFeedView extends View {
         panel.add(createButton);
 
         com.socialnetwork.connecthub.frontend.swing.components.JButton refreshButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Refresh", 5, 12);
-        refreshButton.setBounds(670, 120, 150, 30); // Adjust to fit within the panel
+        refreshButton.setBounds(450, 120, 100, 30); // Adjust to fit within the panel
         refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Refresh the news feed
@@ -476,8 +476,39 @@ public class NewsFeedView extends View {
         });
         panel.add(refreshButton);
 
+        com.socialnetwork.connecthub.frontend.swing.components.JButton groupsButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Groups", 5, 12);
+        groupsButton.setBounds(580, 120, 100, 30); // Adjust to fit within the panel
+        groupsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyGroupsView(user);
+                dispose();
+            }
+        });
+        panel.add(groupsButton);
+
+
+        // Add search bar
+        javax.swing.JTextField searchBar = new javax.swing.JTextField();
+        searchBar.setBounds(700, 120, 200, 30); // Adjust to fit within the panel
+        panel.add(searchBar);
+
+        com.socialnetwork.connecthub.frontend.swing.components.JButton searchButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Search", 5, 12);
+        searchButton.setBounds(920, 120, 100, 30); // Adjust to fit within the panel
+        searchButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Perform search operation
+                String query = searchBar.getText();
+                if (!query.isEmpty()) {
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToSearchResultsView(user, query);
+                } else {
+                    new Alert("Search keyword should not by empty", NewsFeedView.this);
+                }
+            }
+        });
+        panel.add(searchButton);
+
         com.socialnetwork.connecthub.frontend.swing.components.JButton logoutButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("Logout", 5, 12);
-        logoutButton.setBounds(1030, 120, 150, 30); // Adjust to fit within the panel
+        logoutButton.setBounds(1080, 120, 100, 30); // Adjust to fit within the panel
         logoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Logout the user
@@ -493,7 +524,7 @@ public class NewsFeedView extends View {
         createStoryButton.setBounds(1330, 80, 150, 30); // Adjust to fit within the panel
         createStoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the create story view
+                // Open create-story view
 
                 NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, false);
 
