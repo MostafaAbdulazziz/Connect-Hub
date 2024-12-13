@@ -15,8 +15,10 @@ import com.socialnetwork.connecthub.shared.exceptions.GroupCreationException;
 import com.socialnetwork.connecthub.util.idgenerator.IdGeneratorFactory;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class JavaGroupService implements GroupService {
     private static JavaGroupService instance;
@@ -243,26 +245,72 @@ public class JavaGroupService implements GroupService {
     }
 
     @Override
-    public String getGroupPrimaryAdmin(String groupId) {
+    public UserDTO getGroupPrimaryAdmin(String groupId) {
         Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
-        return group.getPrimaryAdmin();
+        return JavaUserAccountService.getInstance().getUserById(group.getPrimaryAdmin());
     }
 
     @Override
-    public List<String> getGroupAdmins(String groupId) {
+    public List<UserDTO> getGroupAdmins(String groupId) {
         Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
-        return new ArrayList<>(group.getAdmins());
+        List<UserDTO> admins = new ArrayList<>();
+        List<String> adminIds = group.getAdmins();
+        for (String adminId : adminIds) {
+            admins.add(JavaUserAccountService.getInstance().getUserById(adminId));
+        }
+        return admins;
     }
 
     @Override
-    public List<String> getGroupMembers(String groupId) {
+    public List<UserDTO> getGroupMembers(String groupId) {
         Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
-        return new ArrayList<>(group.getMembers());
+        List<UserDTO> members = new ArrayList<>();
+        List<String> memberIds = group.getMembers();
+        for (String memberId : memberIds) {
+            members.add(JavaUserAccountService.getInstance().getUserById(memberId));
+        }
+        return members;
     }
 
     @Override
-    public List<String> getGroupPosts(String groupId) {
+    public List<ContentDTO> getGroupPosts(String groupId) {
         Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
-        return new ArrayList<>(group.getPosts());
+        List<ContentDTO> posts = new ArrayList<>();
+        List<String> postIds = group.getPosts();
+        for (String post : postIds) {
+            posts.add(new ContentDTO(JsonPostRepository.getInstance().findById(post).orElseThrow()));
+        }
+
+        return posts;
+    }
+
+    @Override
+    public List<ContentDTO> getUserGroupsPosts(String userId) {
+        User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+        List<Group> userGroups = user.getGroups().stream().map(groupId -> JsonGroupRepository.getInstance().findById(groupId).orElseThrow()).toList();
+        List<ContentDTO> posts = new ArrayList<>();
+        for (Group group : userGroups) {
+            for (String postId : group.getPosts()) {
+                posts.add(new ContentDTO
+                        (JsonPostRepository.getInstance().findById(postId).orElseThrow())
+                );
+            }
+        }
+
+        posts.sort(Comparator.comparing(ContentDTO::getTimestamp).reversed()); // Sort by timestamp (newest first)
+        return posts;
+    }
+
+    @Override
+    public List<GroupDTO> getGroupsSuggestions(String userId) {
+        List<Group> groups = JsonGroupRepository.getInstance().findAll();
+        List<GroupDTO> suggestions = new ArrayList<>();
+        for (Group group : groups) {
+            if (!group.getMembers().contains(userId)) {
+                suggestions.add(new GroupDTO(group));
+            }
+        }
+
+        return suggestions.subList(0, Math.min(suggestions.size(), 20));
     }
 }

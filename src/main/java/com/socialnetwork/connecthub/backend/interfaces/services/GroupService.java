@@ -32,9 +32,10 @@ public interface GroupService {
     GroupDTO getGroupById(String groupId);
     List<GroupDTO> getGroupsByUserId(String userId);
     List<GroupDTO> searchGroupsByName(String name);
-    String getGroupPrimaryAdmin(String groupId);
-    List<String> getGroupAdmins(String groupId);
-    List<String> getGroupMembers(String groupId);
-    List<String> getGroupPosts(String groupId);
-
+    UserDTO getGroupPrimaryAdmin(String groupId);
+    List<UserDTO> getGroupAdmins(String groupId);
+    List<UserDTO> getGroupMembers(String groupId);
+    List<ContentDTO> getGroupPosts(String groupId);
+    List<ContentDTO> getUserGroupsPosts(String userId);
+    List<GroupDTO> getGroupsSuggestions(String userId);
 }
