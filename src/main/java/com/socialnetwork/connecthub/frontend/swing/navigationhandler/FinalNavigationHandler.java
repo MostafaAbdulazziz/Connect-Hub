@@ -65,9 +65,6 @@ public class FinalNavigationHandler implements NavigationHandler {    @Override
         return new GroupCreationView(JavaSocialNetworkAPI.getInstance(), JavaUserAccountService.getInstance().getUserById(user.getUserId()));
     }
 
-
-
-
     @Override
     public MyGroupsView goToMyGroupsView(UserDTO userDTO) {
         return new MyGroupsView(JavaSocialNetworkAPI.getInstance(), JavaUserAccountService.getInstance().getUserById(userDTO.getUserId()));

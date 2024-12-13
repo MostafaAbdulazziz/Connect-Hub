@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyGroupsView extends View{
+public class MyGroupsView extends View {
     private String navigationHandlerType = "final";
     SocialNetworkAPI socialNetworkAPI;
     UserDTO user;

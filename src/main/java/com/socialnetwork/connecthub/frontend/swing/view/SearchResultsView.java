@@ -1,6 +1,7 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
+import com.socialnetwork.connecthub.backend.service.java.JavaFriendService;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
 import com.socialnetwork.connecthub.shared.dto.UserDTO;
 import com.socialnetwork.connecthub.shared.dto.GroupDTO;
@@ -20,6 +21,7 @@ public class SearchResultsView extends JFrame {
     private List<UserDTO> friends;
     private List<GroupDTO> groups;
     private SocialNetworkAPI socialNetworkAPI;
+    private String navigationHandlerType = "final";
     UserDTO user;
 
 
@@ -29,10 +31,11 @@ public class SearchResultsView extends JFrame {
         this.groups = groups;
         this.user = user;
 
-        setTitle("Connect Hub - Filtered Results");
+        setTitle("Search Results");
         setSize(800, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
+        setVisible(true);
 
         // Create JTabbedPane
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -95,7 +98,7 @@ public class SearchResultsView extends JFrame {
 
         // Add profile photo (rounded)
         RoundedImageLabel imageLabel = new RoundedImageLabel(friend.getProfilePhotoPath(), 50, 50);
-        imageLabel.addActionListener(e -> NavigationHandlerFactory.getNavigationHandler("final").goToProfileView(friend,user));  // Open user profile on photo click
+        imageLabel.addActionListener(e -> NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend,user));  // Open user profile on photo click
         friendPanel.add(imageLabel);
 
         // Add username text with action listener to open profile
@@ -104,23 +107,90 @@ public class SearchResultsView extends JFrame {
         textLabel.setForeground(Color.GRAY);
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                NavigationHandlerFactory.getNavigationHandler("final").goToProfileView(friend,user); // Open user profile on name click
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(friend,user); // Open user profile on name click
             }
         });
         friendPanel.add(textLabel);
 
         // Add the action button (Send Friend Request)
-        JButton actionButton = new JButton("Send Friend Request", 10, 12);
-        actionButton.setBackground(new Color(66, 103, 178));
-        actionButton.setForeground(Color.WHITE);
-        actionButton.setFont(new Font("Arial", Font.PLAIN, 12));
-        actionButton.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        actionButton.addActionListener(e -> sendFriendRequest(friend));
-        friendPanel.add(actionButton);
+        JavaFriendService.FriendStatus friendStatus = JavaFriendService.getInstance().getFriendStatus(user.getUserId(), friend.getUserId());
+
+        String friendButtonString = switch (friendStatus) {
+            case FRIENDS -> " Remove Friend ";
+            case FRIEND_REQUEST_SENT -> " Cancel request ";
+            case FRIEND_REQUEST_RECEIVED -> " Accept ";
+            case NOT_FRIENDS -> " Send Friend Request ";
+        };
+
+        // Add buttons
+        com.socialnetwork.connecthub.frontend.swing.components.JButton
+                friendRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(friendButtonString, 20, 12),
+                declineRequestButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" Decline ", 20, 12);
+
+
+        friendPanel.add(friendRequestButton);
+        if (friendStatus == JavaFriendService.FriendStatus.FRIEND_REQUEST_RECEIVED) {
+            friendPanel.add(declineRequestButton);
+        }
+
+        friendRequestButton.addActionListener(e -> {
+            switch (friendStatus) {
+                case FRIENDS: removeFriend(friend); break;
+                case FRIEND_REQUEST_SENT: cancelFriendRequest(friend); break;
+                case FRIEND_REQUEST_RECEIVED: acceptFriendRequest(friend); break;
+                case NOT_FRIENDS: sendFriendRequest(friend); break;
+            }
+        });
+
+        declineRequestButton.addActionListener(e -> {
+            declineFriendRequest(friend);
+        });
 
         friendPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
 
         return friendPanel;
+    }
+
+    private void removeFriend(UserDTO friend) {
+        // Remove from friends
+        socialNetworkAPI.getFriendService().removeFriend(user.getUserId(), friend.getUserId());
+        dispose();
+        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        JOptionPane.showMessageDialog(this, "Removed from friend list!.");
+    }
+
+    private void cancelFriendRequest(UserDTO friend) {
+        Thread declineRequestThread = new Thread(() -> {
+            socialNetworkAPI.getFriendService().declineFriendRequest(user.getUserId(), friend.getUserId());
+        });
+        declineRequestThread.start();
+        dispose();
+        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        JOptionPane.showMessageDialog(this, "Friend request cancelled!.");
+    }
+
+    private void acceptFriendRequest(UserDTO friend) {
+        socialNetworkAPI.getFriendService().acceptFriendRequest(user.getUserId(), friend.getUserId());
+        dispose();
+        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        JOptionPane.showMessageDialog(this, "Friend request accepted!.");
+    }
+
+    private void sendFriendRequest(UserDTO friend) {
+        Thread sendRequestThread = new Thread(() -> {
+            socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), friend.getUserId());
+        });
+        sendRequestThread.start();
+        dispose();
+        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        JOptionPane.showMessageDialog(this, "Friend request sent!");
+    }
+
+    private void declineFriendRequest(UserDTO friend) {
+        socialNetworkAPI.getFriendService().declineFriendRequest(friend.getUserId(), user.getUserId());
+        dispose();
+        new SearchResultsView(socialNetworkAPI, user, friends, groups);
+        JOptionPane.showMessageDialog(this, "Friend request declined!.");
     }
 
     // Method to create the group label with their image, name, and button
@@ -158,16 +228,6 @@ public class SearchResultsView extends JFrame {
         groupPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
 
         return groupPanel;
-    }
-
-    // Send friend request
-    private void sendFriendRequest(UserDTO friend) {
-        try {
-            socialNetworkAPI.getFriendService().sendFriendRequest(user.getUserId(), friend.getUserId());
-            JOptionPane.showMessageDialog(this, "Friend request sent to " + user.getUsername());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error sending friend request: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     // Join a group
