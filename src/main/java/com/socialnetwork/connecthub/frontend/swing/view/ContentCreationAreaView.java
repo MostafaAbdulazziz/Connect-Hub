@@ -47,9 +47,8 @@ public class ContentCreationAreaView extends JFrame {
         this.group = group;
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
-        this.type = (isPost? "Post" : "Story");
         // Set up the frame
-        setTitle("Create a New " + type);
+        setTitle("Create a New Post");
         setSize(1500, 800);
         setLocationRelativeTo(null);
         setBackground(new Color(255, 255, 255));
@@ -84,9 +83,9 @@ public class ContentCreationAreaView extends JFrame {
 
         addImageButton = new JButton("Add Image", 12, 14);
         addImageButton.setPreferredSize(new Dimension(300, 40));
-        submitButton = new JButton("Submit " + type, 12, 14);
+        submitButton = new JButton("Submit Post", 12, 14);
         submitButton.setPreferredSize(new Dimension(300, 40));
-        titleLabel = new JLabel("Create a " + type, 12, GUIConstants.blue, JLabel.CENTER);
+        titleLabel = new JLabel("Create a Post", 12, GUIConstants.blue, JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
         imagePanel = new JPanel();
@@ -134,11 +133,7 @@ public class ContentCreationAreaView extends JFrame {
         setVisible(true);
     }
 
-
-
-
-    private void init(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost)
-    {
+    private void init(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
         this.isPost = isPost;
@@ -229,12 +224,6 @@ public class ContentCreationAreaView extends JFrame {
         setVisible(true);
     }
 
-
-
-
-
-
-
     private void openImageFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setMultiSelectionEnabled(false);
@@ -279,17 +268,16 @@ public class ContentCreationAreaView extends JFrame {
     }
 
     private void submitPost() {
-        if(isGroupPost)
-        {
-            String content = postTextArea.getText().trim();
-            String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
+        String content = postTextArea.getText().trim();
+        String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
+        ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), content, imagePath, new Date());
 
-            ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), content, imagePath, new Date());
+        if(isGroupPost) {
 
             // Call the content service
             try {
 
-                    socialNetworkAPI.getGroupService().submitPost(group.getGroupId(), currentUser.getUserId(),contentDTO);
+                socialNetworkAPI.getGroupService().submitPost(group.getGroupId(), currentUser.getUserId(),contentDTO);
 
                 // Reset UI
                 JOptionPane.showMessageDialog(this, type + " submitted successfully!");
@@ -305,10 +293,6 @@ public class ContentCreationAreaView extends JFrame {
         }
         else
         {
-            String content = postTextArea.getText().trim();
-            String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
-
-            ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), content, imagePath, new Date());
 
             // Call the content service
             try {
