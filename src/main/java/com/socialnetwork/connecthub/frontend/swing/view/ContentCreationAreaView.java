@@ -29,23 +29,27 @@ public class ContentCreationAreaView extends JFrame {
     private boolean isPost;
     private String type;
     private GroupDTO group;
-
+    private ContentDTO contentToEdit;
     private UserDTO currentUser;
     private SocialNetworkAPI socialNetworkAPI;
 
     public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
-       init(socialNetworkAPI, currentUser, isPost);
+        init(socialNetworkAPI, currentUser, isPost, null);
     }
 
     public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, GroupDTO group) {
-        groupPostInit(socialNetworkAPI, currentUser, group);
-
+        groupPostInit(socialNetworkAPI, currentUser, group, null);
     }
 
-    private void groupPostInit(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser,GroupDTO group) {
+    public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, GroupDTO group, ContentDTO contentToEdit) {
+        groupPostInit(socialNetworkAPI, currentUser, group, contentToEdit);
+    }
+
+    private void groupPostInit(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser,GroupDTO group, ContentDTO contentToEdit) {
         this.group = group;
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
+        this.contentToEdit = contentToEdit;
         // Set up the frame
         setTitle("Create a New Post");
         setSize(1500, 800);
@@ -62,6 +66,12 @@ public class ContentCreationAreaView extends JFrame {
         postTextArea.setLineWrap(true);
         postTextArea.setText(placeholderText);
         postTextArea.setForeground(Color.GRAY);
+
+        if (contentToEdit != null && contentToEdit.getContent() != null && !contentToEdit.getContent().isEmpty()) {
+            postTextArea.setText(contentToEdit.getContent());
+            postTextArea.setForeground(Color.BLACK);
+        }
+
         postTextArea.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -89,6 +99,11 @@ public class ContentCreationAreaView extends JFrame {
 
         imagePanel = new JPanel();
         imagePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        if (contentToEdit != null && contentToEdit.getImagePath() != null && !contentToEdit.getImagePath().isEmpty()) {
+            selectedImageFile = new File(contentToEdit.getImagePath());
+            updateImageLabels();
+        }
 
 
         addImageButton.addActionListener(new ActionListener() {
@@ -132,11 +147,12 @@ public class ContentCreationAreaView extends JFrame {
         setVisible(true);
     }
 
-    private void init(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
+    private void init(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost, ContentDTO contentToEdit) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
         this.isPost = isPost;
         this.type = (isPost? "Post" : "Story");
+        this.contentToEdit = contentToEdit;
         // Set up the frame
         setTitle("Create a New " + type);
         setSize(1500, 800);
@@ -153,6 +169,10 @@ public class ContentCreationAreaView extends JFrame {
         postTextArea.setLineWrap(true);
         postTextArea.setText(placeholderText);
         postTextArea.setForeground(Color.GRAY);
+        if (contentToEdit != null && contentToEdit.getContent() != null && !contentToEdit.getContent().isEmpty()) {
+            postTextArea.setText(contentToEdit.getContent());
+            postTextArea.setForeground(Color.BLACK);
+        }
         postTextArea.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -180,6 +200,11 @@ public class ContentCreationAreaView extends JFrame {
 
         imagePanel = new JPanel();
         imagePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        if (contentToEdit != null && contentToEdit.getImagePath() != null && !contentToEdit.getImagePath().isEmpty()) {
+            selectedImageFile = new File(contentToEdit.getImagePath());
+            updateImageLabels();
+        }
 
 
         addImageButton.addActionListener(new ActionListener() {
@@ -271,12 +296,18 @@ public class ContentCreationAreaView extends JFrame {
         String imagePath = selectedImageFile != null ? selectedImageFile.getAbsolutePath() : null;
         ContentDTO contentDTO = new ContentDTO(currentUser.getUserId(), content, imagePath, new Date());
 
-        if(isGroupPost) {
 
-            // Call the content service
+        if(isGroupPost) {
             try {
 
-                socialNetworkAPI.getGroupService().submitPost(group.getGroupId(), currentUser.getUserId(),contentDTO);
+                if (contentToEdit == null) {
+                    socialNetworkAPI.getGroupService().submitPost(group.getGroupId(), currentUser.getUserId(), contentDTO);
+
+                } else {
+                    contentDTO =  new ContentDTO(contentToEdit.getAuthorId(), content, imagePath, new Date());
+                    socialNetworkAPI.getGroupService().editPost(group.getGroupId(), currentUser.getUserId(),contentDTO);
+                }
+
 
                 // Reset UI
                 JOptionPane.showMessageDialog(this, type + " submitted successfully!");
@@ -285,6 +316,7 @@ public class ContentCreationAreaView extends JFrame {
                 postTextArea.setForeground(Color.GRAY);
                 selectedImageFile = null;
                 updateImageLabels();
+
 
             } catch (ContentCreationException ex) {
                 new Alert(ex.getMessage(), ContentCreationAreaView.this);
@@ -296,9 +328,20 @@ public class ContentCreationAreaView extends JFrame {
             // Call the content service
             try {
                 if (isPost)
-                    socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
+                    if(contentToEdit == null)
+                        socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
+                    else {
+                        contentDTO =  new ContentDTO(contentToEdit.getAuthorId(), content, imagePath, new Date());
+                        socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
+                    }
                 else
+                if(contentToEdit == null)
                     socialNetworkAPI.getContentService().createStory(currentUser.getUserId(), contentDTO);
+                else {
+                    contentDTO =  new ContentDTO(contentToEdit.getAuthorId(), content, imagePath, new Date());
+                    socialNetworkAPI.getContentService().createStory(currentUser.getUserId(), contentDTO);
+                }
+
 
                 // Reset UI
                 JOptionPane.showMessageDialog(this, type + " submitted successfully!");
@@ -312,9 +355,5 @@ public class ContentCreationAreaView extends JFrame {
                 new Alert(ex.getMessage(), ContentCreationAreaView.this);
             }
         }
-
-
     }
-
-
 }

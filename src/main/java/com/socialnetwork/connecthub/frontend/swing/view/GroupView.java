@@ -138,34 +138,7 @@ public class GroupView extends View {
         timestampLabel.setForeground(Color.GRAY);
         timestampLabel.setBounds(650, 20, 170, 30); // Adjusted position
         contentPanel.add(timestampLabel);
-        if(socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.ADMIN || socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.PRIMARY_ADMIN){
-            com.socialnetwork.connecthub.frontend.swing.components.JButton editButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("edit", 5, 12);
-            editButton.setBounds(400,20,100,30);
-            editButton.setBackground(Color.BLUE);
-            editButton.setForeground(Color.WHITE);
-            editButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
-                    dispose();
-                }
-            });
-            contentPanel.add(editButton);
-            com.socialnetwork.connecthub.frontend.swing.components.JButton deleteButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("delete", 5, 12);
-            deleteButton.setBounds(510,20,100,30);
-            deleteButton.setBackground(Color.red);
-            deleteButton.setForeground(Color.WHITE);
-            deleteButton.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    socialNetworkAPI.getGroupService().deletePost(group.getGroupId(), user.getUserId(),content);
-                    deleteButton.setText("Deleted");
-                    deleteButton.setEnabled(false);
-                }
-            });
 
-            contentPanel.add(deleteButton);
-
-
-        }
 
             // Add content text
         javax.swing.JLabel contentTextLabel = new javax.swing.JLabel("<html>" + content.getContent().replace("\n", "<br>") + "</html>");
@@ -206,6 +179,34 @@ public class GroupView extends View {
         } else {
             contentPanel.setSize(1900, textHeight + 150);
             contentPanel.setMaximumSize(new Dimension(1900, textHeight + 150));
+        }
+        if(socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.ADMIN || socialNetworkAPI.getGroupService().getMembershipType(group.getGroupId(), user.getUserId()) == JavaGroupService.MembershipType.PRIMARY_ADMIN){
+            com.socialnetwork.connecthub.frontend.swing.components.JButton editButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("edit", 5, 12);
+            editButton.setBounds(400,20,100,30);
+            editButton.setBackground(Color.BLUE);
+            editButton.setForeground(Color.WHITE);
+            editButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
+                    dispose();
+                }
+            });
+            contentPanel.add(editButton);
+            com.socialnetwork.connecthub.frontend.swing.components.JButton deleteButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton("delete", 5, 12);
+            deleteButton.setBounds(510,20,100,30);
+            deleteButton.setBackground(Color.red);
+            deleteButton.setForeground(Color.WHITE);
+            deleteButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    socialNetworkAPI.getGroupService().deletePost(group.getGroupId(), user.getUserId(),content);
+                    deleteButton.setText("Deleted");
+                    deleteButton.setEnabled(false);
+                }
+            });
+
+            contentPanel.add(deleteButton);
+
+
         }
 
         // Repaint and revalidate to reflect changes
@@ -283,7 +284,12 @@ public class GroupView extends View {
         textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 // Open the user's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(member, user);
+                if(member.getUserId().equals(user.getUserId()))
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToMyProfileView(user);
+                else {
+                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToProfileView(member, user);
+                }
+
                 dispose();
             }
         });
