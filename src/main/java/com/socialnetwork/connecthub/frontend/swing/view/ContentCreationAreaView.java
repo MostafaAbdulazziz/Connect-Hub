@@ -9,6 +9,7 @@ import java.util.Date;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.interfaces.services.ContentService;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonPostRepository;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
 import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
@@ -34,7 +35,7 @@ public class ContentCreationAreaView extends JFrame {
     private SocialNetworkAPI socialNetworkAPI;
 
     public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
-        init(socialNetworkAPI, currentUser, isPost, null);
+        init(socialNetworkAPI, currentUser, isPost);
     }
 
     public ContentCreationAreaView(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, GroupDTO group) {
@@ -147,12 +148,11 @@ public class ContentCreationAreaView extends JFrame {
         setVisible(true);
     }
 
-    private void init(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost, ContentDTO contentToEdit) {
+    private void init(SocialNetworkAPI socialNetworkAPI, UserDTO currentUser, boolean isPost) {
         this.socialNetworkAPI = socialNetworkAPI;
         this.currentUser = currentUser;
         this.isPost = isPost;
         this.type = (isPost? "Post" : "Story");
-        this.contentToEdit = contentToEdit;
         // Set up the frame
         setTitle("Create a New " + type);
         setSize(1500, 800);
@@ -304,13 +304,14 @@ public class ContentCreationAreaView extends JFrame {
                     socialNetworkAPI.getGroupService().submitPost(group.getGroupId(), currentUser.getUserId(), contentDTO);
 
                 } else {
-                    contentDTO =  new ContentDTO(contentToEdit.getAuthorId(), content, imagePath, new Date());
-                    socialNetworkAPI.getGroupService().editPost(group.getGroupId(), currentUser.getUserId(),contentDTO);
+                    contentToEdit.setContent(content);
+                    contentToEdit.setImagePath(imagePath);
+                    socialNetworkAPI.getGroupService().editPost(group.getGroupId(), currentUser.getUserId(), contentToEdit);
                 }
 
 
                 // Reset UI
-                JOptionPane.showMessageDialog(this, type + " submitted successfully!");
+                JOptionPane.showMessageDialog(this, "Post submitted successfully!");
                 this.dispose();
                 postTextArea.setText(placeholderText);
                 postTextArea.setForeground(Color.GRAY);
@@ -328,19 +329,9 @@ public class ContentCreationAreaView extends JFrame {
             // Call the content service
             try {
                 if (isPost)
-                    if(contentToEdit == null)
-                        socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
-                    else {
-                        contentDTO =  new ContentDTO(contentToEdit.getAuthorId(), content, imagePath, new Date());
-                        socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
-                    }
+                    socialNetworkAPI.getContentService().createPost(currentUser.getUserId(), contentDTO);
                 else
-                if(contentToEdit == null)
                     socialNetworkAPI.getContentService().createStory(currentUser.getUserId(), contentDTO);
-                else {
-                    contentDTO =  new ContentDTO(contentToEdit.getAuthorId(), content, imagePath, new Date());
-                    socialNetworkAPI.getContentService().createStory(currentUser.getUserId(), contentDTO);
-                }
 
 
                 // Reset UI

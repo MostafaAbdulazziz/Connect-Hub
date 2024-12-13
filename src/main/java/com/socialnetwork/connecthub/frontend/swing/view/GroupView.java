@@ -1,5 +1,6 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
+import com.socialnetwork.connecthub.backend.api.JavaSocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
 import com.socialnetwork.connecthub.backend.model.Group;
 import com.socialnetwork.connecthub.backend.model.GroupNotification;
@@ -93,6 +94,7 @@ public class GroupView extends View {
 
 
     }
+
     private JPanel createContentLabel(ContentDTO content) {
         // Create the content panel with a null layout for custom positioning
         JPanel contentPanel = new JPanel(null);
@@ -187,8 +189,9 @@ public class GroupView extends View {
             editButton.setForeground(Color.WHITE);
             editButton.addActionListener(new java.awt.event.ActionListener() {
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
-                    dispose();
+                    new ContentCreationAreaView(JavaSocialNetworkAPI.getInstance(), user, group, content);
+//                    NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToContentCreationAreaView(user, group);
+//                    dispose();
                 }
             });
             contentPanel.add(editButton);

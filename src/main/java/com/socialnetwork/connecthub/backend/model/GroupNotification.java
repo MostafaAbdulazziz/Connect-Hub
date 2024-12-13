@@ -25,7 +25,7 @@ public class GroupNotification extends Notification {
         this.timestamp = new Date();
     }
 
-    public GroupNotification(String groupIdId, String contentId) {
+    public GroupNotification(String groupId, String contentId) {
         this.groupId = groupId;
         this.contentId = contentId;
         this.message = "New Post in "

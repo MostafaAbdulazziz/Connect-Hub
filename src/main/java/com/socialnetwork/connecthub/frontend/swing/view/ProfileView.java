@@ -12,6 +12,8 @@ import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class ProfileView extends View {
@@ -34,12 +36,14 @@ public class ProfileView extends View {
         profilePanel.setLayout(null); // Use null layout for precise positioning
         profilePanel.setBounds(0, 0, getWidth(), getHeight());
 
-        if (friend.getCoverPhotoPath() == null || friend.getCoverPhotoPath().isEmpty()) {
-            friend.setCoverPhotoPath("src/test/Screenshot 2024-12-03 011157.png");
-        }
-        if (friend.getProfilePhotoPath() == null || friend.getProfilePhotoPath().isEmpty()) {
-            friend.setProfilePhotoPath("src/test/Screenshot 2024-12-03 011157.png");
-        }
+        // Add a custom window listener
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
+            }
+        });
 
         // Set up background panel for the cover photo
         backgroundPanel = new JPanel() {

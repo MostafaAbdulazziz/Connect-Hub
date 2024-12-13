@@ -16,6 +16,7 @@ public class ContentDTO {
     private Date timestamp;
 
     public ContentDTO(Content content) {
+        this.contentId = content.getContentId();
         this.authorId = content.getAuthorId();
         this.content = content.getContent();
         this.imagePath = content.getImagePath();

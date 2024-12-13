@@ -32,7 +32,6 @@ public class ManageJoinRequestsView extends JFrame {
         setTitle("Manage Join Requests");
         setSize(800, 600);
         setLocationRelativeTo(null);
-        setVisible(true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         joinRequestsPanel = new JPanel();
@@ -43,6 +42,7 @@ public class ManageJoinRequestsView extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(joinRequestsPanel);
         getContentPane().add(scrollPane, BorderLayout.CENTER);
+        setVisible(true);
     }
 
     private void addJoinRequestsToPanel() {

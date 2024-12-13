@@ -1,7 +1,9 @@
 package com.socialnetwork.connecthub.frontend.swing.view;
 
 import com.socialnetwork.connecthub.backend.interfaces.SocialNetworkAPI;
+import com.socialnetwork.connecthub.backend.persistence.json.JsonGroupRepository;
 import com.socialnetwork.connecthub.frontend.swing.components.JLabel;
+import com.socialnetwork.connecthub.frontend.swing.components.JButton;
 import com.socialnetwork.connecthub.frontend.swing.components.RoundedImageLabel;
 import com.socialnetwork.connecthub.frontend.swing.constants.GUIConstants;
 import com.socialnetwork.connecthub.frontend.swing.navigationhandler.NavigationHandlerFactory;
@@ -86,7 +88,7 @@ public class MyGroupsView extends View {
         });
         panel.add(newGroupIcon);
 
-//        addTimeline();
+        addTimeline();
         addGroupSuggestions();
         repaint();
         revalidate();
@@ -173,7 +175,7 @@ public class MyGroupsView extends View {
 
         // Create the scroll pane and set its bounds
         JScrollPane scrollPane = new JScrollPane(contentPanel);
-        scrollPane.setBounds(310, 0, 900, 600); // Set the size and position of the scroll pane
+        scrollPane.setBounds(310, 0, 900, 800); // Set the size and position of the scroll pane
         scrollPane.setBackground(new Color(215, 215, 215));
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Disable horizontal scrolling
@@ -297,59 +299,36 @@ public class MyGroupsView extends View {
         textLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         textLabel.setFont(new Font("Arial", Font.BOLD, 13));
         textLabel.setForeground(Color.GRAY); // Ensure visible text color
-        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
+//        textLabel.setBounds(60, 10, 130, 30); // Adjust to fit within the panel
         textLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         suggestionPanel.add(textLabel);
 
+        boolean[] requestSent = {JsonGroupRepository.getInstance().findById(suggestion.getGroupId()).orElseThrow().getRequests().contains(user.getUserId())};
+
         // Add "Friend Request" button
-        com.socialnetwork.connecthub.frontend.swing.components.JButton joinButton = new com.socialnetwork.connecthub.frontend.swing.components.JButton(" join ", 5, 12);
-        joinButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
+        JButton joinButton = new JButton(requestSent[0]?" Cancel ":" join ", 5, 12);
+//        joinButton.setBounds(300, 10, 150, 30); // Adjust to fit within the panel
         joinButton.setBackground(Color.BLUE);
         joinButton.setForeground(Color.WHITE);
 
         joinButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            private boolean requestSent = false;
 
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                if (requestSent) {
+                if (requestSent[0]) {
                     // Cancel friend request
-                    socialNetworkAPI.getGroupService().declineMember(user.getUserId(), suggestion.getGroupId()); // same implementation for cancel
-                    joinButton.setText("Join");
-                    requestSent = false;
+                    socialNetworkAPI.getGroupService().declineMember(suggestion.getGroupId(), user.getUserId()); // same implementation for cancel
+                    joinButton.setText(" Join ");
+                    requestSent[0] = false;
                 } else {
                     // Send friend request
-                    socialNetworkAPI.getGroupService().requestToJoin(user.getUserId(), suggestion.getGroupId());
-                    joinButton.setText(" Cancel join request ");
-                    requestSent = true;
+                    socialNetworkAPI.getGroupService().requestToJoin(suggestion.getGroupId(), user.getUserId());
+                    joinButton.setText(" Cancel ");
+                    requestSent[0] = true;
                 }
             }
         });
 
         suggestionPanel.add(joinButton);
-
-        // Add a border for better visuals
-        suggestionPanel.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 3));
-        textLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the suggestion's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(suggestion, user);
-                dispose();
-            }
-        });
-        imageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the suggestion's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(suggestion, user);
-                dispose();
-            }
-        });
-        suggestionPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Open the suggestion's profile
-                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToGroupView(suggestion, user);
-                dispose();
-            }
-        });
 
         return suggestionPanel;
     }

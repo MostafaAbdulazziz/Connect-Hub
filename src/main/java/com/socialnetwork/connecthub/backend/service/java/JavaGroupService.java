@@ -1,10 +1,7 @@
 package com.socialnetwork.connecthub.backend.service.java;
 
 import com.socialnetwork.connecthub.backend.interfaces.services.GroupService;
-import com.socialnetwork.connecthub.backend.model.Group;
-import com.socialnetwork.connecthub.backend.model.NewPostNotification;
-import com.socialnetwork.connecthub.backend.model.Post;
-import com.socialnetwork.connecthub.backend.model.User;
+import com.socialnetwork.connecthub.backend.model.*;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonGroupRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonPostRepository;
 import com.socialnetwork.connecthub.backend.persistence.json.JsonUserRepository;
@@ -70,6 +67,14 @@ public class JavaGroupService implements GroupService {
 
     @Override
     public void deleteGroup(String groupId) {
+        Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
+        for (User user : group.getMembers().stream().map(memberId -> JsonUserRepository.getInstance().findById(memberId).orElseThrow()).toList()) {
+            user.getGroups().remove(group.getGroupId());
+            JsonUserRepository.getInstance().save(user);
+        }
+        for (String postId : group.getPosts()) {
+            JsonPostRepository.getInstance().delete(postId);
+        }
         JsonGroupRepository.getInstance().delete(groupId);
     }
 
@@ -98,28 +103,30 @@ public class JavaGroupService implements GroupService {
     // Admins Role
     @Override
     public List<UserDTO> getJoinRequests(String groupId) {
-        Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(groupId);
-        if (groupOpt.isPresent()) {
-//            return new ArrayList<>(groupOpt.get().getRequests());
-        }
-        return new ArrayList<>();
+        Group group = JsonGroupRepository.getInstance().findById(groupId).orElseThrow();
+            return new ArrayList<>(group.getRequests().stream().map(memberId -> JavaUserAccountService.getInstance().getUserById(memberId)).toList());
     }
 
     @Override
-    public void approveMember(String groupId, String userId) {
+    public void approveMember(String groupId, String memberId) {
         Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(groupId);
         if (groupOpt.isPresent()) {
             Group group = groupOpt.get();
-            if (group.getRequests().contains(userId)) {
-                group.getRequests().remove(userId);
-                group.getMembers().add(userId);
+            if (group.getRequests().contains(memberId)) {
+                group.getRequests().remove(memberId);
+                group.getMembers().add(memberId);
                 JsonGroupRepository.getInstance().save(group);
 
-                User user = JsonUserRepository.getInstance().findById(userId).orElseThrow();
+                User user = JsonUserRepository.getInstance().findById(memberId).orElseThrow();
                 user.getGroups().add(group.getGroupId());
                 JsonUserRepository.getInstance().save(user);
             }
         }
+
+        // send notification for approved member
+        User member = JsonUserRepository.getInstance().findById(memberId).orElseThrow();
+        member.getNotifications().add(new GroupNotification(groupId));
+        JsonUserRepository.getInstance().save(member);
     }
 
     @Override
@@ -174,6 +181,7 @@ public class JavaGroupService implements GroupService {
         post.setAuthorId(userId);
         post.setContent(content.getContent());
         post.setImagePath(content.getImagePath());
+        post.setTimestamp(content.getTimestamp());
         JsonPostRepository.getInstance().save(post);
     }
 
@@ -202,6 +210,7 @@ public class JavaGroupService implements GroupService {
         post.setAuthorId(userId);
         post.setContent(contentDTO.getContent());
         post.setImagePath(contentDTO.getImagePath());
+        post.setTimestamp(contentDTO.getTimestamp());
         JsonPostRepository.getInstance().save(post);
 
         Optional<Group> groupOpt = JsonGroupRepository.getInstance().findById(groupId);
@@ -213,11 +222,13 @@ public class JavaGroupService implements GroupService {
             }
         }
 
-        // send notification for friends
+        // send notification for members
         List<User> members = groupOpt.orElseThrow().getMembers().stream().map(memberId -> JsonUserRepository.getInstance().findById(memberId).orElseThrow()).toList();
         for (User member : members) {
-            member.getNotifications().add(new NewPostNotification(post.getContentId()));
-            JsonUserRepository.getInstance().save(member);
+            if (!member.getUserId().equals(userId)) {
+                member.getNotifications().add(new GroupNotification(groupId, post.getContentId()));
+                JsonUserRepository.getInstance().save(member);
+            }
         }
     }
 

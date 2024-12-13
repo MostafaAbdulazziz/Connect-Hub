@@ -90,9 +90,12 @@ public class NotificationView extends JFrame {
 
         } else if (notification instanceof GroupNotification) {
             GroupDTO groupDTO = socialNetworkAPI.getGroupService().getGroupById( ((GroupNotification) notification).getGroupId());
-            ContentDTO contentDTO = new ContentDTO(
-                    JsonPostRepository.getInstance().findById( ((GroupNotification) notification).getContentId()).orElseThrow()
-            );
+            ContentDTO contentDTO = null;
+            try {
+                contentDTO = new ContentDTO(
+                        JsonPostRepository.getInstance().findById(((GroupNotification) notification).getContentId()).orElseThrow()
+                );
+            } catch (Exception e) {}
             JLabel messageLabel = new JLabel(notification.getMessage(), 12, Color.GRAY, Font.BOLD);
             RoundedImageLabel groupImage = new RoundedImageLabel(groupDTO.getIconPhotoPath(), 50, 50);
             groupImage.setPreferredSize(new Dimension(50, 50));
@@ -102,10 +105,11 @@ public class NotificationView extends JFrame {
 
             messageLabel.setForeground(new Color(50, 50, 50));
             messageLabel.setPreferredSize(new Dimension(500, 30)); // Increase width here for larger message label
+            ContentDTO finalContentDTO = contentDTO;
             messageLabel.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
-                    if (contentDTO != null)
-                        navigateToPost(contentDTO);  // Navigate to post when message is clicked
+                    if (finalContentDTO != null)
+                        navigateToPost(finalContentDTO);  // Navigate to post when message is clicked
                     else
                         navigateToGroupWindow(groupDTO, user);  // Navigate to group window when message is clicked
                 }

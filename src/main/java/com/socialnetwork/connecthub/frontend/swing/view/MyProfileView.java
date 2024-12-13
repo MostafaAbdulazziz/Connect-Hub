@@ -10,6 +10,8 @@ import com.socialnetwork.connecthub.shared.dto.UserDTO;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class MyProfileView extends View {
@@ -29,6 +31,15 @@ public class MyProfileView extends View {
         profilePanel.setBackground(new Color(215, 215, 215));
         profilePanel.setLayout(null); // Use null layout for precise positioning
         profilePanel.setBounds(0, 0, getWidth(), getHeight());
+
+        // Add a custom window listener
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+                NavigationHandlerFactory.getNavigationHandler(navigationHandlerType).goToNewsFeedView(user);
+            }
+        });
 
         // Set up background panel for the cover photo
         backgroundPanel = new JPanel() {

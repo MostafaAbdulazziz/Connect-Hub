@@ -23,7 +23,7 @@ public interface GroupService {
     void removeMember(String groupId, String userId);
     void approvePost(String groupId, String userId, ContentDTO post);
     void deletePost(String groupId, String userId, ContentDTO post);
-    void editPost(String groupId, String userId, ContentDTO post);
+    void editPost(String groupId, String userId, ContentDTO post) throws ContentCreationException;
 
     // Normal Member Role
     void requestToJoin(String groupId, String userId);
