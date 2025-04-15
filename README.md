@@ -7,7 +7,7 @@ Connect Hub is a social networking platform developed as part of the CC272 Progr
 ## Screenshots
 
 ### Login Page
-![Login Page](images/login_page.png)  
+![Login Page](resourecs/login.png)  
 *The login page for user authentication with a "Sign Up" link for new users.*
 
 ### Sign Up Page
