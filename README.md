@@ -7,11 +7,11 @@ Connect Hub is a social networking platform developed as part of the CC272 Progr
 ## Screenshots
 
 ### Login Page
-![Login Page](resourecs/login.png)  
+![Login Page](src/main/java/com/socialnetwork/connecthub/resources/login.png)  
 *The login page for user authentication with a "Sign Up" link for new users.*
 
 ### Sign Up Page
-![Sign Up Page](images/signup_page.png)  
+![Sign Up Page](src/main/java/com/socialnetwork/connecthub/resources/sgin-up.png)  
 *The sign-up page allowing new users to register with a username, email, and password.*
 
 ## Table of Contents
@@ -124,35 +124,35 @@ Connect Hub is a social networking platform developed as part of the CC272 Progr
 The following UML diagrams illustrate the design and flow of the Connect Hub application. They provide insights into user interactions, system processes, and state transitions.
 
 ### Friend Request Sequence Diagram
-![Friend Request Sequence Diagram](images/friend_request_sequence_diagram.png)  
+![Friend Request Sequence Diagram](src/main/java/com/socialnetwork/connecthub/resources/friend-request-seq-diagram.png)  
 *Illustrates the process of sending and accepting/rejecting a friend request, involving the user, newsfeed, friends suggestions panel, friend manager, database, and receiver.*
 
 ### Creating Story Sequence Diagram
-![Creating Story Sequence Diagram](images/creating_story_sequence_diagram.png)  
+![Creating Story Sequence Diagram](src/main/java/com/socialnetwork/connecthub/resources/creating-story-seq-diagram.png)  
 *Depicts the process of creating a story, from user input to storage in the story repository, including a 24-hour expiration mechanism.*
 
 ### Promotion/Demotion Sequence Diagram
-![Promotion/Demotion Sequence Diagram](images/promotion_demotion_sequence_diagram.png)  
+![Promotion/Demotion Sequence Diagram](src/main/java/com/socialnetwork/connecthub/resources/pro-demo-seq-diagram.png)  
 *Shows the flow for promoting or demoting a group member, including authentication, modification, and notification updates.*
 
 ### Content Creation Sequence Diagram
-![Content Creation Sequence Diagram](images/content_creation_sequence_diagram.png)  
+![Content Creation Sequence Diagram](src/main/java/com/socialnetwork/connecthub/resources/content-creation-seq-diagram.png)  
 *Outlines the steps for creating content (story or post), from user input to storage in the respective repositories.*
 
 ### User Sequence Diagram
-![User Sequence Diagram](images/user_sequence_diagram.png)  
+![User Sequence Diagram](src/main/java/com/socialnetwork/connecthub/resources/user-seq-diagram.png)  
 *Describes the user’s interaction flow, including login, signup, viewing profiles, editing profiles, managing friends, and logging out.*
 
 ### Group Sequence Diagram
-![Group Sequence Diagram](images/group_sequence_diagram.png)  
+![Group Sequence Diagram](src/main/java/com/socialnetwork/connecthub/resources/group-seq-diagram.png)  
 *Details the group management process, including creating posts, managing admins, editing/deleting posts, and deleting groups.*
 
 ### Use Case Diagram
-![Use Case Diagram](images/use_case_diagram.png)  
+![Use Case Diagram](src/main/java/com/socialnetwork/connecthub/resources/use-case-diagram.png)  
 *Represents the main functionalities of Connect Hub, such as signing up, logging in, managing friends, creating content, and editing profiles.*
 
 ### State Diagram
-![State Diagram](images/state_diagram.png)  
+![State Diagram](src/main/java/com/socialnetwork/connecthub/resources/state-diagram.png)  
 *Illustrates the state transitions of the application, from login to user activities like creating posts, editing profiles, and logging out.*
 
 ## Project Structure
